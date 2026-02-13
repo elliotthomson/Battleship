@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 140">
+  <defs>
+    <linearGradient id="gold-body-r" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f5e6a3"/>
+      <stop offset="40%" stop-color="#d4af37"/>
+      <stop offset="70%" stop-color="#b8952a"/>
+      <stop offset="100%" stop-color="#8b6914"/>
+    </linearGradient>
+    <linearGradient id="gold-bow-r" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f5e6a3"/>
+      <stop offset="50%" stop-color="#d4af37"/>
+      <stop offset="100%" stop-color="#8b6914"/>
+    </linearGradient>
+    <radialGradient id="glow-r" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="rgba(255,220,120,.6)"/>
+      <stop offset="100%" stop-color="rgba(255,220,120,0)"/>
+    </radialGradient>
+    <linearGradient id="arrow-shaft-r" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#c0392b"/>
+      <stop offset="100%" stop-color="#d4af37"/>
+    </linearGradient>
+  </defs>
+  <!-- Glow behind archer -->
+  <ellipse cx="65" cy="65" rx="45" ry="50" fill="url(#glow-r)" opacity=".3"/>
+  <!-- Torso -->
+  <path d="M70,95 C68,80 72,68 75,60 C78,52 82,48 80,42 C78,38 74,36 70,38 C66,40 64,46 62,52 C58,62 55,75 56,90 Z"
+        fill="url(#gold-body-r)" stroke="#8b6914" stroke-width=".8"/>
+  <!-- Back shoulder muscle -->
+  <path d="M75,60 C80,56 86,54 88,50 C90,46 88,42 84,44 C80,46 78,52 75,60"
+        fill="url(#gold-body-r)" stroke="#8b6914" stroke-width=".6"/>
+  <!-- Drawing arm (pulling bowstring back) -->
+  <path d="M80,42 C84,40 90,38 94,36 C96,35 98,34 96,38 C94,42 88,44 84,44"
+        fill="url(#gold-body-r)" stroke="#8b6914" stroke-width=".7"/>
+  <!-- Front arm (holding bow, extended left) -->
+  <path d="M62,52 C56,48 48,44 40,42 C36,41 34,42 34,44 C34,46 38,46 42,46"
+        fill="url(#gold-body-r)" stroke="#8b6914" stroke-width=".7"/>
+  <!-- Head -->
+  <ellipse cx="72" cy="34" rx="7" ry="8" fill="url(#gold-body-r)" stroke="#8b6914" stroke-width=".6"/>
+  <!-- Hair/helmet crest -->
+  <path d="M68,28 C70,24 74,22 78,24 C76,26 74,28 72,30"
+        fill="#b8952a" stroke="#8b6914" stroke-width=".4"/>
+  <!-- Bow (large curved arc on the left) -->
+  <path d="M34,20 C22,35 20,55 24,75 C26,82 30,88 34,90"
+        fill="none" stroke="url(#gold-bow-r)" stroke-width="3.5" stroke-linecap="round"/>
+  <!-- Bow inner edge (thickness) -->
+  <path d="M36,22 C26,36 24,54 27,73 C29,80 32,86 36,88"
+        fill="none" stroke="#b8952a" stroke-width="1.2" stroke-linecap="round" opacity=".5"/>
+  <!-- Bowstring -->
+  <line x1="34" y1="20" x2="96" y2="36" stroke="#f5e6a3" stroke-width="1" opacity=".9"/>
+  <line x1="34" y1="90" x2="96" y2="36" stroke="#f5e6a3" stroke-width="1" opacity=".9"/>
+  <!-- Arrow on the bow -->
+  <line x1="10" y1="44" x2="96" y2="36" stroke="url(#arrow-shaft-r)" stroke-width="2" stroke-linecap="round"/>
+  <!-- Arrowhead -->
+  <polygon points="6,40 6,48 10,44" fill="#c0392b"/>
+  <!-- Arrow fletching -->
+  <path d="M92,34 L98,30 L96,36 L98,42 L92,38" fill="#c0392b" opacity=".7"/>
+  <!-- Glow on bowstring contact -->
+  <circle cx="96" cy="36" r="4" fill="rgba(255,220,120,.5)"/>
+  <!-- Glow on arrow tip -->
+  <circle cx="8" cy="44" r="3" fill="rgba(255,220,120,.4)"/>
+  <!-- Lower body / waist -->
+  <path d="M56,90 C54,100 52,110 50,120 C52,122 58,122 60,118 C62,112 64,104 66,96"
+        fill="url(#gold-body-r)" stroke="#8b6914" stroke-width=".6"/>
+  <path d="M70,95 C72,105 74,112 76,118 C78,122 82,122 84,120 C82,112 78,102 74,94"
+        fill="url(#gold-body-r)" stroke="#8b6914" stroke-width=".6"/>
+  <!-- Cape/cloth detail -->
+  <path d="M88,50 C92,56 94,68 90,80 C88,86 84,90 80,92"
+        fill="none" stroke="#c0392b" stroke-width="1.5" opacity=".4" stroke-linecap="round"/>
+</svg>

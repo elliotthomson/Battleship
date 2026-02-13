@@ -440,6 +440,54 @@ main {
 
 .arrow-line.flying { opacity: 1; }
 
+/* ── Archer Graphics ── */
+.board-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    position: relative;
+    min-height: 60px;
+}
+
+.board-title-row .board-title {
+    margin-bottom: 0;
+}
+
+.archer {
+    width: 55px;
+    height: 65px;
+    opacity: 0;
+    transition: opacity .25s ease, transform .3s ease;
+    filter: drop-shadow(0 0 8px rgba(212,175,55,.4));
+    transform: scale(0.8);
+    flex-shrink: 0;
+}
+
+.archer.drawing {
+    opacity: 1;
+    transform: scale(1);
+    animation: archer-draw .35s ease-out;
+}
+
+.archer.releasing {
+    opacity: 1;
+    transform: scale(1.05);
+}
+
+.archer.fading {
+    opacity: 0;
+    transform: scale(0.9);
+    transition: opacity .4s ease, transform .4s ease;
+}
+
+@keyframes archer-draw {
+    0%   { opacity: 0; transform: scale(0.5) translateY(8px); }
+    60%  { opacity: 1; transform: scale(1.08) translateY(-2px); }
+    100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
 /* ── Game Boards ── */
 .game-boards {
     display: flex;
