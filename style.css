@@ -415,6 +415,53 @@ h1 {
 .greece-status { color: #a0c4e8; }
 .vs            { color: #d4af37; font-weight: 700; }
 
+/* ── Game Statistics Panel ── */
+.game-stats {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    width: 100%;
+    margin-top: 4px;
+}
+
+.stats-side {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 5px 14px;
+    border-radius: 8px;
+    font-size: .82em;
+}
+
+.rome-stats {
+    background: rgba(178,34,34,.08);
+    border: 1px solid rgba(178,34,34,.25);
+}
+
+.greece-stats {
+    background: rgba(70,130,180,.08);
+    border: 1px solid rgba(70,130,180,.25);
+}
+
+.stats-label {
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
+    font-size: .9em;
+    letter-spacing: 1px;
+}
+
+.rome-stats .stats-label { color: #e8a0a0; }
+.greece-stats .stats-label { color: #a0c4e8; }
+
+.stat-item {
+    color: #c0b896;
+}
+
+.stat-item strong {
+    color: #d4af37;
+    font-weight: 700;
+}
+
 /* ── Main ── */
 main {
     display: flex;
@@ -909,6 +956,8 @@ main {
     .game-boards { gap: 16px; }
     .setup-layout { gap: 16px; }
     h1 { font-size: 1.6em; }
+    .game-stats { gap: 10px; }
+    .stats-side { gap: 6px; padding: 4px 10px; font-size: .75em; }
 }
 
 @media (max-width: 680px) {
@@ -920,4 +969,5 @@ main {
         grid-template-columns: repeat(10, 28px);
         grid-template-rows: repeat(10, 28px);
     }
+    .game-stats { flex-direction: column; align-items: center; gap: 6px; }
 }
