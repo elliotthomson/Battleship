@@ -202,6 +202,21 @@ class NavalWar {
         this._arrowResolve = null;
         this._arrowCancelled = false;
 
+        // Insult overlay state
+        this._insultIndex = 0;
+        this._insults = [
+            'You call that a shot? My grandmother rows harder!',
+            'Poseidon weeps at your aim!',
+            'Even a blind kraken could hit better!',
+            'The fish are laughing at you!',
+            'Your fleet is an embarrassment to the sea!',
+            'A drunken sailor has better tactics!',
+            'Neptune himself is bored watching you!',
+            'Did you learn strategy from a barnacle?',
+            'The waves themselves dodge your arrows!',
+            'Your admiral must be a landlubber!',
+        ];
+
         // Mute button
         this._createMuteBtn();
 
@@ -1360,6 +1375,23 @@ class NavalWar {
             overlay.remove();
             this.restart();
         });
+    }
+
+    _showInsult() {
+        document.querySelectorAll('.insult-overlay').forEach(el => el.remove());
+
+        const text = this._insults[this._insultIndex];
+        this._insultIndex = (this._insultIndex + 1) % this._insults.length;
+
+        const overlay = document.createElement('div');
+        overlay.className = 'insult-overlay';
+        overlay.innerHTML = `<div class="insult-box"><p>${text}</p></div>`;
+        document.body.appendChild(overlay);
+
+        setTimeout(() => {
+            overlay.classList.add('insult-fade-out');
+            overlay.addEventListener('animationend', () => overlay.remove());
+        }, 2000);
     }
 
     /* ── Visual Effects ── */
