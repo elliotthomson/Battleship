@@ -694,9 +694,84 @@ main {
 }
 
 .cell.miss {
-    background: rgba(100,120,140,.25);
-    border-color: rgba(100,120,140,.2);
+    background: linear-gradient(180deg, rgba(25,65,95,.35) 0%, rgba(35,85,115,.45) 100%);
+    border-color: rgba(60,120,160,.25);
     position: relative;
+    overflow: hidden;
+    transition: border-color .2s;
+}
+
+.cell.miss.miss-adj-top    { border-top-color: transparent; }
+.cell.miss.miss-adj-bottom { border-bottom-color: transparent; }
+.cell.miss.miss-adj-left   { border-left-color: transparent; }
+.cell.miss.miss-adj-right  { border-right-color: transparent; }
+
+.miss-waves {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.miss-waves .wave-1,
+.miss-waves .wave-2,
+.miss-waves .wave-3 {
+    position: absolute;
+    inset: -100%;
+    pointer-events: none;
+}
+
+.miss-waves .wave-1 {
+    background: repeating-linear-gradient(
+        100deg,
+        transparent 0px,
+        transparent 6px,
+        rgba(100,180,230,.2) 6px,
+        rgba(120,195,245,.25) 8px,
+        transparent 8px,
+        transparent 14px
+    );
+    animation: miss-wave-1 3s linear infinite;
+}
+
+.miss-waves .wave-2 {
+    background: repeating-linear-gradient(
+        80deg,
+        transparent 0px,
+        transparent 8px,
+        rgba(80,155,215,.14) 8px,
+        rgba(90,165,225,.18) 10px,
+        transparent 10px,
+        transparent 18px
+    );
+    animation: miss-wave-2 4.2s linear infinite;
+}
+
+.miss-waves .wave-3 {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+        ellipse 80% 60% at 50% 50%,
+        rgba(130,200,245,.18) 0%,
+        transparent 70%
+    );
+    animation: miss-wave-shimmer 2.8s ease-in-out infinite;
+}
+
+@keyframes miss-wave-1 {
+    from { transform: translateX(0) translateY(0); }
+    to   { transform: translateX(14px) translateY(-3px); }
+}
+
+@keyframes miss-wave-2 {
+    from { transform: translateX(0) translateY(0); }
+    to   { transform: translateX(-18px) translateY(2px); }
+}
+
+@keyframes miss-wave-shimmer {
+    0%, 100% { opacity: .3; transform: translateY(1px); }
+    50%      { opacity: .7; transform: translateY(-1px); }
 }
 
 .cell.miss.splash-active::after {
