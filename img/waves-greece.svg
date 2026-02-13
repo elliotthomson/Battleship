@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="200" viewBox="0 0 400 200">
+  <defs>
+    <linearGradient id="gg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0a0a1e" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#0d1a30" stop-opacity="0.3"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="200" fill="url(#gg)"/>
+  <path d="M0,25 Q50,8 100,25 T200,25 T300,25 T400,25" fill="none" stroke="#1a4a6e" stroke-width="2" opacity="0.4"/>
+  <path d="M-20,50 Q30,35 80,50 T180,50 T280,50 T380,50 T420,50" fill="none" stroke="#1e5a80" stroke-width="1.8" opacity="0.3"/>
+  <path d="M0,75 Q50,58 100,75 T200,75 T300,75 T400,75" fill="none" stroke="#1a4a6e" stroke-width="2.2" opacity="0.35"/>
+  <path d="M-30,100 Q20,85 70,100 T170,100 T270,100 T370,100 T420,100" fill="none" stroke="#2468a0" stroke-width="1.5" opacity="0.22"/>
+  <path d="M0,125 Q50,108 100,125 T200,125 T300,125 T400,125" fill="none" stroke="#1a4a6e" stroke-width="2" opacity="0.35"/>
+  <path d="M-10,150 Q40,138 90,150 T190,150 T290,150 T390,150 T420,150" fill="none" stroke="#1e5a80" stroke-width="1.8" opacity="0.25"/>
+  <path d="M0,175 Q50,160 100,175 T200,175 T300,175 T400,175" fill="none" stroke="#1a4a6e" stroke-width="1.5" opacity="0.3"/>
+  <ellipse cx="80" cy="45" rx="35" ry="14" fill="#1a4a7a" opacity="0.07"/>
+  <ellipse cx="290" cy="110" rx="40" ry="16" fill="#1e5a90" opacity="0.06"/>
+  <ellipse cx="190" cy="165" rx="30" ry="12" fill="#1a4a7a" opacity="0.05"/>
+  <ellipse cx="340" cy="50" rx="25" ry="10" fill="#164070" opacity="0.06"/>
+</svg>
