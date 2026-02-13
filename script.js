@@ -1037,9 +1037,9 @@ class NavalWar {
     _getArcherBowTip(archerEl, direction) {
         const rect = archerEl.getBoundingClientRect();
         if (direction === 'right') {
-            return { x: rect.left + rect.width * 0.08, y: rect.top + rect.height * 0.33 };
-        } else {
             return { x: rect.left + rect.width * 0.92, y: rect.top + rect.height * 0.33 };
+        } else {
+            return { x: rect.left + rect.width * 0.08, y: rect.top + rect.height * 0.33 };
         }
     }
 
@@ -1065,13 +1065,11 @@ class NavalWar {
 
             const duration = 480 + Math.random() * 170;
 
+            this.arrowLine.setAttribute('stroke', '#c8a960');
+            this.arrowLine.setAttribute('marker-end', 'url(#arrowhead)');
             if (direction === 'right') {
-                this.arrowLine.setAttribute('stroke', '#c0392b');
-                this.arrowLine.setAttribute('marker-end',   'url(#ah-r)');
                 this.arrowLine.setAttribute('marker-start', 'url(#fl-r)');
             } else {
-                this.arrowLine.setAttribute('stroke', '#2471a3');
-                this.arrowLine.setAttribute('marker-end',   'url(#ah-l)');
                 this.arrowLine.setAttribute('marker-start', 'url(#fl-l)');
             }
 
