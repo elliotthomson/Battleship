@@ -127,6 +127,7 @@ class NavalWar {
                 this.setupBoardEl.appendChild(cell);
             }
         }
+        this._renderShipOverlays(this.setupBoardEl, this.setupFleet, false, false);
     }
 
     _getPositions(r, c, len, orient) {
@@ -339,6 +340,8 @@ class NavalWar {
                 if (sunkCell) sunkCell.classList.add('sunk');
             });
         });
+
+        this._renderShipOverlays(boardEl, fleet, isGreece, false);
     }
 
     _refreshCell(boardEl, data, r, c, isGreece) {
@@ -357,6 +360,165 @@ class NavalWar {
             const cell = boardEl.querySelector(`.cell[data-row="${sr}"][data-col="${sc}"]`);
             if (cell) cell.classList.add('sunk');
         });
+        const isGreece = (boardEl === this.greeceBoardEl);
+        const fleet = isGreece ? this.greeceFleet : this.romeFleet;
+        boardEl.querySelectorAll('.ship-overlay').forEach(el => el.remove());
+        this._renderShipOverlays(boardEl, fleet, isGreece, false);
+    }
+
+    /* ── Ship SVG Overlays ── */
+
+    _getShipSVG(shipId, isGreece, isSunk) {
+        const romeColor1 = isSunk ? '#3a0808' : '#b22222';
+        const romeColor2 = isSunk ? '#2a0505' : '#8B0000';
+        const romeAccent = isSunk ? '#4a2a00' : '#d4af37';
+        const greekColor1 = isSunk ? '#0a1a2e' : '#2471a3';
+        const greekColor2 = isSunk ? '#081428' : '#1a5276';
+        const greekAccent = isSunk ? '#2a3a4a' : '#aed6f1';
+
+        const c1 = isGreece ? greekColor1 : romeColor1;
+        const c2 = isGreece ? greekColor2 : romeColor2;
+        const accent = isGreece ? greekAccent : romeAccent;
+        const sunkCracks = isSunk ? `<line x1="20" y1="10" x2="35" y2="40" stroke="${isSunk ? '#111' : 'none'}" stroke-width="1.5" opacity=".6"/><line x1="60" y1="5" x2="50" y2="38" stroke="${isSunk ? '#111' : 'none'}" stroke-width="1.5" opacity=".6"/><line x1="75" y1="12" x2="85" y2="42" stroke="${isSunk ? '#111' : 'none'}" stroke-width="1" opacity=".5"/>` : '';
+
+        const svgs = {
+            quinquereme: `<svg viewBox="0 0 100 50" preserveAspectRatio="none">
+                <defs><linearGradient id="hull-q-${isGreece?'g':'r'}${isSunk?'s':''}" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="${c1}"/><stop offset="100%" stop-color="${c2}"/>
+                </linearGradient></defs>
+                <path d="M2,28 Q5,18 15,16 L85,16 Q95,18 98,28 L95,35 Q50,40 5,35 Z" fill="url(#hull-q-${isGreece?'g':'r'}${isSunk?'s':''})"
+                      stroke="${accent}" stroke-width="1"/>
+                <rect x="20" y="8" width="2" height="18" fill="${accent}" rx="1"/>
+                <rect x="40" y="5" width="2" height="21" fill="${accent}" rx="1"/>
+                <rect x="60" y="5" width="2" height="21" fill="${accent}" rx="1"/>
+                <rect x="80" y="8" width="2" height="18" fill="${accent}" rx="1"/>
+                <rect x="13" y="7" width="16" height="2" fill="${accent}" opacity=".7" rx="1"/>
+                <rect x="33" y="4" width="16" height="2" fill="${accent}" opacity=".7" rx="1"/>
+                <rect x="53" y="4" width="16" height="2" fill="${accent}" opacity=".7" rx="1"/>
+                <rect x="73" y="7" width="16" height="2" fill="${accent}" opacity=".7" rx="1"/>
+                <path d="M5,35 Q50,42 95,35 L92,38 Q50,44 8,38 Z" fill="${c2}" opacity=".5"/>
+                ${isGreece ? `<circle cx="50" cy="25" r="4" fill="none" stroke="${accent}" stroke-width=".8" opacity=".6"/>` 
+                           : `<rect x="47" y="22" width="6" height="6" fill="none" stroke="${accent}" stroke-width=".8" opacity=".6"/>`}
+                ${sunkCracks}
+            </svg>`,
+
+            roman_trireme: `<svg viewBox="0 0 100 50" preserveAspectRatio="none">
+                <defs><linearGradient id="hull-rt-${isGreece?'g':'r'}${isSunk?'s':''}" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="${c1}"/><stop offset="100%" stop-color="${c2}"/>
+                </linearGradient></defs>
+                <path d="M3,28 Q8,17 18,15 L82,15 Q92,17 97,28 L93,34 Q50,39 7,34 Z" fill="url(#hull-rt-${isGreece?'g':'r'}${isSunk?'s':''})"
+                      stroke="${accent}" stroke-width="1"/>
+                <rect x="28" y="6" width="2" height="19" fill="${accent}" rx="1"/>
+                <rect x="50" y="4" width="2" height="21" fill="${accent}" rx="1"/>
+                <rect x="72" y="6" width="2" height="19" fill="${accent}" rx="1"/>
+                <rect x="21" y="5" width="16" height="2" fill="${accent}" opacity=".7" rx="1"/>
+                <rect x="43" y="3" width="16" height="2" fill="${accent}" opacity=".7" rx="1"/>
+                <rect x="65" y="5" width="16" height="2" fill="${accent}" opacity=".7" rx="1"/>
+                <path d="M0,26 L3,28" stroke="${accent}" stroke-width="1.5"/>
+                <path d="M7,34 Q50,41 93,34 L91,37 Q50,43 9,37 Z" fill="${c2}" opacity=".5"/>
+                ${sunkCracks}
+            </svg>`,
+
+            greek_trireme: `<svg viewBox="0 0 100 50" preserveAspectRatio="none">
+                <defs><linearGradient id="hull-gt-${isGreece?'g':'r'}${isSunk?'s':''}" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="${c1}"/><stop offset="100%" stop-color="${c2}"/>
+                </linearGradient></defs>
+                <path d="M4,28 Q10,17 20,15 L80,15 Q90,17 96,28 L92,34 Q50,39 8,34 Z" fill="url(#hull-gt-${isGreece?'g':'r'}${isSunk?'s':''})"
+                      stroke="${accent}" stroke-width="1"/>
+                <rect x="35" y="5" width="2" height="20" fill="${accent}" rx="1"/>
+                <rect x="63" y="5" width="2" height="20" fill="${accent}" rx="1"/>
+                <rect x="28" y="4" width="16" height="2" fill="${accent}" opacity=".7" rx="1"/>
+                <rect x="56" y="4" width="16" height="2" fill="${accent}" opacity=".7" rx="1"/>
+                <path d="M1,26 L4,28" stroke="${accent}" stroke-width="1.5"/>
+                <path d="M8,34 Q50,41 92,34 L90,37 Q50,43 10,37 Z" fill="${c2}" opacity=".5"/>
+                ${isGreece ? `<path d="M48,20 L50,16 L52,20 Z" fill="${accent}" opacity=".5"/>` 
+                           : `<circle cx="50" cy="22" r="3" fill="none" stroke="${accent}" stroke-width=".7" opacity=".5"/>`}
+                ${sunkCracks}
+            </svg>`,
+
+            bireme: `<svg viewBox="0 0 100 50" preserveAspectRatio="none">
+                <defs><linearGradient id="hull-bi-${isGreece?'g':'r'}${isSunk?'s':''}" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="${c1}"/><stop offset="100%" stop-color="${c2}"/>
+                </linearGradient></defs>
+                <path d="M5,28 Q12,18 22,16 L78,16 Q88,18 95,28 L90,33 Q50,38 10,33 Z" fill="url(#hull-bi-${isGreece?'g':'r'}${isSunk?'s':''})"
+                      stroke="${accent}" stroke-width="1"/>
+                <rect x="38" y="6" width="2" height="19" fill="${accent}" rx="1"/>
+                <rect x="60" y="6" width="2" height="19" fill="${accent}" rx="1"/>
+                <rect x="31" y="5" width="16" height="2" fill="${accent}" opacity=".7" rx="1"/>
+                <rect x="53" y="5" width="16" height="2" fill="${accent}" opacity=".7" rx="1"/>
+                <path d="M2,26 L5,28" stroke="${accent}" stroke-width="1.5"/>
+                <path d="M10,33 Q50,39 90,33 L88,36 Q50,42 12,36 Z" fill="${c2}" opacity=".5"/>
+                ${sunkCracks}
+            </svg>`,
+
+            scout_galley: `<svg viewBox="0 0 100 50" preserveAspectRatio="none">
+                <defs><linearGradient id="hull-sg-${isGreece?'g':'r'}${isSunk?'s':''}" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="${c1}"/><stop offset="100%" stop-color="${c2}"/>
+                </linearGradient></defs>
+                <path d="M6,28 Q15,18 25,16 L75,16 Q85,18 94,28 L88,33 Q50,38 12,33 Z" fill="url(#hull-sg-${isGreece?'g':'r'}${isSunk?'s':''})"
+                      stroke="${accent}" stroke-width="1"/>
+                <rect x="48" y="6" width="2" height="19" fill="${accent}" rx="1"/>
+                <rect x="40" y="5" width="18" height="2" fill="${accent}" opacity=".7" rx="1"/>
+                <path d="M3,26 L6,28" stroke="${accent}" stroke-width="1.5"/>
+                <path d="M12,33 Q50,39 88,33 L86,36 Q50,42 14,36 Z" fill="${c2}" opacity=".5"/>
+                ${sunkCracks}
+            </svg>`
+        };
+
+        return svgs[shipId] || svgs.scout_galley;
+    }
+
+    _getShipOrientation(ship) {
+        if (ship.positions.length < 2) return 'h';
+        return ship.positions[0][0] === ship.positions[1][0] ? 'h' : 'v';
+    }
+
+    _renderShipOverlays(boardEl, fleet, isGreece, forceShow) {
+        boardEl.querySelectorAll('.ship-overlay').forEach(el => el.remove());
+
+        for (const ship of fleet) {
+            if (isGreece && !ship.sunk && !forceShow) continue;
+
+            const orient = this._getShipOrientation(ship);
+            const startPos = ship.positions[0];
+            const startCell = boardEl.querySelector(
+                `.cell[data-row="${startPos[0]}"][data-col="${startPos[1]}"]`
+            );
+            if (!startCell) continue;
+
+            const overlay = document.createElement('div');
+            overlay.className = 'ship-overlay';
+            overlay.classList.add(ship.sunk ? 'ship-overlay-sunk' : (isGreece ? 'ship-overlay-greece' : 'ship-overlay-rome'));
+            if (orient === 'v') overlay.classList.add('ship-overlay-vertical');
+            overlay.dataset.shipId = ship.id;
+            overlay.dataset.shipLen = ship.length;
+            overlay.innerHTML = this._getShipSVG(ship.id, isGreece, ship.sunk);
+
+            const cellRect = startCell.getBoundingClientRect();
+            const boardRect = boardEl.getBoundingClientRect();
+            const cellW = cellRect.width;
+            const cellH = cellRect.height;
+            const gap = 2;
+
+            const left = startCell.offsetLeft;
+            const top = startCell.offsetTop;
+
+            const spanLen = orient === 'h'
+                ? (cellW * ship.length + gap * (ship.length - 1))
+                : (cellH * ship.length + gap * (ship.length - 1));
+
+            overlay.style.width = spanLen + 'px';
+            overlay.style.height = (orient === 'h' ? cellH : cellW) + 'px';
+            overlay.style.left = left + 'px';
+            overlay.style.top = top + 'px';
+
+            if (orient === 'v') {
+                overlay.style.transformOrigin = 'top left';
+                overlay.style.transform = `rotate(90deg) translateY(-${cellW}px)`;
+            }
+
+            boardEl.appendChild(overlay);
+        }
     }
 
     /* ── Turn indicator ── */
