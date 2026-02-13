@@ -2,6 +2,160 @@
    Naval War: Rome vs Greece — Game Engine
    ═══════════════════════════════════════════════════════════════ */
 
+/* ── Sound Manager (Web Audio API) ── */
+const SoundEngine = {
+    ctx: null,
+    muted: false,
+
+    _ensureCtx() {
+        if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+        if (this.ctx.state === 'suspended') this.ctx.resume();
+        return this.ctx;
+    },
+
+    _noise(duration, gain) {
+        const ctx = this._ensureCtx();
+        const buf = ctx.createBuffer(1, ctx.sampleRate * duration, ctx.sampleRate);
+        const data = buf.getChannelData(0);
+        for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+        const src = ctx.createBufferSource();
+        src.buffer = buf;
+        const g = ctx.createGain();
+        g.gain.setValueAtTime(gain, ctx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+        src.connect(g).connect(ctx.destination);
+        return { src, gain: g };
+    },
+
+    arrowLaunch() {
+        if (this.muted) return;
+        const ctx = this._ensureCtx();
+        const t = ctx.currentTime;
+        const { src } = this._noise(0.25, 0.12);
+        const bpf = ctx.createBiquadFilter();
+        bpf.type = 'bandpass';
+        bpf.frequency.setValueAtTime(800, t);
+        bpf.frequency.exponentialRampToValueAtTime(2400, t + 0.15);
+        bpf.Q.value = 1.5;
+        src.disconnect();
+        const g = ctx.createGain();
+        g.gain.setValueAtTime(0.15, t);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
+        src.connect(bpf).connect(g).connect(ctx.destination);
+        src.start(t);
+        src.stop(t + 0.25);
+    },
+
+    hit() {
+        if (this.muted) return;
+        const ctx = this._ensureCtx();
+        const t = ctx.currentTime;
+        const osc = ctx.createOscillator();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(150, t);
+        osc.frequency.exponentialRampToValueAtTime(40, t + 0.3);
+        const g = ctx.createGain();
+        g.gain.setValueAtTime(0.2, t);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
+        osc.connect(g).connect(ctx.destination);
+        osc.start(t);
+        osc.stop(t + 0.3);
+        const { src } = this._noise(0.15, 0.18);
+        src.start(t);
+        src.stop(t + 0.15);
+    },
+
+    miss() {
+        if (this.muted) return;
+        const ctx = this._ensureCtx();
+        const t = ctx.currentTime;
+        const { src } = this._noise(0.35, 0.08);
+        const lpf = ctx.createBiquadFilter();
+        lpf.type = 'lowpass';
+        lpf.frequency.setValueAtTime(1200, t);
+        lpf.frequency.exponentialRampToValueAtTime(200, t + 0.35);
+        src.disconnect();
+        const g = ctx.createGain();
+        g.gain.setValueAtTime(0.1, t);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
+        src.connect(lpf).connect(g).connect(ctx.destination);
+        src.start(t);
+        src.stop(t + 0.35);
+    },
+
+    sink() {
+        if (this.muted) return;
+        const ctx = this._ensureCtx();
+        const t = ctx.currentTime;
+        const osc = ctx.createOscillator();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(300, t);
+        osc.frequency.exponentialRampToValueAtTime(60, t + 0.8);
+        const g = ctx.createGain();
+        g.gain.setValueAtTime(0.18, t);
+        g.gain.linearRampToValueAtTime(0.12, t + 0.2);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 0.8);
+        osc.connect(g).connect(ctx.destination);
+        osc.start(t);
+        osc.stop(t + 0.8);
+        const { src } = this._noise(0.5, 0.06);
+        const lpf = ctx.createBiquadFilter();
+        lpf.type = 'lowpass';
+        lpf.frequency.setValueAtTime(600, t);
+        lpf.frequency.exponentialRampToValueAtTime(100, t + 0.5);
+        src.disconnect();
+        const g2 = ctx.createGain();
+        g2.gain.setValueAtTime(0.08, t + 0.1);
+        g2.gain.exponentialRampToValueAtTime(0.001, t + 0.6);
+        src.connect(lpf).connect(g2).connect(ctx.destination);
+        src.start(t + 0.1);
+        src.stop(t + 0.6);
+    },
+
+    warHorn() {
+        if (this.muted) return;
+        const ctx = this._ensureCtx();
+        const t = ctx.currentTime;
+        const osc = ctx.createOscillator();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(120, t);
+        osc.frequency.linearRampToValueAtTime(180, t + 0.4);
+        osc.frequency.linearRampToValueAtTime(160, t + 1.0);
+        const g = ctx.createGain();
+        g.gain.setValueAtTime(0.001, t);
+        g.gain.linearRampToValueAtTime(0.12, t + 0.3);
+        g.gain.linearRampToValueAtTime(0.1, t + 0.8);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 1.2);
+        const lpf = ctx.createBiquadFilter();
+        lpf.type = 'lowpass';
+        lpf.frequency.value = 400;
+        osc.connect(lpf).connect(g).connect(ctx.destination);
+        osc.start(t);
+        osc.stop(t + 1.2);
+    },
+
+    place() {
+        if (this.muted) return;
+        const ctx = this._ensureCtx();
+        const t = ctx.currentTime;
+        const osc = ctx.createOscillator();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(600, t);
+        osc.frequency.exponentialRampToValueAtTime(800, t + 0.08);
+        const g = ctx.createGain();
+        g.gain.setValueAtTime(0.08, t);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
+        osc.connect(g).connect(ctx.destination);
+        osc.start(t);
+        osc.stop(t + 0.1);
+    },
+
+    toggle() {
+        this.muted = !this.muted;
+        return this.muted;
+    }
+};
+
 class NavalWar {
     constructor() {
         this.SIZE = 10;
@@ -40,6 +194,9 @@ class NavalWar {
         this._arrowResolve = null;
         this._arrowCancelled = false;
 
+        // Mute button
+        this._createMuteBtn();
+
         // Setup state
         this.orientation = 'h';          // h | v
         this.setupData   = null;         // grid for placement
@@ -49,6 +206,18 @@ class NavalWar {
         this._bindSetup();
         this._bindBattle();
         this._showSetup();
+    }
+
+    _createMuteBtn() {
+        const btn = document.createElement('button');
+        btn.className = 'mute-btn';
+        btn.setAttribute('aria-label', 'Toggle sound');
+        btn.innerHTML = '&#x1f50a;';
+        btn.addEventListener('click', () => {
+            const muted = SoundEngine.toggle();
+            btn.innerHTML = muted ? '&#x1f507;' : '&#x1f50a;';
+        });
+        document.body.appendChild(btn);
     }
 
     /* ══════════════════════════════════════════
@@ -189,7 +358,13 @@ class NavalWar {
         rackEl.classList.add('placed');
         rackEl.classList.remove('selected');
 
+        SoundEngine.place();
         this._renderSetupBoard();
+
+        positions.forEach(([pr, pc]) => {
+            const placedCell = this.setupBoardEl.querySelector(`.cell[data-row="${pr}"][data-col="${pc}"]`);
+            if (placedCell) placedCell.classList.add('just-placed');
+        });
 
         // Auto-select next unplaced ship
         this._selectNextShip();
@@ -225,25 +400,43 @@ class NavalWar {
         this._renderSetupBoard();
     }
 
-    _beginWar() {
-        // Copy player placement into romeData/romeFleet
+    async _beginWar() {
         this.romeData  = this.setupData.map(row => [...row]);
         this.romeFleet = this.setupFleet.map(s => ({ ...s, positions: s.positions.map(p => [...p]), sunk: false }));
 
-        // Place Greece fleet randomly
         this.greeceData  = this._emptyGrid();
         this.greeceFleet = [];
         this._placeFleetRandom(this.greeceData, this.greeceFleet);
 
-        // Show difficulty on battle screen
         const labels = { easy: 'Easy', medium: 'Medium', hard: 'Hard', expert: 'Expert' };
         this.diffDisplay.textContent = labels[this.difficulty];
 
-        // Switch screens
+        this.startWarBtn.disabled = true;
+
+        await this._playWarTransition();
+
         this.setupScreen.classList.add('hidden');
         this.battleScreen.classList.remove('hidden');
 
         this._startBattle();
+    }
+
+    _playWarTransition() {
+        return new Promise(resolve => {
+            SoundEngine.warHorn();
+
+            const overlay = document.createElement('div');
+            overlay.className = 'war-transition-overlay';
+            overlay.innerHTML = '<div class="war-flash"></div>' +
+                '<div class="war-title">War Begins</div>' +
+                '<div class="war-subtitle">Rome vs Greece</div>';
+            document.body.appendChild(overlay);
+
+            setTimeout(() => {
+                overlay.remove();
+                resolve();
+            }, 1800);
+        });
     }
 
     /* ══════════════════════════════════════════
@@ -374,10 +567,27 @@ class NavalWar {
 
     /* ── Message Log ── */
 
+    _logIcon(cls) {
+        const icons = {
+            'hit-msg':  '&#x2694;',
+            'miss-msg': '&#x1f4a7;',
+            'sunk-msg': '&#x2620;',
+            'win-msg':  '&#x1f3c6;',
+            'lose-msg': '&#x1f480;',
+        };
+        return icons[cls] || '&#x25B6;';
+    }
+
     _log(text, cls = '') {
         const p = document.createElement('p');
         p.className = 'log-entry' + (cls ? ' ' + cls : '');
-        p.textContent = text;
+        const iconSpan = document.createElement('span');
+        iconSpan.className = 'log-icon';
+        iconSpan.innerHTML = this._logIcon(cls);
+        const textSpan = document.createElement('span');
+        textSpan.textContent = text;
+        p.appendChild(iconSpan);
+        p.appendChild(textSpan);
         this.logEntriesEl.prepend(p);
     }
 
@@ -494,6 +704,7 @@ class NavalWar {
     async _executePlayerAttack(r, c) {
         this.locked = true;
 
+        SoundEngine.arrowLaunch();
         await this._fireArrow('right');
         if (this.gameOver) return;
 
@@ -501,20 +712,25 @@ class NavalWar {
         if (val === 'ship') {
             this.greeceData[r][c] = 'hit';
             this._refreshCell(this.greeceBoardEl, this.greeceData, r, c, true);
+            SoundEngine.hit();
+            this._spawnImpactFlash(this.greeceBoardEl, r, c);
             this._log('Direct hit!', 'hit-msg');
 
             const sunkShip = this._checkSunk(this.greeceFleet, this.greeceData);
             if (sunkShip) {
                 this._markSunk(this.greeceBoardEl, sunkShip);
+                SoundEngine.sink();
                 this._log(`You sank the ${sunkShip.name}!`, 'sunk-msg');
             }
             this._updateCounts();
             if (this._checkVictory()) return;
 
-            this.locked = false; // player gets another turn
+            this.locked = false;
         } else {
             this.greeceData[r][c] = 'miss';
             this._refreshCell(this.greeceBoardEl, this.greeceData, r, c, true);
+            SoundEngine.miss();
+            this._spawnSplash(this.greeceBoardEl, r, c);
             this._log('Splash\u2014miss!', 'miss-msg');
 
             this._setTurn('greece');
@@ -541,6 +757,7 @@ class NavalWar {
         const [r, c] = this._aiPickTarget();
         this.aiShots.add(r * this.SIZE + c);
 
+        SoundEngine.arrowLaunch();
         await this._fireArrow('left');
         if (this.gameOver) return;
 
@@ -548,14 +765,16 @@ class NavalWar {
         if (val === 'ship') {
             this.romeData[r][c] = 'hit';
             this._refreshCell(this.romeBoardEl, this.romeData, r, c, false);
+            SoundEngine.hit();
+            this._spawnImpactFlash(this.romeBoardEl, r, c);
             this._log('Greece scores a direct hit!', 'hit-msg');
 
-            // Feed hit into AI targeting
             this._aiRegisterHit(r, c);
 
             const sunkShip = this._checkSunk(this.romeFleet, this.romeData);
             if (sunkShip) {
                 this._markSunk(this.romeBoardEl, sunkShip);
+                SoundEngine.sink();
                 this._log(`Greece sank your ${sunkShip.name}!`, 'sunk-msg');
                 this._aiRegisterSunk(sunkShip);
             }
@@ -567,6 +786,8 @@ class NavalWar {
         } else {
             this.romeData[r][c] = 'miss';
             this._refreshCell(this.romeBoardEl, this.romeData, r, c, false);
+            SoundEngine.miss();
+            this._spawnSplash(this.romeBoardEl, r, c);
             this._log('Greece missed!', 'miss-msg');
 
             this._setTurn('rome');
@@ -754,6 +975,38 @@ class NavalWar {
             overlay.remove();
             this.restart();
         });
+    }
+
+    /* ── Visual Effects ── */
+
+    _spawnSplash(boardEl, r, c) {
+        const cell = boardEl.querySelector(`.cell[data-row="${r}"][data-col="${c}"]`);
+        if (!cell) return;
+        cell.classList.add('splash-active');
+        setTimeout(() => cell.classList.remove('splash-active'), 700);
+
+        for (let i = 0; i < 6; i++) {
+            const p = document.createElement('div');
+            p.className = 'splash-particle';
+            const angle = (Math.PI * 2 / 6) * i + Math.random() * 0.5;
+            const dist = 12 + Math.random() * 10;
+            p.style.setProperty('--sx', Math.cos(angle) * dist + 'px');
+            p.style.setProperty('--sy', Math.sin(angle) * dist + 'px');
+            p.style.left = '50%';
+            p.style.top = '50%';
+            cell.appendChild(p);
+            setTimeout(() => p.remove(), 550);
+        }
+    }
+
+    _spawnImpactFlash(boardEl, r, c) {
+        const cell = boardEl.querySelector(`.cell[data-row="${r}"][data-col="${c}"]`);
+        if (!cell) return;
+        const flash = document.createElement('div');
+        flash.className = 'impact-flash';
+        cell.style.position = 'relative';
+        cell.appendChild(flash);
+        setTimeout(() => flash.remove(), 400);
     }
 
     /* ── Utility ── */
