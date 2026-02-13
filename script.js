@@ -1004,7 +1004,9 @@ class NavalWar {
         if (this.arrowLine) {
             this.arrowLine.classList.remove('flying');
             this.arrowLine.setAttribute('x1', '0');
+            this.arrowLine.setAttribute('y1', '0');
             this.arrowLine.setAttribute('x2', '0');
+            this.arrowLine.setAttribute('y2', '0');
         }
         if (this._arrowResolve) {
             this._arrowResolve();
@@ -1012,17 +1014,40 @@ class NavalWar {
         }
     }
 
-    _fireArrow(direction) {
+    _pickSourceCell(boardEl, fleet) {
+        const alive = fleet.filter(s => !s.sunk);
+        if (alive.length > 0) {
+            const ship = alive[Math.floor(Math.random() * alive.length)];
+            const [r, c] = ship.positions[Math.floor(Math.random() * ship.positions.length)];
+            const cell = boardEl.querySelector(`.cell[data-row="${r}"][data-col="${c}"]`);
+            if (cell) return cell;
+        }
+        const allCells = boardEl.querySelectorAll('.cell');
+        return allCells[Math.floor(Math.random() * allCells.length)];
+    }
+
+    _fireArrow(sourceCell, targetCell, direction) {
         return new Promise((resolve) => {
             this._arrowCancelled = false;
             this._arrowResolve = resolve;
 
-            const duration = 480 + Math.random() * 170; // 480-650ms
-            const startX = direction === 'right' ? 40  : 960;
-            const endX   = direction === 'right' ? 960 : 40;
-            const midY   = 50; // centre of 100-unit viewBox
+            const arrowSvg = document.getElementById('arrow-svg');
+            const vw = window.innerWidth;
+            const vh = window.innerHeight;
+            arrowSvg.setAttribute('viewBox', `0 0 ${vw} ${vh}`);
 
-            // Bow-and-arrow styling: colour, arrowhead marker, fletching marker
+            const srcRect = sourceCell.getBoundingClientRect();
+            const tgtRect = targetCell.getBoundingClientRect();
+            const startX = srcRect.left + srcRect.width / 2;
+            const startY = srcRect.top + srcRect.height / 2;
+            const endX = tgtRect.left + tgtRect.width / 2;
+            const endY = tgtRect.top + tgtRect.height / 2;
+
+            const dist = Math.hypot(endX - startX, endY - startY);
+            const arcHeight = Math.min(dist * 0.25, 120);
+
+            const duration = 480 + Math.random() * 170;
+
             if (direction === 'right') {
                 this.arrowLine.setAttribute('stroke', '#c0392b');
                 this.arrowLine.setAttribute('marker-end',   'url(#ah-r)');
@@ -1033,44 +1058,41 @@ class NavalWar {
                 this.arrowLine.setAttribute('marker-start', 'url(#fl-l)');
             }
 
-            // Initial position (point)
             this.arrowLine.setAttribute('x1', String(startX));
-            this.arrowLine.setAttribute('y1', String(midY));
+            this.arrowLine.setAttribute('y1', String(startY));
             this.arrowLine.setAttribute('x2', String(startX));
-            this.arrowLine.setAttribute('y2', String(midY));
+            this.arrowLine.setAttribute('y2', String(startY));
             this.arrowLine.classList.add('flying');
 
             const t0 = performance.now();
-            const shaftLen = 80; // SVG units for visible shaft length
+            const shaftLen = dist * 0.12;
 
             const tick = (now) => {
                 if (this._arrowCancelled) return;
                 const elapsed = now - t0;
                 const progress = Math.min(elapsed / duration, 1);
 
-                // Ease-out cubic for natural deceleration
                 const ease = 1 - Math.pow(1 - progress, 3);
 
-                // Tip position
                 const tipX = startX + (endX - startX) * ease;
-                // Parabolic arc (peaks at midpoint, ~25 units up)
-                const arc = Math.sin(progress * Math.PI) * -25;
-                const tipY = midY + arc;
+                const tipY = startY + (endY - startY) * ease + Math.sin(progress * Math.PI) * -arcHeight;
 
-                // Tail position (follows behind by shaftLen in SVG units)
-                const tailEase = 1 - Math.pow(1 - Math.max(0, progress - 0.08), 3);
-                const tailX = startX + (endX - startX) * tailEase;
-                // Clamp tail so shaft doesn't exceed shaftLen
+                const tailProgress = Math.max(0, progress - 0.08);
+                const tailEase = 1 - Math.pow(1 - tailProgress, 3);
+                let tailX = startX + (endX - startX) * tailEase;
+                let tailY = startY + (endY - startY) * tailEase + Math.sin(tailProgress * Math.PI) * -arcHeight;
+
                 const dx = tipX - tailX;
-                const clampedTailX = Math.abs(dx) > shaftLen
-                    ? tipX - Math.sign(dx) * shaftLen
-                    : tailX;
-                const tailArc = Math.sin(Math.max(0, progress - 0.08) * Math.PI) * -25;
-                const tailY = midY + tailArc;
+                const dy = tipY - tailY;
+                const segLen = Math.hypot(dx, dy);
+                if (segLen > shaftLen && segLen > 0) {
+                    tailX = tipX - (dx / segLen) * shaftLen;
+                    tailY = tipY - (dy / segLen) * shaftLen;
+                }
 
                 this.arrowLine.setAttribute('x2', String(tipX));
                 this.arrowLine.setAttribute('y2', String(tipY));
-                this.arrowLine.setAttribute('x1', String(clampedTailX));
+                this.arrowLine.setAttribute('x1', String(tailX));
                 this.arrowLine.setAttribute('y1', String(tailY));
 
                 if (progress < 1) {
@@ -1104,8 +1126,11 @@ class NavalWar {
     async _executePlayerAttack(r, c) {
         this.locked = true;
 
+        const sourceCell = this._pickSourceCell(this.romeBoardEl, this.romeFleet);
+        const targetCell = this.greeceBoardEl.querySelector(`.cell[data-row="${r}"][data-col="${c}"]`);
+
         SoundEngine.arrowLaunch();
-        await this._fireArrow('right');
+        await this._fireArrow(sourceCell, targetCell, 'right');
         if (this.gameOver) return;
 
         const val = this.greeceData[r][c];
@@ -1157,8 +1182,11 @@ class NavalWar {
         const [r, c] = this._aiPickTarget();
         this.aiShots.add(r * this.SIZE + c);
 
+        const sourceCell = this._pickSourceCell(this.greeceBoardEl, this.greeceFleet);
+        const targetCell = this.romeBoardEl.querySelector(`.cell[data-row="${r}"][data-col="${c}"]`);
+
         SoundEngine.arrowLaunch();
-        await this._fireArrow('left');
+        await this._fireArrow(sourceCell, targetCell, 'left');
         if (this.gameOver) return;
 
         const val = this.romeData[r][c];
