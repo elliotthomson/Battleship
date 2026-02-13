@@ -423,29 +423,14 @@ main {
     gap: 14px;
 }
 
-/* ── Battle Lane ── */
-.battle-lane {
-    position: relative;
+/* ── Arrow Overlay (flies between boards) ── */
+.arrow-svg-overlay {
+    position: fixed;
+    inset: 0;
     width: 100%;
-    height: 70px;
-    background: linear-gradient(90deg,
-        rgba(139,0,0,.08) 0%,
-        rgba(212,175,55,.06) 50%,
-        rgba(26,58,107,.08) 100%);
-    border: 1px solid rgba(212,175,55,.15);
-    border-radius: 10px;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.arrow-svg {
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
+    height: 100%;
     pointer-events: none;
-    z-index: 2;
+    z-index: 50;
 }
 
 .arrow-line {
@@ -454,18 +439,6 @@ main {
 }
 
 .arrow-line.flying { opacity: 1; }
-
-.lane-label {
-    font-family: 'Cinzel', serif;
-    font-weight: 700;
-    font-size: .85em;
-    padding: 0 16px;
-    z-index: 1;
-    opacity: .6;
-}
-
-.rome-lane   { color: #e8a0a0; }
-.greece-lane { color: #a0c4e8; }
 
 /* ── Game Boards ── */
 .game-boards {
