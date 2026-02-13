@@ -211,6 +211,8 @@ class NavalWar {
         this.setupFleet  = [];           // placed ships
         this.currentShipIdx = 0;         // index into FLEET being placed
 
+        this.playerMissCount = 0;
+
         this._bindSetup();
         this._bindBattle();
         this._showSetup();
@@ -479,6 +481,7 @@ class NavalWar {
 
         this._updateCounts();
         this._setTurn('rome');
+        this.playerMissCount = 0;
         this.logEntriesEl.innerHTML = '';
         this._log('The fleets are assembled. Rome strikes first!');
 
@@ -1085,7 +1088,24 @@ class NavalWar {
             this._refreshCell(this.greeceBoardEl, this.greeceData, r, c, true);
             SoundEngine.miss();
             this._spawnSplash(this.greeceBoardEl, r, c);
-            this._log('Splash\u2014miss!', 'miss-msg');
+            this.playerMissCount++;
+
+            if (this.playerMissCount % 3 === 0) {
+                const insults = [
+                    "Is that the best you've got?",
+                    "Looks like you need more practice!",
+                    "Even a blind archer shoots better!",
+                    "The gods mock your aim!",
+                    "Perhaps try closing your eyes next time?",
+                    "Your ancestors weep at this display!",
+                    "A child could aim better!",
+                    "Neptune himself laughs at you!"
+                ];
+                const insult = insults[Math.floor(Math.random() * insults.length)];
+                this._log(insult, 'insult-msg');
+            } else {
+                this._log('Splash\u2014miss!', 'miss-msg');
+            }
             this._updateCounts();
 
             this._setTurn('greece');
