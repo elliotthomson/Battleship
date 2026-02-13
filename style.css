@@ -590,8 +590,8 @@ main {
 }
 
 .cell.ship-rome {
-    background: linear-gradient(135deg, rgba(178,34,34,.45), rgba(139,0,0,.55));
-    border-color: rgba(178,34,34,.4);
+    background: linear-gradient(135deg, rgba(178,34,34,.2), rgba(139,0,0,.3));
+    border-color: rgba(178,34,34,.25);
 }
 
 .cell.greece-cell { cursor: crosshair; position: relative; }
@@ -711,7 +711,7 @@ main {
     position: absolute;
     pointer-events: none;
     z-index: 3;
-    opacity: .85;
+    opacity: .9;
     transition: opacity .3s;
     overflow: visible;
 }
@@ -720,23 +720,24 @@ main {
     width: 100%;
     height: 100%;
     display: block;
-    filter: drop-shadow(0 1px 3px rgba(0,0,0,.4));
+    filter: drop-shadow(0 1px 3px rgba(0,0,0,.5));
+    overflow: visible;
 }
 
 .ship-overlay-rome svg {
-    filter: drop-shadow(0 1px 4px rgba(178,34,34,.3));
+    filter: drop-shadow(0 1px 5px rgba(178,34,34,.4));
 }
 
 .ship-overlay-greece svg {
-    filter: drop-shadow(0 1px 4px rgba(36,113,163,.3));
+    filter: drop-shadow(0 1px 5px rgba(36,113,163,.4));
 }
 
 .ship-overlay-sunk {
-    opacity: .6;
+    opacity: .55;
 }
 
 .ship-overlay-sunk svg {
-    filter: drop-shadow(0 1px 2px rgba(0,0,0,.6)) saturate(.4);
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,.6)) saturate(.3);
 }
 
 .ship-overlay-vertical {
