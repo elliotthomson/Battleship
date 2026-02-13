@@ -461,6 +461,7 @@ class NavalWar {
         this.gameOver = false;
         this.locked   = false;
         this.turn     = 'rome';
+        this._waveEpoch = Date.now();
 
         // AI state
         this.aiShots  = new Set();
@@ -530,15 +531,17 @@ class NavalWar {
                 if (isGreece) {
                     cell.classList.add('greece-cell');
                     if (val === 'hit')  { cell.classList.add('hit'); }
-                    if (val === 'miss') { cell.classList.add('miss'); cell.textContent = '•'; }
+                    if (val === 'miss') { cell.classList.add('miss'); this._createWaveElements(cell); }
                 } else {
                     if (val === 'ship') cell.classList.add('ship-rome');
                     if (val === 'hit')  { cell.classList.add('hit'); }
-                    if (val === 'miss') { cell.classList.add('miss'); cell.textContent = '•'; }
+                    if (val === 'miss') { cell.classList.add('miss'); this._createWaveElements(cell); }
                 }
                 boardEl.appendChild(cell);
             }
         }
+
+        this._syncAdjacentMisses(boardEl, data);
 
         const fleet = isGreece ? this.greeceFleet : this.romeFleet;
         fleet.filter(s => s.sunk).forEach(s => {
@@ -558,7 +561,7 @@ class NavalWar {
         cell.className = 'cell' + (isGreece ? ' greece-cell' : '');
         if (!isGreece && val === 'ship') cell.classList.add('ship-rome');
         if (val === 'hit')       { cell.classList.add('hit'); }
-        else if (val === 'miss') { cell.classList.add('miss'); cell.textContent = '•'; }
+        else if (val === 'miss') { cell.classList.add('miss'); this._createWaveElements(cell); this._updateAdjacentMisses(boardEl, data, r, c); }
         else                     { cell.textContent = ''; }
     }
 
@@ -1372,6 +1375,41 @@ class NavalWar {
     }
 
     /* ── Utility ── */
+
+    _createWaveElements(cell) {
+        cell.textContent = '';
+        const waves = document.createElement('div');
+        waves.className = 'miss-waves';
+        waves.innerHTML = '<div class="wave-1"></div><div class="wave-2"></div><div class="wave-3"></div>';
+        const elapsed = Date.now() - (this._waveEpoch || Date.now());
+        waves.children[0].style.animationDelay = -(elapsed % 3000) + 'ms';
+        waves.children[1].style.animationDelay = -(elapsed % 4200) + 'ms';
+        waves.children[2].style.animationDelay = -(elapsed % 2800) + 'ms';
+        cell.appendChild(waves);
+    }
+
+    _updateAdjacentMisses(boardEl, data, r, c) {
+        const dirs = [[-1, 0, 'top', 'bottom'], [1, 0, 'bottom', 'top'], [0, -1, 'left', 'right'], [0, 1, 'right', 'left']];
+        const cell = boardEl.querySelector(`.cell[data-row="${r}"][data-col="${c}"]`);
+        for (const [dr, dc, dir, opp] of dirs) {
+            const nr = r + dr, nc = c + dc;
+            if (nr >= 0 && nr < this.SIZE && nc >= 0 && nc < this.SIZE && data[nr][nc] === 'miss') {
+                if (cell) cell.classList.add('miss-adj-' + dir);
+                const neighbor = boardEl.querySelector(`.cell[data-row="${nr}"][data-col="${nc}"]`);
+                if (neighbor) neighbor.classList.add('miss-adj-' + opp);
+            }
+        }
+    }
+
+    _syncAdjacentMisses(boardEl, data) {
+        for (let r = 0; r < this.SIZE; r++) {
+            for (let c = 0; c < this.SIZE; c++) {
+                if (data[r][c] === 'miss') {
+                    this._updateAdjacentMisses(boardEl, data, r, c);
+                }
+            }
+        }
+    }
 
     _delay(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
