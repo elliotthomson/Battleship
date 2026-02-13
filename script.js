@@ -188,6 +188,8 @@ class NavalWar {
         this.arrowLine     = document.getElementById('arrow-line');
         this.restartBtn    = document.getElementById('restart-btn');
         this.diffDisplay   = document.getElementById('diff-display');
+        this.archerRome    = document.getElementById('archer-rome');
+        this.archerGreece  = document.getElementById('archer-greece');
 
         // Arrow animation state
         this._arrowRaf = null;
@@ -1012,21 +1014,36 @@ class NavalWar {
             this._arrowResolve();
             this._arrowResolve = null;
         }
+        this._hideArcher(this.archerRome);
+        this._hideArcher(this.archerGreece);
     }
 
-    _pickSourceCell(boardEl, fleet) {
-        const alive = fleet.filter(s => !s.sunk);
-        if (alive.length > 0) {
-            const ship = alive[Math.floor(Math.random() * alive.length)];
-            const [r, c] = ship.positions[Math.floor(Math.random() * ship.positions.length)];
-            const cell = boardEl.querySelector(`.cell[data-row="${r}"][data-col="${c}"]`);
-            if (cell) return cell;
+    _showArcher(archerEl) {
+        archerEl.classList.remove('fading', 'releasing');
+        archerEl.classList.add('drawing');
+    }
+
+    _releaseArcher(archerEl) {
+        archerEl.classList.remove('drawing');
+        archerEl.classList.add('releasing');
+    }
+
+    _hideArcher(archerEl) {
+        archerEl.classList.remove('drawing', 'releasing');
+        archerEl.classList.add('fading');
+        setTimeout(() => archerEl.classList.remove('fading'), 400);
+    }
+
+    _getArcherBowTip(archerEl, direction) {
+        const rect = archerEl.getBoundingClientRect();
+        if (direction === 'right') {
+            return { x: rect.left + rect.width * 0.08, y: rect.top + rect.height * 0.33 };
+        } else {
+            return { x: rect.left + rect.width * 0.92, y: rect.top + rect.height * 0.33 };
         }
-        const allCells = boardEl.querySelectorAll('.cell');
-        return allCells[Math.floor(Math.random() * allCells.length)];
     }
 
-    _fireArrow(sourceCell, targetCell, direction) {
+    _fireArrow(archerEl, targetCell, direction) {
         return new Promise((resolve) => {
             this._arrowCancelled = false;
             this._arrowResolve = resolve;
@@ -1036,10 +1053,10 @@ class NavalWar {
             const vh = window.innerHeight;
             arrowSvg.setAttribute('viewBox', `0 0 ${vw} ${vh}`);
 
-            const srcRect = sourceCell.getBoundingClientRect();
+            const bowTip = this._getArcherBowTip(archerEl, direction);
             const tgtRect = targetCell.getBoundingClientRect();
-            const startX = srcRect.left + srcRect.width / 2;
-            const startY = srcRect.top + srcRect.height / 2;
+            const startX = bowTip.x;
+            const startY = bowTip.y;
             const endX = tgtRect.left + tgtRect.width / 2;
             const endY = tgtRect.top + tgtRect.height / 2;
 
@@ -1063,6 +1080,8 @@ class NavalWar {
             this.arrowLine.setAttribute('x2', String(startX));
             this.arrowLine.setAttribute('y2', String(startY));
             this.arrowLine.classList.add('flying');
+
+            this._releaseArcher(archerEl);
 
             const t0 = performance.now();
             const shaftLen = dist * 0.12;
@@ -1101,6 +1120,7 @@ class NavalWar {
                     this.arrowLine.classList.remove('flying');
                     this._arrowRaf = null;
                     this._arrowResolve = null;
+                    this._hideArcher(archerEl);
                     resolve();
                 }
             };
@@ -1126,11 +1146,12 @@ class NavalWar {
     async _executePlayerAttack(r, c) {
         this.locked = true;
 
-        const sourceCell = this._pickSourceCell(this.romeBoardEl, this.romeFleet);
         const targetCell = this.greeceBoardEl.querySelector(`.cell[data-row="${r}"][data-col="${c}"]`);
 
+        this._showArcher(this.archerRome);
+        await this._delay(300);
         SoundEngine.arrowLaunch();
-        await this._fireArrow(sourceCell, targetCell, 'right');
+        await this._fireArrow(this.archerRome, targetCell, 'right');
         if (this.gameOver) return;
 
         const val = this.greeceData[r][c];
@@ -1182,11 +1203,12 @@ class NavalWar {
         const [r, c] = this._aiPickTarget();
         this.aiShots.add(r * this.SIZE + c);
 
-        const sourceCell = this._pickSourceCell(this.greeceBoardEl, this.greeceFleet);
         const targetCell = this.romeBoardEl.querySelector(`.cell[data-row="${r}"][data-col="${c}"]`);
 
+        this._showArcher(this.archerGreece);
+        await this._delay(300);
         SoundEngine.arrowLaunch();
-        await this._fireArrow(sourceCell, targetCell, 'left');
+        await this._fireArrow(this.archerGreece, targetCell, 'left');
         if (this.gameOver) return;
 
         const val = this.romeData[r][c];
