@@ -1,108 +1,57 @@
-# ⚓ Battleship Game
+# ⚔️ Naval War: Rome vs Greece
 
-A fully functional, web-based Battleship game built with HTML, CSS, and JavaScript. Challenge the computer in this classic naval combat game!
+A themed Battleship game pitting the Roman fleet against the Greek navy. Built with vanilla HTML, CSS, and JavaScript — no frameworks, no build step.
 
-## 🎮 Game Features
+**[Play Live on GitHub Pages →](https://elliotthomson.github.io/Battleship/)**
 
-- **Interactive Ship Placement**: Place your 5 ships strategically on your board
-- **Smart AI Opponent**: Computer places ships randomly and attacks intelligently
-- **Visual Feedback**: See hits (💥) and misses (💧) with animations
-- **Turn-Based Gameplay**: Classic alternating turn system
-- **Responsive Design**: Works on desktop and mobile devices
-- **Modern UI**: Beautiful gradient design with smooth animations
+## 🎮 Features
 
-## 🚀 How to Play
+- **Manual Ship Placement** — place your Roman fleet with hover preview, orientation toggle, and validation
+- **🎲 Random Placement** — one-click auto-place for quick games
+- **4 Difficulty Modes** — Easy, Medium, Hard, Expert with increasingly smart AI
+- **Bow-and-Arrow Animation** — SVG arrow with arrowhead, shaft, and fletching flies across the battle lane
+- **Themed UI** — Roman crimson/gold vs Greek blue/marble styling with Cinzel & Philosopher fonts
+- **Responsive** — works on desktop and mobile
 
-### Setup Phase
-1. **Select a Ship**: Click on any ship from the ship selector
-2. **Choose Orientation**: Toggle between horizontal and vertical placement
-3. **Place Ships**: Click on your board to place the selected ship
-4. **Preview Placement**: Hover over the board to see where the ship will be placed
-5. **Start Game**: Once all 5 ships are placed, click "Start Game"
+## 🏛️ Roman Fleet
 
-### Ships to Place
-- **Carrier** (5 cells)
-- **Battleship** (4 cells) 
-- **Cruiser** (3 cells)
-- **Submarine** (3 cells)
-- **Destroyer** (2 cells)
+- **Quinquereme** (5 cells)
+- **Roman Trireme** (4 cells)
+- **Greek Trireme** (3 cells)
+- **Bireme** (3 cells)
+- **Scout Galley** (2 cells)
 
-### Battle Phase
-1. **Your Turn**: Click on the computer's board to attack
-2. **Computer's Turn**: The AI automatically attacks your board
-3. **Win Condition**: Sink all enemy ships to win!
+## 🤖 AI Difficulty Levels
 
-## 🎯 Game Rules
-
-- **Ships cannot overlap** during placement
-- **Ships cannot be placed diagonally**
-- **Each player gets one attack per turn**
-- **Hits are shown with 💥, misses with 💧**
-- **Game ends when all ships of one player are sunk**
-- **Computer gets consecutive turns when scoring hits**
-
-## 🛠️ Technical Features
-
-- **Object-Oriented Design**: Clean, maintainable JavaScript architecture
-- **Event-Driven**: Responsive user interactions
-- **State Management**: Proper game state tracking
-- **Collision Detection**: Accurate hit/miss detection
-- **Random Ship Placement**: Computer uses randomized but valid placement
-- **Mobile Responsive**: Adapts to different screen sizes
+- **Easy** — Pure random targeting
+- **Medium** — Random + tries adjacent cells after a hit
+- **Hard** — Hunt/Target mode with depth-first adjacent targeting
+- **Expert** — Hunt/Target + checkerboard parity scanning
 
 ## 📁 File Structure
 
 ```
-battleship/
-├── index.html      # Main game interface
-├── style.css       # Styling and animations
-├── script.js       # Game logic and mechanics
-└── README.md       # This file
+Battleship/
+├── index.html      # Game interface (setup + battle screens)
+├── style.css       # All styling, animations, responsive design
+├── script.js       # Game engine, AI, arrow animation
+├── 404.html        # Themed 404 page for GitHub Pages
+├── .nojekyll       # Bypass Jekyll processing on GitHub Pages
+└── README.md
 ```
 
-## 🎨 Design Highlights
+## 🚀 Deploy to GitHub Pages
 
-- **Modern Gradient Background**: Eye-catching purple-blue gradient
-- **Smooth Animations**: Hover effects, hit animations, transitions
-- **Intuitive UI**: Clear visual indicators for game state
-- **Color-Coded Elements**: Different colors for ships, hits, misses
-- **Responsive Grid**: 10x10 game boards that adapt to screen size
+1. Go to your repo **Settings → Pages**
+2. Under **Source**, select **Deploy from a branch**
+3. Choose **main** branch and **/ (root)** folder
+4. Click **Save**
+5. Your site will be live at `https://elliotthomson.github.io/Battleship/`
 
-## 🚀 Quick Start
+## 🖥️ Run Locally
 
-1. **Open `index.html`** in your web browser
-2. **Place your ships** following the setup instructions
-3. **Start the battle** and enjoy!
+Just open `index.html` in a browser — no build step or server required.
 
-No installation required - just open the HTML file and play!
+## 🔧 Browser Support
 
-## 🎮 Controls
-
-- **Mouse Click**: Select ships, place them, attack enemy board
-- **Hover**: Preview ship placement, see interactive feedback
-- **Buttons**: Start game, new game, reset functionality
-
-## 🏆 Strategy Tips
-
-- **Spread out your ships** to make them harder to find
-- **Use the edges** - ships on borders are harder to hit completely
-- **Mix orientations** - don't place all ships horizontally or vertically
-- **Pay attention** to the computer's attack patterns
-- **Systematic searching** works better than random clicking
-
-## 🔧 Browser Compatibility
-
-- **Chrome/Chromium**: Full support
-- **Firefox**: Full support  
-- **Safari**: Full support
-- **Edge**: Full support
-- **Mobile Browsers**: Full support with responsive design
-
-## 🎯 Game Statistics
-
-- **Board Size**: 10x10 grid (100 cells)
-- **Total Ships**: 5 per player
-- **Ship Cells**: 17 total cells occupied per player
-- **Win Rate**: Depends on your strategy!
-
-Enjoy playing Battleship! 🚢⚓
+Chrome, Firefox, Safari, Edge, and mobile browsers.
