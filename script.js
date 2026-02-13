@@ -185,6 +185,12 @@ class NavalWar {
         this.turnEl        = document.getElementById('turn-indicator');
         this.romeShipsEl   = document.getElementById('rome-ships');
         this.greeceShipsEl = document.getElementById('greece-ships');
+        this.romeShotsEl   = document.getElementById('rome-shots');
+        this.romeHitsEl    = document.getElementById('rome-hits');
+        this.romeSunkEl    = document.getElementById('rome-sunk');
+        this.greeceShotsEl = document.getElementById('greece-shots');
+        this.greeceHitsEl  = document.getElementById('greece-hits');
+        this.greeceSunkEl  = document.getElementById('greece-sunk');
         this.arrowLine     = document.getElementById('arrow-line');
         this.restartBtn    = document.getElementById('restart-btn');
         this.diffDisplay   = document.getElementById('diff-display');
@@ -460,6 +466,12 @@ class NavalWar {
         this.aiShots  = new Set();
         this.aiHitQueue = [];       // for medium+ targeting
         this.aiHitStack = [];       // for hard/expert hunt mode
+
+        // Statistics tracking
+        this.romeShotCount = 0;
+        this.romeHitCount = 0;
+        this.greeceShotCount = 0;
+        this.greeceHitCount = 0;
 
         // Render boards
         this._renderBoard(this.romeBoardEl,   this.romeData,   false);
@@ -851,8 +863,16 @@ class NavalWar {
     }
 
     _updateCounts() {
-        this.romeShipsEl.textContent   = this.romeFleet.filter(s => !s.sunk).length;
-        this.greeceShipsEl.textContent = this.greeceFleet.filter(s => !s.sunk).length;
+        const romeRemaining = this.romeFleet.filter(s => !s.sunk).length;
+        const greeceRemaining = this.greeceFleet.filter(s => !s.sunk).length;
+        this.romeShipsEl.textContent   = romeRemaining;
+        this.greeceShipsEl.textContent = greeceRemaining;
+        this.romeShotsEl.textContent   = this.romeShotCount;
+        this.romeHitsEl.textContent    = this.romeHitCount;
+        this.romeSunkEl.textContent    = 5 - greeceRemaining;
+        this.greeceShotsEl.textContent = this.greeceShotCount;
+        this.greeceHitsEl.textContent  = this.greeceHitCount;
+        this.greeceSunkEl.textContent  = 5 - romeRemaining;
     }
 
     /* ── Message Log ── */
@@ -1031,6 +1051,7 @@ class NavalWar {
 
     async _executePlayerAttack(r, c) {
         this.locked = true;
+        this.romeShotCount++;
 
         const targetCell = this.greeceBoardEl.querySelector(`.cell[data-row="${r}"][data-col="${c}"]`);
 
@@ -1042,6 +1063,7 @@ class NavalWar {
 
         const val = this.greeceData[r][c];
         if (val === 'ship') {
+            this.romeHitCount++;
             this.greeceData[r][c] = 'hit';
             this._refreshCell(this.greeceBoardEl, this.greeceData, r, c, true);
             SoundEngine.hit();
@@ -1064,6 +1086,7 @@ class NavalWar {
             SoundEngine.miss();
             this._spawnSplash(this.greeceBoardEl, r, c);
             this._log('Splash\u2014miss!', 'miss-msg');
+            this._updateCounts();
 
             this._setTurn('greece');
             await this._delay(500);
@@ -1088,6 +1111,7 @@ class NavalWar {
 
         const [r, c] = this._aiPickTarget();
         this.aiShots.add(r * this.SIZE + c);
+        this.greeceShotCount++;
 
         const targetCell = this.romeBoardEl.querySelector(`.cell[data-row="${r}"][data-col="${c}"]`);
 
@@ -1099,6 +1123,7 @@ class NavalWar {
 
         const val = this.romeData[r][c];
         if (val === 'ship') {
+            this.greeceHitCount++;
             this.romeData[r][c] = 'hit';
             this._refreshCell(this.romeBoardEl, this.romeData, r, c, false);
             SoundEngine.hit();
@@ -1125,6 +1150,7 @@ class NavalWar {
             SoundEngine.miss();
             this._spawnSplash(this.romeBoardEl, r, c);
             this._log('Greece missed!', 'miss-msg');
+            this._updateCounts();
 
             this._setTurn('rome');
             this.locked = false;
