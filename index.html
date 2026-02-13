@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Naval War: Rome vs Greece</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- ═══════════ SETUP SCREEN ═══════════ -->
+    <div class="screen" id="setup-screen">
+        <div class="container">
+            <header>
+                <h1>⚔️ Naval War: Rome vs Greece ⚔️</h1>
+                <p class="subtitle">Position your fleet, Commander.</p>
+            </header>
+
+            <!-- Difficulty Selector -->
+            <div class="difficulty-bar">
+                <span class="diff-label">Difficulty:</span>
+                <button class="diff-btn active" data-diff="easy">Easy</button>
+                <button class="diff-btn" data-diff="medium">Medium</button>
+                <button class="diff-btn" data-diff="hard">Hard</button>
+                <button class="diff-btn" data-diff="expert">Expert</button>
+            </div>
+
+            <div class="setup-layout">
+                <!-- Ship list -->
+                <div class="ship-rack" id="ship-rack">
+                    <h3>Roman Fleet</h3>
+                    <div class="rack-ship selected" data-ship="quinquereme" data-len="5">
+                        <span class="rack-name">Quinquereme</span>
+                        <span class="rack-pips"><i></i><i></i><i></i><i></i><i></i></span>
+                    </div>
+                    <div class="rack-ship" data-ship="roman_trireme" data-len="4">
+                        <span class="rack-name">Roman Trireme</span>
+                        <span class="rack-pips"><i></i><i></i><i></i><i></i></span>
+                    </div>
+                    <div class="rack-ship" data-ship="greek_trireme" data-len="3">
+                        <span class="rack-name">Greek Trireme</span>
+                        <span class="rack-pips"><i></i><i></i><i></i></span>
+                    </div>
+                    <div class="rack-ship" data-ship="bireme" data-len="3">
+                        <span class="rack-name">Bireme</span>
+                        <span class="rack-pips"><i></i><i></i><i></i></span>
+                    </div>
+                    <div class="rack-ship" data-ship="scout_galley" data-len="2">
+                        <span class="rack-name">Scout Galley</span>
+                        <span class="rack-pips"><i></i><i></i></span>
+                    </div>
+                    <div class="rack-controls">
+                        <button id="orient-btn" class="control-btn orient-btn">↔ Horizontal</button>
+                        <button id="random-btn" class="control-btn">🎲 Random</button>
+                    </div>
+                </div>
+
+                <!-- Placement board -->
+                <div class="board-container rome-board-container">
+                    <h3 class="board-title rome-title">Rome Waters</h3>
+                    <div class="board" id="setup-board"></div>
+                </div>
+            </div>
+
+            <button id="start-war-btn" class="start-war-btn" disabled>⚔️ Begin the War!</button>
+        </div>
+    </div>
+
+    <!-- ═══════════ BATTLE SCREEN ═══════════ -->
+    <div class="screen hidden" id="battle-screen">
+        <div class="container">
+            <header>
+                <h1>⚔️ Naval War: Rome vs Greece ⚔️</h1>
+                <div class="game-info">
+                    <div class="turn-indicator rome-turn" id="turn-indicator">Rome's Turn</div>
+                    <div class="fleet-status">
+                        <span class="rome-status">🏛️ Rome: <strong id="rome-ships">5</strong> ships</span>
+                        <span class="vs">vs</span>
+                        <span class="greece-status">🏺 Greece: <strong id="greece-ships">5</strong> ships</span>
+                    </div>
+                    <div class="diff-display" id="diff-display">Easy</div>
+                </div>
+            </header>
+
+            <main>
+                <!-- Battle Lane (arrow flies here) -->
+                <div class="battle-lane" id="battle-lane">
+                    <svg id="arrow-svg" class="arrow-svg" viewBox="0 0 1000 100" preserveAspectRatio="none">
+                        <defs>
+                            <!-- Rome arrow (right) -->
+                            <marker id="ah-r" markerWidth="14" markerHeight="10" refX="13" refY="5" orient="auto">
+                                <polygon points="0 0, 14 5, 0 10, 3 5" fill="#c0392b"/>
+                            </marker>
+                            <!-- Greece arrow (left) -->
+                            <marker id="ah-l" markerWidth="14" markerHeight="10" refX="1" refY="5" orient="auto">
+                                <polygon points="14 0, 0 5, 14 10, 11 5" fill="#2471a3"/>
+                            </marker>
+                            <!-- Fletching Rome -->
+                            <marker id="fl-r" markerWidth="12" markerHeight="10" refX="0" refY="5" orient="auto">
+                                <path d="M12,0 L4,5 L12,10" fill="none" stroke="#c0392b" stroke-width="1.5"/>
+                            </marker>
+                            <!-- Fletching Greece -->
+                            <marker id="fl-l" markerWidth="12" markerHeight="10" refX="12" refY="5" orient="auto">
+                                <path d="M0,0 L8,5 L0,10" fill="none" stroke="#2471a3" stroke-width="1.5"/>
+                            </marker>
+                        </defs>
+                        <!-- Arrow shaft -->
+                        <line id="arrow-line" class="arrow-line"
+                              x1="0" y1="50" x2="0" y2="50"
+                              stroke="#c0392b" stroke-width="2.5"
+                              marker-end="url(#ah-r)" marker-start="url(#fl-r)"/>
+                    </svg>
+                    <div class="lane-label rome-lane">🏛️ Rome</div>
+                    <div class="lane-label greece-lane">🏺 Greece</div>
+                </div>
+
+                <!-- Game Boards -->
+                <div class="game-boards" id="game-boards">
+                    <div class="board-container rome-board-container">
+                        <h3 class="board-title rome-title">Rome Waters</h3>
+                        <div class="board" id="rome-board"></div>
+                    </div>
+                    <div class="board-container greece-board-container">
+                        <h3 class="board-title greece-title">Greek Waters</h3>
+                        <div class="board" id="greece-board"></div>
+                    </div>
+                </div>
+
+                <!-- Controls -->
+                <div class="game-controls">
+                    <button id="restart-btn" class="control-btn restart-btn">⚔️ Restart War</button>
+                </div>
+            </main>
+
+            <!-- Message Log -->
+            <div class="message-log" id="message-log">
+                <h4>Battle Log</h4>
+                <div class="log-entries" id="log-entries">
+                    <p class="log-entry">The fleets are assembled. Rome strikes first!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
