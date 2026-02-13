@@ -322,11 +322,11 @@ class NavalWar {
                 const val = data[r][c];
                 if (isGreece) {
                     cell.classList.add('greece-cell');
-                    if (val === 'hit')  { cell.classList.add('hit');  cell.textContent = '🔥'; }
+                    if (val === 'hit')  { cell.classList.add('hit'); }
                     if (val === 'miss') { cell.classList.add('miss'); cell.textContent = '•'; }
                 } else {
                     if (val === 'ship') cell.classList.add('ship-rome');
-                    if (val === 'hit')  { cell.classList.add('hit');  cell.textContent = '🔥'; }
+                    if (val === 'hit')  { cell.classList.add('hit'); }
                     if (val === 'miss') { cell.classList.add('miss'); cell.textContent = '•'; }
                 }
                 boardEl.appendChild(cell);
@@ -350,7 +350,7 @@ class NavalWar {
         const val = data[r][c];
         cell.className = 'cell' + (isGreece ? ' greece-cell' : '');
         if (!isGreece && val === 'ship') cell.classList.add('ship-rome');
-        if (val === 'hit')       { cell.classList.add('hit');  cell.textContent = '🔥'; }
+        if (val === 'hit')       { cell.classList.add('hit'); }
         else if (val === 'miss') { cell.classList.add('miss'); cell.textContent = '•'; }
         else                     { cell.textContent = ''; }
     }
