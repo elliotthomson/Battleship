@@ -591,310 +591,195 @@ class NavalWar {
         const uid = `${shipId}-${isGreece?'g':'r'}${isSunk?'s':''}`;
 
         const sunkDamage = isSunk ? `
-            <line x1="18" y1="15" x2="28" y2="38" stroke="#111" stroke-width="1.2" opacity=".5"/>
-            <line x1="55" y1="12" x2="48" y2="40" stroke="#111" stroke-width="1.2" opacity=".5"/>
-            <line x1="78" y1="18" x2="82" y2="36" stroke="#111" stroke-width="1" opacity=".4"/>
-            <circle cx="30" cy="30" r="3" fill="none" stroke="#111" stroke-width=".8" opacity=".3"/>
-            <circle cx="65" cy="28" r="2.5" fill="none" stroke="#111" stroke-width=".8" opacity=".3"/>` : '';
-
-        const waterline = `<path d="M8,36 Q25,39 50,40 Q75,39 92,36 L90,38 Q75,41 50,42 Q25,41 10,38 Z" fill="${h2}" opacity=".4"/>`;
+            <line x1="20" y1="10" x2="30" y2="40" stroke="#111" stroke-width="1.2" opacity=".5"/>
+            <line x1="55" y1="8" x2="48" y2="42" stroke="#111" stroke-width="1.2" opacity=".5"/>
+            <line x1="75" y1="12" x2="80" y2="38" stroke="#111" stroke-width="1" opacity=".4"/>
+            <circle cx="35" cy="25" r="3" fill="none" stroke="#111" stroke-width=".8" opacity=".3"/>
+            <circle cx="65" cy="25" r="2.5" fill="none" stroke="#111" stroke-width=".8" opacity=".3"/>` : '';
 
         const oarRow = (x1, x2, y, count, side) => {
             let oars = '';
             const spacing = (x2 - x1) / (count - 1);
             for (let i = 0; i < count; i++) {
                 const ox = x1 + i * spacing;
-                const oy = side === 'top' ? y - 6 : y + 6;
-                oars += `<line x1="${ox}" y1="${y}" x2="${ox + (side==='top'?-1.5:1.5)}" y2="${oy}" stroke="${wd}" stroke-width=".6" opacity=".55"/>`;
+                const oy = side === 'top' ? y - 10 : y + 10;
+                const angle = side === 'top' ? -0.15 : 0.15;
+                const tipX = ox + angle * 10;
+                oars += `<line x1="${ox}" y1="${y}" x2="${tipX.toFixed(1)}" y2="${oy}" stroke="${wd}" stroke-width=".8" stroke-linecap="round" opacity=".65"/>`;
+                oars += `<line x1="${tipX.toFixed(1)}" y1="${oy}" x2="${(tipX + (side==='top'?-0.5:0.5)).toFixed(1)}" y2="${oy + (side==='top'?-1.5:1.5)}" stroke="${wd}" stroke-width=".5" opacity=".4"/>`;
             }
             return oars;
         };
 
+        const deckPlanks = (x1, x2, y, count) => {
+            let planks = '';
+            const spacing = (x2 - x1) / (count + 1);
+            for (let i = 1; i <= count; i++) {
+                const px = x1 + i * spacing;
+                planks += `<line x1="${px}" y1="${y - 5}" x2="${px}" y2="${y + 5}" stroke="${wd}" stroke-width=".3" opacity=".2"/>`;
+            }
+            return planks;
+        };
+
         const svgs = {
             quinquereme: (() => {
-                if (isGreece) {
-                    return `<svg viewBox="0 0 100 50" preserveAspectRatio="none">
-                        <defs>
-                            <linearGradient id="h-${uid}" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stop-color="${h1}"/><stop offset="100%" stop-color="${h2}"/>
-                            </linearGradient>
-                            <linearGradient id="s-${uid}" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stop-color="${sl2}"/><stop offset="100%" stop-color="${sl}"/>
-                            </linearGradient>
-                        </defs>
-                        <path d="M1,27 Q3,22 8,20 L14,18 L86,18 Q93,19 96,24 L98,27 L95,34 Q50,39 5,34 Z" fill="url(#h-${uid})" stroke="${ac}" stroke-width=".8"/>
-                        <path d="M0,27 L1,27 L-2,26" stroke="${ac}" stroke-width="1.2" fill="none"/>
-                        <path d="M-2,26 L-4,25.5" stroke="${ac}" stroke-width="1.8" stroke-linecap="round"/>
-                        <ellipse cx="6" cy="25" rx="2" ry="1.8" fill="none" stroke="${ac}" stroke-width=".7" opacity=".8"/>
-                        <circle cx="6" cy="25" r=".6" fill="${ac}" opacity=".8"/>
-                        <path d="M10,20 L86,20 L84,22 L12,22 Z" fill="${dk}" opacity=".5"/>
-                        <line x1="14" y1="21" x2="14" y2="22" stroke="${ac}" stroke-width=".4" opacity=".4"/>
-                        <line x1="24" y1="21" x2="24" y2="22" stroke="${ac}" stroke-width=".4" opacity=".4"/>
-                        <line x1="34" y1="21" x2="34" y2="22" stroke="${ac}" stroke-width=".4" opacity=".4"/>
-                        <line x1="44" y1="21" x2="44" y2="22" stroke="${ac}" stroke-width=".4" opacity=".4"/>
-                        <line x1="54" y1="21" x2="54" y2="22" stroke="${ac}" stroke-width=".4" opacity=".4"/>
-                        <line x1="64" y1="21" x2="64" y2="22" stroke="${ac}" stroke-width=".4" opacity=".4"/>
-                        <line x1="74" y1="21" x2="74" y2="22" stroke="${ac}" stroke-width=".4" opacity=".4"/>
-                        ${oarRow(15, 82, 18, 12, 'top')}
-                        ${oarRow(15, 82, 34, 12, 'bottom')}
-                        <rect x="30" y="4" width="1.5" height="16" fill="${wd}" rx=".5"/>
-                        <rect x="55" y="3" width="1.5" height="17" fill="${wd}" rx=".5"/>
-                        <path d="M31.5,5 L41,5 L41,13 L31.5,14 Z" fill="url(#s-${uid})" stroke="${ac}" stroke-width=".3" opacity=".85"/>
-                        <path d="M56.5,4 L66,4 L66,13 L56.5,14 Z" fill="url(#s-${uid})" stroke="${ac}" stroke-width=".3" opacity=".85"/>
-                        <path d="M36,5 L36,13" stroke="${ac}" stroke-width=".25" opacity=".3"/>
-                        <path d="M61,4 L61,13" stroke="${ac}" stroke-width=".25" opacity=".3"/>
-                        <path d="M96,24 Q97,22 96,19 Q97,17 98,18 L99,20 Q99,23 98,25 Z" fill="${ac}" opacity=".4"/>
-                        <path d="M96,19 Q95,16 96,14 Q97,13 97,14 L97,17 Z" fill="${ac}" opacity=".3"/>
-                        ${waterline}
-                        <path d="M42,20 L44,17 L46,20" fill="${ac}" opacity=".3" stroke="${ac}" stroke-width=".3"/>
-                        ${sunkDamage}
-                    </svg>`;
-                } else {
-                    return `<svg viewBox="0 0 100 50" preserveAspectRatio="none">
-                        <defs>
-                            <linearGradient id="h-${uid}" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stop-color="${h1}"/><stop offset="100%" stop-color="${h2}"/>
-                            </linearGradient>
-                            <linearGradient id="s-${uid}" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stop-color="${sl2}"/><stop offset="100%" stop-color="${sl}"/>
-                            </linearGradient>
-                        </defs>
-                        <path d="M2,28 Q4,22 10,19 L15,17 L85,17 Q92,18 96,23 L98,28 L95,35 Q50,40 5,35 Z" fill="url(#h-${uid})" stroke="${ac}" stroke-width=".8"/>
-                        <path d="M0,27 L2,28 L-1,26.5" stroke="${ac}" stroke-width="1.2" fill="none"/>
-                        <path d="M-1,26.5 L-3,26" stroke="${ac}" stroke-width="2" stroke-linecap="round"/>
-                        <path d="M12,19 L85,19 L83,21 L14,21 Z" fill="${dk}" opacity=".5"/>
-                        <rect x="8" y="18" width="3" height="6" fill="${wd}" stroke="${ac}" stroke-width=".4" rx=".5" opacity=".7"/>
-                        <rect x="7" y="14" width="5" height="4" fill="${ac}" opacity=".35" rx=".5"/>
-                        <path d="M7,14 L12,14 L10,12 L9,12 Z" fill="${ac}" opacity=".25"/>
-                        ${oarRow(18, 82, 17, 14, 'top')}
-                        ${oarRow(18, 82, 35, 14, 'bottom')}
-                        <rect x="35" y="4" width="2" height="15" fill="${wd}" rx=".5"/>
-                        <rect x="60" y="3" width="2" height="16" fill="${wd}" rx=".5"/>
-                        <path d="M37,5 L48,5 L48,14 L37,15 Z" fill="url(#s-${uid})" stroke="${ac}" stroke-width=".3" opacity=".85"/>
-                        <path d="M62,4 L73,4 L73,14 L62,15 Z" fill="url(#s-${uid})" stroke="${ac}" stroke-width=".3" opacity=".85"/>
-                        <path d="M42,5 L42,14" stroke="${ac}" stroke-width=".3" opacity=".35"/>
-                        <path d="M67,4 L67,14" stroke="${ac}" stroke-width=".3" opacity=".35"/>
-                        <path d="M96,23 Q97,20 96,17 Q98,15 99,17 L99,21 Q99,24 98,26 Z" fill="${ac}" opacity=".35"/>
-                        <path d="M96,17 Q95,14 96,12" stroke="${ac}" stroke-width=".6" fill="none" opacity=".4"/>
-                        <rect x="88" y="17" width="4" height="5" fill="${wd}" stroke="${ac}" stroke-width=".3" rx=".5" opacity=".6"/>
-                        <path d="M88,17 L92,17 L91,15 L89,15 Z" fill="${ac}" opacity=".3"/>
-                        <path d="M44,7 L46,5 L48,7" fill="none" stroke="${ac}" stroke-width=".5" opacity=".5"/>
-                        <rect x="45" y="7" width="2" height="1" fill="${ac}" opacity=".3" rx=".3"/>
-                        ${waterline}
-                        ${sunkDamage}
-                    </svg>`;
-                }
+                return `<svg viewBox="0 0 100 50" preserveAspectRatio="none">
+                    <defs>
+                        <linearGradient id="h-${uid}" x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0%" stop-color="${h2}"/><stop offset="30%" stop-color="${h1}"/><stop offset="70%" stop-color="${h1}"/><stop offset="100%" stop-color="${h2}"/>
+                        </linearGradient>
+                        <linearGradient id="dk-${uid}" x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0%" stop-color="${dk}" stop-opacity=".3"/><stop offset="50%" stop-color="${dk}" stop-opacity=".7"/><stop offset="100%" stop-color="${dk}" stop-opacity=".3"/>
+                        </linearGradient>
+                        <radialGradient id="s1-${uid}" cx=".5" cy=".5" r=".5">
+                            <stop offset="0%" stop-color="${sl2}" stop-opacity=".9"/><stop offset="100%" stop-color="${sl}" stop-opacity=".7"/>
+                        </radialGradient>
+                    </defs>
+                    <path d="M-3,25 Q2,20 8,17 Q14,14 22,13 L78,13 Q86,14 92,17 Q98,20 103,25 Q98,30 92,33 Q86,36 78,37 L22,37 Q14,36 8,33 Q2,30 -3,25 Z" fill="url(#h-${uid})" stroke="${ac}" stroke-width=".6" opacity=".3"/>
+                    <path d="M0,25 Q4,20 10,17.5 Q16,15 24,14 L76,14 Q84,15 90,17.5 Q96,20 100,25 Q96,30 90,32.5 Q84,35 76,36 L24,36 Q16,35 10,32.5 Q4,30 0,25 Z" fill="url(#h-${uid})" stroke="${ac}" stroke-width=".8"/>
+                    <path d="M-2,25 L-5,25" stroke="${ac}" stroke-width="1.8" stroke-linecap="round"/>
+                    <path d="M6,18 L6,32" stroke="${h2}" stroke-width=".4" opacity=".3"/>
+                    <path d="M5,25 Q8,21 14,18.5 L86,18.5 Q92,21 95,25 Q92,29 86,31.5 L14,31.5 Q8,29 5,25 Z" fill="url(#dk-${uid})"/>
+                    ${deckPlanks(12, 88, 25, 14)}
+                    ${oarRow(14, 86, 14, 14, 'top')}
+                    ${oarRow(14, 86, 36, 14, 'bottom')}
+                    <line x1="30" y1="14" x2="30" y2="36" stroke="${wd}" stroke-width="1" opacity=".5"/>
+                    <ellipse cx="30" cy="25" rx="6" ry="5" fill="url(#s1-${uid})" stroke="${ac}" stroke-width=".3" opacity=".8"/>
+                    <line x1="30" y1="20" x2="30" y2="30" stroke="${ac}" stroke-width=".3" opacity=".4"/>
+                    <line x1="24" y1="25" x2="36" y2="25" stroke="${ac}" stroke-width=".3" opacity=".4"/>
+                    <line x1="65" y1="14" x2="65" y2="36" stroke="${wd}" stroke-width="1" opacity=".5"/>
+                    <ellipse cx="65" cy="25" rx="5.5" ry="4.5" fill="url(#s1-${uid})" stroke="${ac}" stroke-width=".3" opacity=".8"/>
+                    <line x1="65" y1="20.5" x2="65" y2="29.5" stroke="${ac}" stroke-width=".3" opacity=".4"/>
+                    <line x1="59.5" y1="25" x2="70.5" y2="25" stroke="${ac}" stroke-width=".3" opacity=".4"/>
+                    <rect x="46" y="22" width="4" height="6" rx="1" fill="${wd}" stroke="${ac}" stroke-width=".3" opacity=".5"/>
+                    <path d="M99,25 L102,24 L102,26 Z" fill="${ac}" opacity=".5"/>
+                    <circle cx="8" cy="25" r="1.5" fill="${ac}" opacity=".3"/>
+                    <line x1="7" y1="20" x2="7" y2="30" stroke="${ac}" stroke-width=".3" opacity=".2"/>
+                    ${sunkDamage}
+                </svg>`;
             })(),
 
             roman_trireme: (() => {
-                if (isGreece) {
-                    return `<svg viewBox="0 0 100 50" preserveAspectRatio="none">
-                        <defs>
-                            <linearGradient id="h-${uid}" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stop-color="${h1}"/><stop offset="100%" stop-color="${h2}"/>
-                            </linearGradient>
-                            <linearGradient id="s-${uid}" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stop-color="${sl2}"/><stop offset="100%" stop-color="${sl}"/>
-                            </linearGradient>
-                        </defs>
-                        <path d="M2,28 Q5,21 12,19 L16,17 L84,17 Q92,18 96,24 L98,28 L94,34 Q50,39 6,34 Z" fill="url(#h-${uid})" stroke="${ac}" stroke-width=".8"/>
-                        <path d="M0,27 L2,28 L-2,26" stroke="${ac}" stroke-width="1" fill="none"/>
-                        <path d="M-2,26 L-4,25.5" stroke="${ac}" stroke-width="1.5" stroke-linecap="round"/>
-                        <ellipse cx="7" cy="25.5" rx="1.8" ry="1.5" fill="none" stroke="${ac}" stroke-width=".6" opacity=".7"/>
-                        <circle cx="7" cy="25.5" r=".5" fill="${ac}" opacity=".7"/>
-                        <path d="M14,19 L84,19 L82,21 L16,21 Z" fill="${dk}" opacity=".45"/>
-                        ${oarRow(18, 80, 17, 10, 'top')}
-                        ${oarRow(18, 80, 34, 10, 'bottom')}
-                        <rect x="42" y="4" width="1.5" height="15" fill="${wd}" rx=".5"/>
-                        <path d="M43.5,5 L54,5 L54,13 L43.5,14 Z" fill="url(#s-${uid})" stroke="${ac}" stroke-width=".3" opacity=".85"/>
-                        <path d="M49,5 L49,13" stroke="${ac}" stroke-width=".25" opacity=".3"/>
-                        <path d="M96,24 Q97,21 96,18 Q97,16 98,17 L98,22 Z" fill="${ac}" opacity=".35"/>
-                        <path d="M96,18 Q95,15 96,13" stroke="${ac}" stroke-width=".5" fill="none" opacity=".35"/>
-                        ${waterline}
-                        ${sunkDamage}
-                    </svg>`;
-                } else {
-                    return `<svg viewBox="0 0 100 50" preserveAspectRatio="none">
-                        <defs>
-                            <linearGradient id="h-${uid}" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stop-color="${h1}"/><stop offset="100%" stop-color="${h2}"/>
-                            </linearGradient>
-                            <linearGradient id="s-${uid}" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stop-color="${sl2}"/><stop offset="100%" stop-color="${sl}"/>
-                            </linearGradient>
-                        </defs>
-                        <path d="M3,28 Q6,21 13,19 L17,17 L83,17 Q91,18 95,24 L97,28 L93,35 Q50,40 7,35 Z" fill="url(#h-${uid})" stroke="${ac}" stroke-width=".8"/>
-                        <path d="M1,27 L3,28 L0,26.5" stroke="${ac}" stroke-width="1" fill="none"/>
-                        <path d="M0,26.5 L-2,26" stroke="${ac}" stroke-width="1.8" stroke-linecap="round"/>
-                        <path d="M15,19 L83,19 L81,21 L17,21 Z" fill="${dk}" opacity=".45"/>
-                        <rect x="10" y="18" width="3" height="5" fill="${wd}" stroke="${ac}" stroke-width=".3" rx=".5" opacity=".65"/>
-                        <path d="M10,18 L13,18 L12,16 L11,16 Z" fill="${ac}" opacity=".25"/>
-                        ${oarRow(20, 80, 17, 10, 'top')}
-                        ${oarRow(20, 80, 35, 10, 'bottom')}
-                        <rect x="45" y="4" width="1.8" height="15" fill="${wd}" rx=".5"/>
-                        <path d="M46.8,5 L57,5 L57,14 L46.8,15 Z" fill="url(#s-${uid})" stroke="${ac}" stroke-width=".3" opacity=".85"/>
-                        <path d="M52,5 L52,14" stroke="${ac}" stroke-width=".25" opacity=".3"/>
-                        <path d="M95,24 Q96,21 95,18 Q97,16 97,18 L97,22 Z" fill="${ac}" opacity=".3"/>
-                        <rect x="86" y="17" width="3.5" height="4.5" fill="${wd}" stroke="${ac}" stroke-width=".3" rx=".5" opacity=".55"/>
-                        <path d="M86,17 L89.5,17 L88.5,15 L87,15 Z" fill="${ac}" opacity=".25"/>
-                        ${waterline}
-                        ${sunkDamage}
-                    </svg>`;
-                }
+                return `<svg viewBox="0 0 100 50" preserveAspectRatio="none">
+                    <defs>
+                        <linearGradient id="h-${uid}" x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0%" stop-color="${h2}"/><stop offset="30%" stop-color="${h1}"/><stop offset="70%" stop-color="${h1}"/><stop offset="100%" stop-color="${h2}"/>
+                        </linearGradient>
+                        <linearGradient id="dk-${uid}" x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0%" stop-color="${dk}" stop-opacity=".3"/><stop offset="50%" stop-color="${dk}" stop-opacity=".7"/><stop offset="100%" stop-color="${dk}" stop-opacity=".3"/>
+                        </linearGradient>
+                        <radialGradient id="s1-${uid}" cx=".5" cy=".5" r=".5">
+                            <stop offset="0%" stop-color="${sl2}" stop-opacity=".9"/><stop offset="100%" stop-color="${sl}" stop-opacity=".7"/>
+                        </radialGradient>
+                    </defs>
+                    <path d="M-2,25 Q3,20 9,17.5 Q16,15 24,14.5 L76,14.5 Q84,15 91,17.5 Q97,20 102,25 Q97,30 91,32.5 Q84,35 76,35.5 L24,35.5 Q16,35 9,32.5 Q3,30 -2,25 Z" fill="url(#h-${uid})" stroke="${ac}" stroke-width=".6" opacity=".3"/>
+                    <path d="M1,25 Q5,20.5 11,18 Q17,16 25,15 L75,15 Q83,16 89,18 Q95,20.5 99,25 Q95,29.5 89,32 Q83,34 75,35 L25,35 Q17,34 11,32 Q5,29.5 1,25 Z" fill="url(#h-${uid})" stroke="${ac}" stroke-width=".8"/>
+                    <path d="M-1,25 L-4,25" stroke="${ac}" stroke-width="1.5" stroke-linecap="round"/>
+                    <path d="M6,19 L6,31" stroke="${h2}" stroke-width=".4" opacity=".3"/>
+                    <path d="M7,25 Q10,21.5 16,19 L84,19 Q90,21.5 93,25 Q90,28.5 84,31 L16,31 Q10,28.5 7,25 Z" fill="url(#dk-${uid})"/>
+                    ${deckPlanks(14, 86, 25, 12)}
+                    ${oarRow(16, 84, 15, 11, 'top')}
+                    ${oarRow(16, 84, 35, 11, 'bottom')}
+                    <line x1="48" y1="15" x2="48" y2="35" stroke="${wd}" stroke-width="1" opacity=".5"/>
+                    <ellipse cx="48" cy="25" rx="5.5" ry="4.5" fill="url(#s1-${uid})" stroke="${ac}" stroke-width=".3" opacity=".8"/>
+                    <line x1="48" y1="20.5" x2="48" y2="29.5" stroke="${ac}" stroke-width=".3" opacity=".4"/>
+                    <line x1="42.5" y1="25" x2="53.5" y2="25" stroke="${ac}" stroke-width=".3" opacity=".4"/>
+                    <rect x="28" y="22.5" width="3.5" height="5" rx="1" fill="${wd}" stroke="${ac}" stroke-width=".3" opacity=".5"/>
+                    <rect x="68" y="22.5" width="3.5" height="5" rx="1" fill="${wd}" stroke="${ac}" stroke-width=".3" opacity=".45"/>
+                    <path d="M98,25 L101,24 L101,26 Z" fill="${ac}" opacity=".5"/>
+                    <circle cx="9" cy="25" r="1.3" fill="${ac}" opacity=".3"/>
+                    ${sunkDamage}
+                </svg>`;
             })(),
 
             greek_trireme: (() => {
-                if (isGreece) {
-                    return `<svg viewBox="0 0 100 50" preserveAspectRatio="none">
-                        <defs>
-                            <linearGradient id="h-${uid}" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stop-color="${h1}"/><stop offset="100%" stop-color="${h2}"/>
-                            </linearGradient>
-                            <linearGradient id="s-${uid}" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stop-color="${sl2}"/><stop offset="100%" stop-color="${sl}"/>
-                            </linearGradient>
-                        </defs>
-                        <path d="M2,27 Q4,21 10,19 L14,17.5 L86,17.5 Q93,18.5 96,23 L98,27 L95,34 Q50,39 5,34 Z" fill="url(#h-${uid})" stroke="${ac}" stroke-width=".8"/>
-                        <path d="M0,26 L2,27 L-2,25.5" stroke="${ac}" stroke-width="1" fill="none"/>
-                        <path d="M-2,25.5 L-5,25" stroke="${ac}" stroke-width="1.5" stroke-linecap="round"/>
-                        <ellipse cx="6" cy="24.5" rx="2" ry="1.6" fill="none" stroke="${ac}" stroke-width=".7" opacity=".8"/>
-                        <circle cx="6" cy="24.5" r=".5" fill="${ac}" opacity=".8"/>
-                        <path d="M12,19.5 L86,19.5 L84,21 L14,21 Z" fill="${dk}" opacity=".4"/>
-                        ${oarRow(16, 83, 17.5, 9, 'top')}
-                        ${oarRow(16, 83, 34, 9, 'bottom')}
-                        <rect x="45" y="4" width="1.5" height="15.5" fill="${wd}" rx=".5"/>
-                        <path d="M46.5,5 L56,5 L56,13 L46.5,14 Z" fill="url(#s-${uid})" stroke="${ac}" stroke-width=".3" opacity=".85"/>
-                        <path d="M51,5 L51,13" stroke="${ac}" stroke-width=".25" opacity=".3"/>
-                        <path d="M96,23 Q97,20 96,17 Q97,15 98,16 L98,20 Z" fill="${ac}" opacity=".35"/>
-                        <path d="M96,17 Q95,14 96,12 Q97,11 97,12" stroke="${ac}" stroke-width=".5" fill="none" opacity=".4"/>
-                        <path d="M97,12 L98,11 L96,12" fill="${ac}" opacity=".3"/>
-                        ${waterline}
-                        ${sunkDamage}
-                    </svg>`;
-                } else {
-                    return `<svg viewBox="0 0 100 50" preserveAspectRatio="none">
-                        <defs>
-                            <linearGradient id="h-${uid}" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stop-color="${h1}"/><stop offset="100%" stop-color="${h2}"/>
-                            </linearGradient>
-                            <linearGradient id="s-${uid}" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stop-color="${sl2}"/><stop offset="100%" stop-color="${sl}"/>
-                            </linearGradient>
-                        </defs>
-                        <path d="M3,28 Q6,22 12,20 L16,18 L84,18 Q91,19 95,24 L97,28 L93,34 Q50,39 7,34 Z" fill="url(#h-${uid})" stroke="${ac}" stroke-width=".8"/>
-                        <path d="M1,27 L3,28 L0,26.5" stroke="${ac}" stroke-width="1" fill="none"/>
-                        <path d="M0,26.5 L-2,26" stroke="${ac}" stroke-width="1.5" stroke-linecap="round"/>
-                        <path d="M14,20 L84,20 L82,22 L16,22 Z" fill="${dk}" opacity=".4"/>
-                        ${oarRow(18, 82, 18, 9, 'top')}
-                        ${oarRow(18, 82, 34, 9, 'bottom')}
-                        <rect x="46" y="5" width="1.5" height="15" fill="${wd}" rx=".5"/>
-                        <path d="M47.5,6 L57,6 L57,14 L47.5,15 Z" fill="url(#s-${uid})" stroke="${ac}" stroke-width=".3" opacity=".85"/>
-                        <path d="M52,6 L52,14" stroke="${ac}" stroke-width=".25" opacity=".3"/>
-                        <path d="M95,24 Q96,21 95,18" stroke="${ac}" stroke-width=".5" fill="none" opacity=".35"/>
-                        ${waterline}
-                        ${sunkDamage}
-                    </svg>`;
-                }
+                return `<svg viewBox="0 0 100 50" preserveAspectRatio="none">
+                    <defs>
+                        <linearGradient id="h-${uid}" x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0%" stop-color="${h2}"/><stop offset="30%" stop-color="${h1}"/><stop offset="70%" stop-color="${h1}"/><stop offset="100%" stop-color="${h2}"/>
+                        </linearGradient>
+                        <linearGradient id="dk-${uid}" x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0%" stop-color="${dk}" stop-opacity=".3"/><stop offset="50%" stop-color="${dk}" stop-opacity=".7"/><stop offset="100%" stop-color="${dk}" stop-opacity=".3"/>
+                        </linearGradient>
+                        <radialGradient id="s1-${uid}" cx=".5" cy=".5" r=".5">
+                            <stop offset="0%" stop-color="${sl2}" stop-opacity=".9"/><stop offset="100%" stop-color="${sl}" stop-opacity=".7"/>
+                        </radialGradient>
+                    </defs>
+                    <path d="M-1,25 Q4,20 10,17.5 Q17,15 26,14.5 L74,14.5 Q83,15 90,17.5 Q96,20 101,25 Q96,30 90,32.5 Q83,35 74,35.5 L26,35.5 Q17,35 10,32.5 Q4,30 -1,25 Z" fill="url(#h-${uid})" stroke="${ac}" stroke-width=".6" opacity=".3"/>
+                    <path d="M2,25 Q6,20.5 12,18 Q18,16 27,15.5 L73,15.5 Q82,16 88,18 Q94,20.5 98,25 Q94,29.5 88,32 Q82,34 73,34.5 L27,34.5 Q18,34 12,32 Q6,29.5 2,25 Z" fill="url(#h-${uid})" stroke="${ac}" stroke-width=".8"/>
+                    <path d="M0,25 L-4,25" stroke="${ac}" stroke-width="1.5" stroke-linecap="round"/>
+                    <ellipse cx="6" cy="25" rx="1.8" ry="1.5" fill="none" stroke="${ac}" stroke-width=".5" opacity=".5"/>
+                    <circle cx="6" cy="25" r=".5" fill="${ac}" opacity=".5"/>
+                    <path d="M8,25 Q11,21.5 17,19.5 L83,19.5 Q89,21.5 92,25 Q89,28.5 83,30.5 L17,30.5 Q11,28.5 8,25 Z" fill="url(#dk-${uid})"/>
+                    ${deckPlanks(15, 85, 25, 10)}
+                    ${oarRow(17, 83, 15.5, 9, 'top')}
+                    ${oarRow(17, 83, 34.5, 9, 'bottom')}
+                    <line x1="50" y1="15.5" x2="50" y2="34.5" stroke="${wd}" stroke-width="1" opacity=".5"/>
+                    <ellipse cx="50" cy="25" rx="5" ry="4" fill="url(#s1-${uid})" stroke="${ac}" stroke-width=".3" opacity=".8"/>
+                    <line x1="50" y1="21" x2="50" y2="29" stroke="${ac}" stroke-width=".3" opacity=".4"/>
+                    <line x1="45" y1="25" x2="55" y2="25" stroke="${ac}" stroke-width=".3" opacity=".4"/>
+                    <rect x="30" y="23" width="3" height="4" rx=".8" fill="${wd}" stroke="${ac}" stroke-width=".3" opacity=".45"/>
+                    <path d="M97,25 L100,24 L100,26 Z" fill="${ac}" opacity=".5"/>
+                    <path d="M-4,25 L-6,24 L-6,26 Z" fill="${ac}" opacity=".3"/>
+                    ${sunkDamage}
+                </svg>`;
             })(),
 
             bireme: (() => {
-                if (isGreece) {
-                    return `<svg viewBox="0 0 100 50" preserveAspectRatio="none">
-                        <defs>
-                            <linearGradient id="h-${uid}" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stop-color="${h1}"/><stop offset="100%" stop-color="${h2}"/>
-                            </linearGradient>
-                            <linearGradient id="s-${uid}" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stop-color="${sl2}"/><stop offset="100%" stop-color="${sl}"/>
-                            </linearGradient>
-                        </defs>
-                        <path d="M3,27 Q6,21 13,19 L17,17.5 L83,17.5 Q90,18.5 94,23 L96,27 L93,33 Q50,38 7,33 Z" fill="url(#h-${uid})" stroke="${ac}" stroke-width=".8"/>
-                        <path d="M1,26 L3,27 L-1,25.5" stroke="${ac}" stroke-width="1" fill="none"/>
-                        <path d="M-1,25.5 L-3,25" stroke="${ac}" stroke-width="1.3" stroke-linecap="round"/>
-                        <ellipse cx="7" cy="24.5" rx="1.6" ry="1.3" fill="none" stroke="${ac}" stroke-width=".6" opacity=".7"/>
-                        <circle cx="7" cy="24.5" r=".4" fill="${ac}" opacity=".7"/>
-                        <path d="M15,19.5 L83,19.5 L81,21 L17,21 Z" fill="${dk}" opacity=".4"/>
-                        ${oarRow(20, 80, 17.5, 8, 'top')}
-                        ${oarRow(20, 80, 33, 8, 'bottom')}
-                        <rect x="46" y="5" width="1.3" height="14.5" fill="${wd}" rx=".5"/>
-                        <path d="M47.3,6 L56,6 L56,13 L47.3,14 Z" fill="url(#s-${uid})" stroke="${ac}" stroke-width=".3" opacity=".8"/>
-                        <path d="M94,23 Q95,20 94,17 Q95,15 96,16 L96,20 Z" fill="${ac}" opacity=".3"/>
-                        <path d="M94,17 Q93,14 94,12" stroke="${ac}" stroke-width=".5" fill="none" opacity=".35"/>
-                        <path d="M8,37 Q50,40 92,37 L90,39 Q50,42 10,39 Z" fill="${h2}" opacity=".4"/>
-                        ${sunkDamage}
-                    </svg>`;
-                } else {
-                    return `<svg viewBox="0 0 100 50" preserveAspectRatio="none">
-                        <defs>
-                            <linearGradient id="h-${uid}" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stop-color="${h1}"/><stop offset="100%" stop-color="${h2}"/>
-                            </linearGradient>
-                            <linearGradient id="s-${uid}" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stop-color="${sl2}"/><stop offset="100%" stop-color="${sl}"/>
-                            </linearGradient>
-                        </defs>
-                        <path d="M4,28 Q7,22 14,20 L18,18 L82,18 Q89,19 93,24 L95,28 L92,34 Q50,38 8,34 Z" fill="url(#h-${uid})" stroke="${ac}" stroke-width=".8"/>
-                        <path d="M2,27 L4,28 L1,26.5" stroke="${ac}" stroke-width="1" fill="none"/>
-                        <path d="M1,26.5 L-1,26" stroke="${ac}" stroke-width="1.5" stroke-linecap="round"/>
-                        <path d="M16,20 L82,20 L80,22 L18,22 Z" fill="${dk}" opacity=".4"/>
-                        ${oarRow(20, 80, 18, 8, 'top')}
-                        ${oarRow(20, 80, 34, 8, 'bottom')}
-                        <rect x="46" y="5" width="1.5" height="15" fill="${wd}" rx=".5"/>
-                        <path d="M47.5,6 L56,6 L56,14 L47.5,15 Z" fill="url(#s-${uid})" stroke="${ac}" stroke-width=".3" opacity=".8"/>
-                        <path d="M93,24 Q94,21 93,18" stroke="${ac}" stroke-width=".5" fill="none" opacity=".3"/>
-                        <path d="M8,37 Q50,40 92,37 L90,39 Q50,42 10,39 Z" fill="${h2}" opacity=".4"/>
-                        ${sunkDamage}
-                    </svg>`;
-                }
+                return `<svg viewBox="0 0 100 50" preserveAspectRatio="none">
+                    <defs>
+                        <linearGradient id="h-${uid}" x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0%" stop-color="${h2}"/><stop offset="30%" stop-color="${h1}"/><stop offset="70%" stop-color="${h1}"/><stop offset="100%" stop-color="${h2}"/>
+                        </linearGradient>
+                        <linearGradient id="dk-${uid}" x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0%" stop-color="${dk}" stop-opacity=".3"/><stop offset="50%" stop-color="${dk}" stop-opacity=".7"/><stop offset="100%" stop-color="${dk}" stop-opacity=".3"/>
+                        </linearGradient>
+                        <radialGradient id="s1-${uid}" cx=".5" cy=".5" r=".5">
+                            <stop offset="0%" stop-color="${sl2}" stop-opacity=".9"/><stop offset="100%" stop-color="${sl}" stop-opacity=".7"/>
+                        </radialGradient>
+                    </defs>
+                    <path d="M0,25 Q5,20 11,17.5 Q18,15.5 27,15 L73,15 Q82,15.5 89,17.5 Q95,20 100,25 Q95,30 89,32.5 Q82,34.5 73,35 L27,35 Q18,34.5 11,32.5 Q5,30 0,25 Z" fill="url(#h-${uid})" stroke="${ac}" stroke-width=".6" opacity=".3"/>
+                    <path d="M3,25 Q7,21 13,18.5 Q19,16.5 28,16 L72,16 Q81,16.5 87,18.5 Q93,21 97,25 Q93,29 87,31.5 Q81,33.5 72,34 L28,34 Q19,33.5 13,31.5 Q7,29 3,25 Z" fill="url(#h-${uid})" stroke="${ac}" stroke-width=".8"/>
+                    <path d="M1,25 L-2,25" stroke="${ac}" stroke-width="1.3" stroke-linecap="round"/>
+                    <path d="M9,25 Q12,22 18,20 L82,20 Q88,22 91,25 Q88,28 82,30 L18,30 Q12,28 9,25 Z" fill="url(#dk-${uid})"/>
+                    ${deckPlanks(16, 84, 25, 9)}
+                    ${oarRow(18, 82, 16, 8, 'top')}
+                    ${oarRow(18, 82, 34, 8, 'bottom')}
+                    <line x1="50" y1="16" x2="50" y2="34" stroke="${wd}" stroke-width=".9" opacity=".5"/>
+                    <ellipse cx="50" cy="25" rx="4.5" ry="3.5" fill="url(#s1-${uid})" stroke="${ac}" stroke-width=".3" opacity=".75"/>
+                    <line x1="50" y1="21.5" x2="50" y2="28.5" stroke="${ac}" stroke-width=".3" opacity=".35"/>
+                    <line x1="45.5" y1="25" x2="54.5" y2="25" stroke="${ac}" stroke-width=".3" opacity=".35"/>
+                    <path d="M96,25 L99,24 L99,26 Z" fill="${ac}" opacity=".45"/>
+                    <circle cx="8" cy="25" r="1" fill="${ac}" opacity=".25"/>
+                    ${sunkDamage}
+                </svg>`;
             })(),
 
             scout_galley: (() => {
-                if (isGreece) {
-                    return `<svg viewBox="0 0 100 50" preserveAspectRatio="none">
-                        <defs>
-                            <linearGradient id="h-${uid}" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stop-color="${h1}"/><stop offset="100%" stop-color="${h2}"/>
-                            </linearGradient>
-                            <linearGradient id="s-${uid}" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stop-color="${sl2}"/><stop offset="100%" stop-color="${sl}"/>
-                            </linearGradient>
-                        </defs>
-                        <path d="M4,27 Q8,21 16,19 L20,18 L80,18 Q88,19 93,23 L96,27 L92,33 Q50,37 8,33 Z" fill="url(#h-${uid})" stroke="${ac}" stroke-width=".7"/>
-                        <path d="M2,26 L4,27 L0,25.5" stroke="${ac}" stroke-width=".8" fill="none"/>
-                        <path d="M0,25.5 L-2,25" stroke="${ac}" stroke-width="1.2" stroke-linecap="round"/>
-                        <ellipse cx="9" cy="24.5" rx="1.4" ry="1.1" fill="none" stroke="${ac}" stroke-width=".5" opacity=".6"/>
-                        <path d="M18,20 L80,20 L78,21.5 L20,21.5 Z" fill="${dk}" opacity=".35"/>
-                        ${oarRow(22, 78, 18, 6, 'top')}
-                        ${oarRow(22, 78, 33, 6, 'bottom')}
-                        <rect x="48" y="6" width="1.2" height="14" fill="${wd}" rx=".4"/>
-                        <path d="M49.2,7 L57,7 L57,13 L49.2,14 Z" fill="url(#s-${uid})" stroke="${ac}" stroke-width=".3" opacity=".75"/>
-                        <path d="M93,23 Q94,20 93,18" stroke="${ac}" stroke-width=".4" fill="none" opacity=".3"/>
-                        <path d="M8,36 Q50,39 92,36 L90,38 Q50,41 10,38 Z" fill="${h2}" opacity=".35"/>
-                        ${sunkDamage}
-                    </svg>`;
-                } else {
-                    return `<svg viewBox="0 0 100 50" preserveAspectRatio="none">
-                        <defs>
-                            <linearGradient id="h-${uid}" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stop-color="${h1}"/><stop offset="100%" stop-color="${h2}"/>
-                            </linearGradient>
-                            <linearGradient id="s-${uid}" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stop-color="${sl2}"/><stop offset="100%" stop-color="${sl}"/>
-                            </linearGradient>
-                        </defs>
-                        <path d="M5,28 Q9,22 17,20 L21,18.5 L79,18.5 Q87,19.5 92,24 L95,28 L91,33 Q50,37 9,33 Z" fill="url(#h-${uid})" stroke="${ac}" stroke-width=".7"/>
-                        <path d="M3,27 L5,28 L2,26.5" stroke="${ac}" stroke-width=".8" fill="none"/>
-                        <path d="M2,26.5 L0,26" stroke="${ac}" stroke-width="1.3" stroke-linecap="round"/>
-                        <path d="M19,20.5 L79,20.5 L77,22 L21,22 Z" fill="${dk}" opacity=".35"/>
-                        ${oarRow(23, 77, 18.5, 6, 'top')}
-                        ${oarRow(23, 77, 33, 6, 'bottom')}
-                        <rect x="48" y="6" width="1.3" height="14.5" fill="${wd}" rx=".4"/>
-                        <path d="M49.3,7 L57,7 L57,14 L49.3,14.5 Z" fill="url(#s-${uid})" stroke="${ac}" stroke-width=".3" opacity=".75"/>
-                        <path d="M92,24 Q93,21 92,19" stroke="${ac}" stroke-width=".4" fill="none" opacity=".3"/>
-                        <path d="M9,36 Q50,39 91,36 L89,38 Q50,41 11,38 Z" fill="${h2}" opacity=".35"/>
-                        ${sunkDamage}
-                    </svg>`;
-                }
+                return `<svg viewBox="0 0 100 50" preserveAspectRatio="none">
+                    <defs>
+                        <linearGradient id="h-${uid}" x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0%" stop-color="${h2}"/><stop offset="30%" stop-color="${h1}"/><stop offset="70%" stop-color="${h1}"/><stop offset="100%" stop-color="${h2}"/>
+                        </linearGradient>
+                        <linearGradient id="dk-${uid}" x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0%" stop-color="${dk}" stop-opacity=".3"/><stop offset="50%" stop-color="${dk}" stop-opacity=".6"/><stop offset="100%" stop-color="${dk}" stop-opacity=".3"/>
+                        </linearGradient>
+                        <radialGradient id="s1-${uid}" cx=".5" cy=".5" r=".5">
+                            <stop offset="0%" stop-color="${sl2}" stop-opacity=".85"/><stop offset="100%" stop-color="${sl}" stop-opacity=".65"/>
+                        </radialGradient>
+                    </defs>
+                    <path d="M2,25 Q7,20 14,17.5 Q21,16 30,15.5 L70,15.5 Q79,16 86,17.5 Q93,20 98,25 Q93,30 86,32.5 Q79,34 70,34.5 L30,34.5 Q21,34 14,32.5 Q7,30 2,25 Z" fill="url(#h-${uid})" stroke="${ac}" stroke-width=".6" opacity=".3"/>
+                    <path d="M5,25 Q9,21 15,18.5 Q22,17 31,16.5 L69,16.5 Q78,17 85,18.5 Q91,21 95,25 Q91,29 85,31.5 Q78,33 69,33.5 L31,33.5 Q22,33 15,31.5 Q9,29 5,25 Z" fill="url(#h-${uid})" stroke="${ac}" stroke-width=".7"/>
+                    <path d="M3,25 L0,25" stroke="${ac}" stroke-width="1.2" stroke-linecap="round"/>
+                    <path d="M11,25 Q14,22 20,20.5 L80,20.5 Q86,22 89,25 Q86,28 80,29.5 L20,29.5 Q14,28 11,25 Z" fill="url(#dk-${uid})"/>
+                    ${deckPlanks(18, 82, 25, 7)}
+                    ${oarRow(22, 78, 16.5, 6, 'top')}
+                    ${oarRow(22, 78, 33.5, 6, 'bottom')}
+                    <line x1="50" y1="16.5" x2="50" y2="33.5" stroke="${wd}" stroke-width=".8" opacity=".45"/>
+                    <ellipse cx="50" cy="25" rx="3.5" ry="3" fill="url(#s1-${uid})" stroke="${ac}" stroke-width=".3" opacity=".7"/>
+                    <path d="M94,25 L97,24 L97,26 Z" fill="${ac}" opacity=".4"/>
+                    ${sunkDamage}
+                </svg>`;
             })()
         };
 
@@ -940,13 +825,16 @@ class NavalWar {
                 ? (cellW * ship.length + gap * (ship.length - 1))
                 : (cellH * ship.length + gap * (ship.length - 1));
 
+            const oarExtend = Math.round(cellH * 0.35);
+            const overlayH = (orient === 'h' ? cellH : cellW) + oarExtend * 2;
+
             overlay.style.width = spanLen + 'px';
-            overlay.style.height = (orient === 'h' ? cellH : cellW) + 'px';
+            overlay.style.height = overlayH + 'px';
             overlay.style.left = left + 'px';
-            overlay.style.top = top + 'px';
+            overlay.style.top = (top - oarExtend) + 'px';
 
             if (orient === 'v') {
-                overlay.style.transformOrigin = 'top left';
+                overlay.style.transformOrigin = `${oarExtend}px ${oarExtend}px`;
                 overlay.style.transform = `rotate(90deg) translateY(-${cellW}px)`;
             }
 
