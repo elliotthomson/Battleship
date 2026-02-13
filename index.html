@@ -8,8 +8,23 @@
 </head>
 <body>
 
+    <!-- ═══════════ SPLASH SCREEN ═══════════ -->
+    <div class="screen" id="splash-screen">
+        <div class="splash-container">
+            <h1 class="splash-title">⚔️ Naval War ⚔️</h1>
+            <p class="splash-subtitle">Rome vs Greece</p>
+            <div class="splash-image-wrapper">
+                <img class="splash-image" src="assets/splash-army.svg" alt="Roman army raising weapons in salute">
+            </div>
+            <p class="splash-quote">"Ave Imperator, morituri te salutant!"</p>
+            <p class="splash-quote-translation">We who are about to die, salute you!</p>
+            <button id="splash-continue-btn" class="splash-continue-btn">⚔️ Enter the Arena</button>
+            <audio id="splash-audio" src="assets/gladiator-salute.mp3" preload="auto"></audio>
+        </div>
+    </div>
+
     <!-- ═══════════ SETUP SCREEN ═══════════ -->
-    <div class="screen" id="setup-screen">
+    <div class="screen hidden" id="setup-screen">
         <div class="container">
             <header>
                 <h1>⚔️ Naval War: Rome vs Greece ⚔️</h1>
