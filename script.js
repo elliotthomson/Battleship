@@ -562,100 +562,338 @@ class NavalWar {
     /* ── Ship SVG Overlays ── */
 
     _getShipSVG(shipId, isGreece, isSunk) {
-        const romeColor1 = isSunk ? '#3a0808' : '#b22222';
-        const romeColor2 = isSunk ? '#2a0505' : '#8B0000';
+        const romeHull1 = isSunk ? '#3a0808' : '#8B0000';
+        const romeHull2 = isSunk ? '#2a0505' : '#5c0000';
+        const romeDeck = isSunk ? '#2a1a0a' : '#6b3a1a';
         const romeAccent = isSunk ? '#4a2a00' : '#d4af37';
-        const greekColor1 = isSunk ? '#0a1a2e' : '#2471a3';
-        const greekColor2 = isSunk ? '#081428' : '#1a5276';
-        const greekAccent = isSunk ? '#2a3a4a' : '#aed6f1';
+        const romeWood = isSunk ? '#3a2010' : '#a0522d';
+        const romeSail = isSunk ? '#2a1515' : '#c0392b';
+        const romeSailLight = isSunk ? '#3a2020' : '#e74c3c';
 
-        const c1 = isGreece ? greekColor1 : romeColor1;
-        const c2 = isGreece ? greekColor2 : romeColor2;
-        const accent = isGreece ? greekAccent : romeAccent;
-        const sunkCracks = isSunk ? `<line x1="20" y1="10" x2="35" y2="40" stroke="${isSunk ? '#111' : 'none'}" stroke-width="1.5" opacity=".6"/><line x1="60" y1="5" x2="50" y2="38" stroke="${isSunk ? '#111' : 'none'}" stroke-width="1.5" opacity=".6"/><line x1="75" y1="12" x2="85" y2="42" stroke="${isSunk ? '#111' : 'none'}" stroke-width="1" opacity=".5"/>` : '';
+        const greekHull1 = isSunk ? '#0a1a2e' : '#1a3a5c';
+        const greekHull2 = isSunk ? '#081428' : '#0f2844';
+        const greekDeck = isSunk ? '#1a2a3a' : '#3a6688';
+        const greekAccent = isSunk ? '#2a3a4a' : '#aed6f1';
+        const greekWood = isSunk ? '#1a2a3a' : '#5b8ca8';
+        const greekSail = isSunk ? '#0a1828' : '#2471a3';
+        const greekSailLight = isSunk ? '#152535' : '#3498db';
+
+        const h1 = isGreece ? greekHull1 : romeHull1;
+        const h2 = isGreece ? greekHull2 : romeHull2;
+        const dk = isGreece ? greekDeck : romeDeck;
+        const ac = isGreece ? greekAccent : romeAccent;
+        const wd = isGreece ? greekWood : romeWood;
+        const sl = isGreece ? greekSail : romeSail;
+        const sl2 = isGreece ? greekSailLight : romeSailLight;
+
+        const uid = `${shipId}-${isGreece?'g':'r'}${isSunk?'s':''}`;
+
+        const sunkDamage = isSunk ? `
+            <line x1="18" y1="15" x2="28" y2="38" stroke="#111" stroke-width="1.2" opacity=".5"/>
+            <line x1="55" y1="12" x2="48" y2="40" stroke="#111" stroke-width="1.2" opacity=".5"/>
+            <line x1="78" y1="18" x2="82" y2="36" stroke="#111" stroke-width="1" opacity=".4"/>
+            <circle cx="30" cy="30" r="3" fill="none" stroke="#111" stroke-width=".8" opacity=".3"/>
+            <circle cx="65" cy="28" r="2.5" fill="none" stroke="#111" stroke-width=".8" opacity=".3"/>` : '';
+
+        const waterline = `<path d="M8,36 Q25,39 50,40 Q75,39 92,36 L90,38 Q75,41 50,42 Q25,41 10,38 Z" fill="${h2}" opacity=".4"/>`;
+
+        const oarRow = (x1, x2, y, count, side) => {
+            let oars = '';
+            const spacing = (x2 - x1) / (count - 1);
+            for (let i = 0; i < count; i++) {
+                const ox = x1 + i * spacing;
+                const oy = side === 'top' ? y - 6 : y + 6;
+                oars += `<line x1="${ox}" y1="${y}" x2="${ox + (side==='top'?-1.5:1.5)}" y2="${oy}" stroke="${wd}" stroke-width=".6" opacity=".55"/>`;
+            }
+            return oars;
+        };
 
         const svgs = {
-            quinquereme: `<svg viewBox="0 0 100 50" preserveAspectRatio="none">
-                <defs><linearGradient id="hull-q-${isGreece?'g':'r'}${isSunk?'s':''}" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stop-color="${c1}"/><stop offset="100%" stop-color="${c2}"/>
-                </linearGradient></defs>
-                <path d="M2,28 Q5,18 15,16 L85,16 Q95,18 98,28 L95,35 Q50,40 5,35 Z" fill="url(#hull-q-${isGreece?'g':'r'}${isSunk?'s':''})"
-                      stroke="${accent}" stroke-width="1"/>
-                <rect x="20" y="8" width="2" height="18" fill="${accent}" rx="1"/>
-                <rect x="40" y="5" width="2" height="21" fill="${accent}" rx="1"/>
-                <rect x="60" y="5" width="2" height="21" fill="${accent}" rx="1"/>
-                <rect x="80" y="8" width="2" height="18" fill="${accent}" rx="1"/>
-                <rect x="13" y="7" width="16" height="2" fill="${accent}" opacity=".7" rx="1"/>
-                <rect x="33" y="4" width="16" height="2" fill="${accent}" opacity=".7" rx="1"/>
-                <rect x="53" y="4" width="16" height="2" fill="${accent}" opacity=".7" rx="1"/>
-                <rect x="73" y="7" width="16" height="2" fill="${accent}" opacity=".7" rx="1"/>
-                <path d="M5,35 Q50,42 95,35 L92,38 Q50,44 8,38 Z" fill="${c2}" opacity=".5"/>
-                ${isGreece ? `<circle cx="50" cy="25" r="4" fill="none" stroke="${accent}" stroke-width=".8" opacity=".6"/>` 
-                           : `<rect x="47" y="22" width="6" height="6" fill="none" stroke="${accent}" stroke-width=".8" opacity=".6"/>`}
-                ${sunkCracks}
-            </svg>`,
+            quinquereme: (() => {
+                if (isGreece) {
+                    return `<svg viewBox="0 0 100 50" preserveAspectRatio="none">
+                        <defs>
+                            <linearGradient id="h-${uid}" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="${h1}"/><stop offset="100%" stop-color="${h2}"/>
+                            </linearGradient>
+                            <linearGradient id="s-${uid}" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="${sl2}"/><stop offset="100%" stop-color="${sl}"/>
+                            </linearGradient>
+                        </defs>
+                        <path d="M1,27 Q3,22 8,20 L14,18 L86,18 Q93,19 96,24 L98,27 L95,34 Q50,39 5,34 Z" fill="url(#h-${uid})" stroke="${ac}" stroke-width=".8"/>
+                        <path d="M0,27 L1,27 L-2,26" stroke="${ac}" stroke-width="1.2" fill="none"/>
+                        <path d="M-2,26 L-4,25.5" stroke="${ac}" stroke-width="1.8" stroke-linecap="round"/>
+                        <ellipse cx="6" cy="25" rx="2" ry="1.8" fill="none" stroke="${ac}" stroke-width=".7" opacity=".8"/>
+                        <circle cx="6" cy="25" r=".6" fill="${ac}" opacity=".8"/>
+                        <path d="M10,20 L86,20 L84,22 L12,22 Z" fill="${dk}" opacity=".5"/>
+                        <line x1="14" y1="21" x2="14" y2="22" stroke="${ac}" stroke-width=".4" opacity=".4"/>
+                        <line x1="24" y1="21" x2="24" y2="22" stroke="${ac}" stroke-width=".4" opacity=".4"/>
+                        <line x1="34" y1="21" x2="34" y2="22" stroke="${ac}" stroke-width=".4" opacity=".4"/>
+                        <line x1="44" y1="21" x2="44" y2="22" stroke="${ac}" stroke-width=".4" opacity=".4"/>
+                        <line x1="54" y1="21" x2="54" y2="22" stroke="${ac}" stroke-width=".4" opacity=".4"/>
+                        <line x1="64" y1="21" x2="64" y2="22" stroke="${ac}" stroke-width=".4" opacity=".4"/>
+                        <line x1="74" y1="21" x2="74" y2="22" stroke="${ac}" stroke-width=".4" opacity=".4"/>
+                        ${oarRow(15, 82, 18, 12, 'top')}
+                        ${oarRow(15, 82, 34, 12, 'bottom')}
+                        <rect x="30" y="4" width="1.5" height="16" fill="${wd}" rx=".5"/>
+                        <rect x="55" y="3" width="1.5" height="17" fill="${wd}" rx=".5"/>
+                        <path d="M31.5,5 L41,5 L41,13 L31.5,14 Z" fill="url(#s-${uid})" stroke="${ac}" stroke-width=".3" opacity=".85"/>
+                        <path d="M56.5,4 L66,4 L66,13 L56.5,14 Z" fill="url(#s-${uid})" stroke="${ac}" stroke-width=".3" opacity=".85"/>
+                        <path d="M36,5 L36,13" stroke="${ac}" stroke-width=".25" opacity=".3"/>
+                        <path d="M61,4 L61,13" stroke="${ac}" stroke-width=".25" opacity=".3"/>
+                        <path d="M96,24 Q97,22 96,19 Q97,17 98,18 L99,20 Q99,23 98,25 Z" fill="${ac}" opacity=".4"/>
+                        <path d="M96,19 Q95,16 96,14 Q97,13 97,14 L97,17 Z" fill="${ac}" opacity=".3"/>
+                        ${waterline}
+                        <path d="M42,20 L44,17 L46,20" fill="${ac}" opacity=".3" stroke="${ac}" stroke-width=".3"/>
+                        ${sunkDamage}
+                    </svg>`;
+                } else {
+                    return `<svg viewBox="0 0 100 50" preserveAspectRatio="none">
+                        <defs>
+                            <linearGradient id="h-${uid}" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="${h1}"/><stop offset="100%" stop-color="${h2}"/>
+                            </linearGradient>
+                            <linearGradient id="s-${uid}" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="${sl2}"/><stop offset="100%" stop-color="${sl}"/>
+                            </linearGradient>
+                        </defs>
+                        <path d="M2,28 Q4,22 10,19 L15,17 L85,17 Q92,18 96,23 L98,28 L95,35 Q50,40 5,35 Z" fill="url(#h-${uid})" stroke="${ac}" stroke-width=".8"/>
+                        <path d="M0,27 L2,28 L-1,26.5" stroke="${ac}" stroke-width="1.2" fill="none"/>
+                        <path d="M-1,26.5 L-3,26" stroke="${ac}" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M12,19 L85,19 L83,21 L14,21 Z" fill="${dk}" opacity=".5"/>
+                        <rect x="8" y="18" width="3" height="6" fill="${wd}" stroke="${ac}" stroke-width=".4" rx=".5" opacity=".7"/>
+                        <rect x="7" y="14" width="5" height="4" fill="${ac}" opacity=".35" rx=".5"/>
+                        <path d="M7,14 L12,14 L10,12 L9,12 Z" fill="${ac}" opacity=".25"/>
+                        ${oarRow(18, 82, 17, 14, 'top')}
+                        ${oarRow(18, 82, 35, 14, 'bottom')}
+                        <rect x="35" y="4" width="2" height="15" fill="${wd}" rx=".5"/>
+                        <rect x="60" y="3" width="2" height="16" fill="${wd}" rx=".5"/>
+                        <path d="M37,5 L48,5 L48,14 L37,15 Z" fill="url(#s-${uid})" stroke="${ac}" stroke-width=".3" opacity=".85"/>
+                        <path d="M62,4 L73,4 L73,14 L62,15 Z" fill="url(#s-${uid})" stroke="${ac}" stroke-width=".3" opacity=".85"/>
+                        <path d="M42,5 L42,14" stroke="${ac}" stroke-width=".3" opacity=".35"/>
+                        <path d="M67,4 L67,14" stroke="${ac}" stroke-width=".3" opacity=".35"/>
+                        <path d="M96,23 Q97,20 96,17 Q98,15 99,17 L99,21 Q99,24 98,26 Z" fill="${ac}" opacity=".35"/>
+                        <path d="M96,17 Q95,14 96,12" stroke="${ac}" stroke-width=".6" fill="none" opacity=".4"/>
+                        <rect x="88" y="17" width="4" height="5" fill="${wd}" stroke="${ac}" stroke-width=".3" rx=".5" opacity=".6"/>
+                        <path d="M88,17 L92,17 L91,15 L89,15 Z" fill="${ac}" opacity=".3"/>
+                        <path d="M44,7 L46,5 L48,7" fill="none" stroke="${ac}" stroke-width=".5" opacity=".5"/>
+                        <rect x="45" y="7" width="2" height="1" fill="${ac}" opacity=".3" rx=".3"/>
+                        ${waterline}
+                        ${sunkDamage}
+                    </svg>`;
+                }
+            })(),
 
-            roman_trireme: `<svg viewBox="0 0 100 50" preserveAspectRatio="none">
-                <defs><linearGradient id="hull-rt-${isGreece?'g':'r'}${isSunk?'s':''}" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stop-color="${c1}"/><stop offset="100%" stop-color="${c2}"/>
-                </linearGradient></defs>
-                <path d="M3,28 Q8,17 18,15 L82,15 Q92,17 97,28 L93,34 Q50,39 7,34 Z" fill="url(#hull-rt-${isGreece?'g':'r'}${isSunk?'s':''})"
-                      stroke="${accent}" stroke-width="1"/>
-                <rect x="28" y="6" width="2" height="19" fill="${accent}" rx="1"/>
-                <rect x="50" y="4" width="2" height="21" fill="${accent}" rx="1"/>
-                <rect x="72" y="6" width="2" height="19" fill="${accent}" rx="1"/>
-                <rect x="21" y="5" width="16" height="2" fill="${accent}" opacity=".7" rx="1"/>
-                <rect x="43" y="3" width="16" height="2" fill="${accent}" opacity=".7" rx="1"/>
-                <rect x="65" y="5" width="16" height="2" fill="${accent}" opacity=".7" rx="1"/>
-                <path d="M0,26 L3,28" stroke="${accent}" stroke-width="1.5"/>
-                <path d="M7,34 Q50,41 93,34 L91,37 Q50,43 9,37 Z" fill="${c2}" opacity=".5"/>
-                ${sunkCracks}
-            </svg>`,
+            roman_trireme: (() => {
+                if (isGreece) {
+                    return `<svg viewBox="0 0 100 50" preserveAspectRatio="none">
+                        <defs>
+                            <linearGradient id="h-${uid}" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="${h1}"/><stop offset="100%" stop-color="${h2}"/>
+                            </linearGradient>
+                            <linearGradient id="s-${uid}" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="${sl2}"/><stop offset="100%" stop-color="${sl}"/>
+                            </linearGradient>
+                        </defs>
+                        <path d="M2,28 Q5,21 12,19 L16,17 L84,17 Q92,18 96,24 L98,28 L94,34 Q50,39 6,34 Z" fill="url(#h-${uid})" stroke="${ac}" stroke-width=".8"/>
+                        <path d="M0,27 L2,28 L-2,26" stroke="${ac}" stroke-width="1" fill="none"/>
+                        <path d="M-2,26 L-4,25.5" stroke="${ac}" stroke-width="1.5" stroke-linecap="round"/>
+                        <ellipse cx="7" cy="25.5" rx="1.8" ry="1.5" fill="none" stroke="${ac}" stroke-width=".6" opacity=".7"/>
+                        <circle cx="7" cy="25.5" r=".5" fill="${ac}" opacity=".7"/>
+                        <path d="M14,19 L84,19 L82,21 L16,21 Z" fill="${dk}" opacity=".45"/>
+                        ${oarRow(18, 80, 17, 10, 'top')}
+                        ${oarRow(18, 80, 34, 10, 'bottom')}
+                        <rect x="42" y="4" width="1.5" height="15" fill="${wd}" rx=".5"/>
+                        <path d="M43.5,5 L54,5 L54,13 L43.5,14 Z" fill="url(#s-${uid})" stroke="${ac}" stroke-width=".3" opacity=".85"/>
+                        <path d="M49,5 L49,13" stroke="${ac}" stroke-width=".25" opacity=".3"/>
+                        <path d="M96,24 Q97,21 96,18 Q97,16 98,17 L98,22 Z" fill="${ac}" opacity=".35"/>
+                        <path d="M96,18 Q95,15 96,13" stroke="${ac}" stroke-width=".5" fill="none" opacity=".35"/>
+                        ${waterline}
+                        ${sunkDamage}
+                    </svg>`;
+                } else {
+                    return `<svg viewBox="0 0 100 50" preserveAspectRatio="none">
+                        <defs>
+                            <linearGradient id="h-${uid}" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="${h1}"/><stop offset="100%" stop-color="${h2}"/>
+                            </linearGradient>
+                            <linearGradient id="s-${uid}" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="${sl2}"/><stop offset="100%" stop-color="${sl}"/>
+                            </linearGradient>
+                        </defs>
+                        <path d="M3,28 Q6,21 13,19 L17,17 L83,17 Q91,18 95,24 L97,28 L93,35 Q50,40 7,35 Z" fill="url(#h-${uid})" stroke="${ac}" stroke-width=".8"/>
+                        <path d="M1,27 L3,28 L0,26.5" stroke="${ac}" stroke-width="1" fill="none"/>
+                        <path d="M0,26.5 L-2,26" stroke="${ac}" stroke-width="1.8" stroke-linecap="round"/>
+                        <path d="M15,19 L83,19 L81,21 L17,21 Z" fill="${dk}" opacity=".45"/>
+                        <rect x="10" y="18" width="3" height="5" fill="${wd}" stroke="${ac}" stroke-width=".3" rx=".5" opacity=".65"/>
+                        <path d="M10,18 L13,18 L12,16 L11,16 Z" fill="${ac}" opacity=".25"/>
+                        ${oarRow(20, 80, 17, 10, 'top')}
+                        ${oarRow(20, 80, 35, 10, 'bottom')}
+                        <rect x="45" y="4" width="1.8" height="15" fill="${wd}" rx=".5"/>
+                        <path d="M46.8,5 L57,5 L57,14 L46.8,15 Z" fill="url(#s-${uid})" stroke="${ac}" stroke-width=".3" opacity=".85"/>
+                        <path d="M52,5 L52,14" stroke="${ac}" stroke-width=".25" opacity=".3"/>
+                        <path d="M95,24 Q96,21 95,18 Q97,16 97,18 L97,22 Z" fill="${ac}" opacity=".3"/>
+                        <rect x="86" y="17" width="3.5" height="4.5" fill="${wd}" stroke="${ac}" stroke-width=".3" rx=".5" opacity=".55"/>
+                        <path d="M86,17 L89.5,17 L88.5,15 L87,15 Z" fill="${ac}" opacity=".25"/>
+                        ${waterline}
+                        ${sunkDamage}
+                    </svg>`;
+                }
+            })(),
 
-            greek_trireme: `<svg viewBox="0 0 100 50" preserveAspectRatio="none">
-                <defs><linearGradient id="hull-gt-${isGreece?'g':'r'}${isSunk?'s':''}" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stop-color="${c1}"/><stop offset="100%" stop-color="${c2}"/>
-                </linearGradient></defs>
-                <path d="M4,28 Q10,17 20,15 L80,15 Q90,17 96,28 L92,34 Q50,39 8,34 Z" fill="url(#hull-gt-${isGreece?'g':'r'}${isSunk?'s':''})"
-                      stroke="${accent}" stroke-width="1"/>
-                <rect x="35" y="5" width="2" height="20" fill="${accent}" rx="1"/>
-                <rect x="63" y="5" width="2" height="20" fill="${accent}" rx="1"/>
-                <rect x="28" y="4" width="16" height="2" fill="${accent}" opacity=".7" rx="1"/>
-                <rect x="56" y="4" width="16" height="2" fill="${accent}" opacity=".7" rx="1"/>
-                <path d="M1,26 L4,28" stroke="${accent}" stroke-width="1.5"/>
-                <path d="M8,34 Q50,41 92,34 L90,37 Q50,43 10,37 Z" fill="${c2}" opacity=".5"/>
-                ${isGreece ? `<path d="M48,20 L50,16 L52,20 Z" fill="${accent}" opacity=".5"/>` 
-                           : `<circle cx="50" cy="22" r="3" fill="none" stroke="${accent}" stroke-width=".7" opacity=".5"/>`}
-                ${sunkCracks}
-            </svg>`,
+            greek_trireme: (() => {
+                if (isGreece) {
+                    return `<svg viewBox="0 0 100 50" preserveAspectRatio="none">
+                        <defs>
+                            <linearGradient id="h-${uid}" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="${h1}"/><stop offset="100%" stop-color="${h2}"/>
+                            </linearGradient>
+                            <linearGradient id="s-${uid}" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="${sl2}"/><stop offset="100%" stop-color="${sl}"/>
+                            </linearGradient>
+                        </defs>
+                        <path d="M2,27 Q4,21 10,19 L14,17.5 L86,17.5 Q93,18.5 96,23 L98,27 L95,34 Q50,39 5,34 Z" fill="url(#h-${uid})" stroke="${ac}" stroke-width=".8"/>
+                        <path d="M0,26 L2,27 L-2,25.5" stroke="${ac}" stroke-width="1" fill="none"/>
+                        <path d="M-2,25.5 L-5,25" stroke="${ac}" stroke-width="1.5" stroke-linecap="round"/>
+                        <ellipse cx="6" cy="24.5" rx="2" ry="1.6" fill="none" stroke="${ac}" stroke-width=".7" opacity=".8"/>
+                        <circle cx="6" cy="24.5" r=".5" fill="${ac}" opacity=".8"/>
+                        <path d="M12,19.5 L86,19.5 L84,21 L14,21 Z" fill="${dk}" opacity=".4"/>
+                        ${oarRow(16, 83, 17.5, 9, 'top')}
+                        ${oarRow(16, 83, 34, 9, 'bottom')}
+                        <rect x="45" y="4" width="1.5" height="15.5" fill="${wd}" rx=".5"/>
+                        <path d="M46.5,5 L56,5 L56,13 L46.5,14 Z" fill="url(#s-${uid})" stroke="${ac}" stroke-width=".3" opacity=".85"/>
+                        <path d="M51,5 L51,13" stroke="${ac}" stroke-width=".25" opacity=".3"/>
+                        <path d="M96,23 Q97,20 96,17 Q97,15 98,16 L98,20 Z" fill="${ac}" opacity=".35"/>
+                        <path d="M96,17 Q95,14 96,12 Q97,11 97,12" stroke="${ac}" stroke-width=".5" fill="none" opacity=".4"/>
+                        <path d="M97,12 L98,11 L96,12" fill="${ac}" opacity=".3"/>
+                        ${waterline}
+                        ${sunkDamage}
+                    </svg>`;
+                } else {
+                    return `<svg viewBox="0 0 100 50" preserveAspectRatio="none">
+                        <defs>
+                            <linearGradient id="h-${uid}" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="${h1}"/><stop offset="100%" stop-color="${h2}"/>
+                            </linearGradient>
+                            <linearGradient id="s-${uid}" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="${sl2}"/><stop offset="100%" stop-color="${sl}"/>
+                            </linearGradient>
+                        </defs>
+                        <path d="M3,28 Q6,22 12,20 L16,18 L84,18 Q91,19 95,24 L97,28 L93,34 Q50,39 7,34 Z" fill="url(#h-${uid})" stroke="${ac}" stroke-width=".8"/>
+                        <path d="M1,27 L3,28 L0,26.5" stroke="${ac}" stroke-width="1" fill="none"/>
+                        <path d="M0,26.5 L-2,26" stroke="${ac}" stroke-width="1.5" stroke-linecap="round"/>
+                        <path d="M14,20 L84,20 L82,22 L16,22 Z" fill="${dk}" opacity=".4"/>
+                        ${oarRow(18, 82, 18, 9, 'top')}
+                        ${oarRow(18, 82, 34, 9, 'bottom')}
+                        <rect x="46" y="5" width="1.5" height="15" fill="${wd}" rx=".5"/>
+                        <path d="M47.5,6 L57,6 L57,14 L47.5,15 Z" fill="url(#s-${uid})" stroke="${ac}" stroke-width=".3" opacity=".85"/>
+                        <path d="M52,6 L52,14" stroke="${ac}" stroke-width=".25" opacity=".3"/>
+                        <path d="M95,24 Q96,21 95,18" stroke="${ac}" stroke-width=".5" fill="none" opacity=".35"/>
+                        ${waterline}
+                        ${sunkDamage}
+                    </svg>`;
+                }
+            })(),
 
-            bireme: `<svg viewBox="0 0 100 50" preserveAspectRatio="none">
-                <defs><linearGradient id="hull-bi-${isGreece?'g':'r'}${isSunk?'s':''}" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stop-color="${c1}"/><stop offset="100%" stop-color="${c2}"/>
-                </linearGradient></defs>
-                <path d="M5,28 Q12,18 22,16 L78,16 Q88,18 95,28 L90,33 Q50,38 10,33 Z" fill="url(#hull-bi-${isGreece?'g':'r'}${isSunk?'s':''})"
-                      stroke="${accent}" stroke-width="1"/>
-                <rect x="38" y="6" width="2" height="19" fill="${accent}" rx="1"/>
-                <rect x="60" y="6" width="2" height="19" fill="${accent}" rx="1"/>
-                <rect x="31" y="5" width="16" height="2" fill="${accent}" opacity=".7" rx="1"/>
-                <rect x="53" y="5" width="16" height="2" fill="${accent}" opacity=".7" rx="1"/>
-                <path d="M2,26 L5,28" stroke="${accent}" stroke-width="1.5"/>
-                <path d="M10,33 Q50,39 90,33 L88,36 Q50,42 12,36 Z" fill="${c2}" opacity=".5"/>
-                ${sunkCracks}
-            </svg>`,
+            bireme: (() => {
+                if (isGreece) {
+                    return `<svg viewBox="0 0 100 50" preserveAspectRatio="none">
+                        <defs>
+                            <linearGradient id="h-${uid}" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="${h1}"/><stop offset="100%" stop-color="${h2}"/>
+                            </linearGradient>
+                            <linearGradient id="s-${uid}" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="${sl2}"/><stop offset="100%" stop-color="${sl}"/>
+                            </linearGradient>
+                        </defs>
+                        <path d="M3,27 Q6,21 13,19 L17,17.5 L83,17.5 Q90,18.5 94,23 L96,27 L93,33 Q50,38 7,33 Z" fill="url(#h-${uid})" stroke="${ac}" stroke-width=".8"/>
+                        <path d="M1,26 L3,27 L-1,25.5" stroke="${ac}" stroke-width="1" fill="none"/>
+                        <path d="M-1,25.5 L-3,25" stroke="${ac}" stroke-width="1.3" stroke-linecap="round"/>
+                        <ellipse cx="7" cy="24.5" rx="1.6" ry="1.3" fill="none" stroke="${ac}" stroke-width=".6" opacity=".7"/>
+                        <circle cx="7" cy="24.5" r=".4" fill="${ac}" opacity=".7"/>
+                        <path d="M15,19.5 L83,19.5 L81,21 L17,21 Z" fill="${dk}" opacity=".4"/>
+                        ${oarRow(20, 80, 17.5, 8, 'top')}
+                        ${oarRow(20, 80, 33, 8, 'bottom')}
+                        <rect x="46" y="5" width="1.3" height="14.5" fill="${wd}" rx=".5"/>
+                        <path d="M47.3,6 L56,6 L56,13 L47.3,14 Z" fill="url(#s-${uid})" stroke="${ac}" stroke-width=".3" opacity=".8"/>
+                        <path d="M94,23 Q95,20 94,17 Q95,15 96,16 L96,20 Z" fill="${ac}" opacity=".3"/>
+                        <path d="M94,17 Q93,14 94,12" stroke="${ac}" stroke-width=".5" fill="none" opacity=".35"/>
+                        <path d="M8,37 Q50,40 92,37 L90,39 Q50,42 10,39 Z" fill="${h2}" opacity=".4"/>
+                        ${sunkDamage}
+                    </svg>`;
+                } else {
+                    return `<svg viewBox="0 0 100 50" preserveAspectRatio="none">
+                        <defs>
+                            <linearGradient id="h-${uid}" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="${h1}"/><stop offset="100%" stop-color="${h2}"/>
+                            </linearGradient>
+                            <linearGradient id="s-${uid}" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="${sl2}"/><stop offset="100%" stop-color="${sl}"/>
+                            </linearGradient>
+                        </defs>
+                        <path d="M4,28 Q7,22 14,20 L18,18 L82,18 Q89,19 93,24 L95,28 L92,34 Q50,38 8,34 Z" fill="url(#h-${uid})" stroke="${ac}" stroke-width=".8"/>
+                        <path d="M2,27 L4,28 L1,26.5" stroke="${ac}" stroke-width="1" fill="none"/>
+                        <path d="M1,26.5 L-1,26" stroke="${ac}" stroke-width="1.5" stroke-linecap="round"/>
+                        <path d="M16,20 L82,20 L80,22 L18,22 Z" fill="${dk}" opacity=".4"/>
+                        ${oarRow(20, 80, 18, 8, 'top')}
+                        ${oarRow(20, 80, 34, 8, 'bottom')}
+                        <rect x="46" y="5" width="1.5" height="15" fill="${wd}" rx=".5"/>
+                        <path d="M47.5,6 L56,6 L56,14 L47.5,15 Z" fill="url(#s-${uid})" stroke="${ac}" stroke-width=".3" opacity=".8"/>
+                        <path d="M93,24 Q94,21 93,18" stroke="${ac}" stroke-width=".5" fill="none" opacity=".3"/>
+                        <path d="M8,37 Q50,40 92,37 L90,39 Q50,42 10,39 Z" fill="${h2}" opacity=".4"/>
+                        ${sunkDamage}
+                    </svg>`;
+                }
+            })(),
 
-            scout_galley: `<svg viewBox="0 0 100 50" preserveAspectRatio="none">
-                <defs><linearGradient id="hull-sg-${isGreece?'g':'r'}${isSunk?'s':''}" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stop-color="${c1}"/><stop offset="100%" stop-color="${c2}"/>
-                </linearGradient></defs>
-                <path d="M6,28 Q15,18 25,16 L75,16 Q85,18 94,28 L88,33 Q50,38 12,33 Z" fill="url(#hull-sg-${isGreece?'g':'r'}${isSunk?'s':''})"
-                      stroke="${accent}" stroke-width="1"/>
-                <rect x="48" y="6" width="2" height="19" fill="${accent}" rx="1"/>
-                <rect x="40" y="5" width="18" height="2" fill="${accent}" opacity=".7" rx="1"/>
-                <path d="M3,26 L6,28" stroke="${accent}" stroke-width="1.5"/>
-                <path d="M12,33 Q50,39 88,33 L86,36 Q50,42 14,36 Z" fill="${c2}" opacity=".5"/>
-                ${sunkCracks}
-            </svg>`
+            scout_galley: (() => {
+                if (isGreece) {
+                    return `<svg viewBox="0 0 100 50" preserveAspectRatio="none">
+                        <defs>
+                            <linearGradient id="h-${uid}" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="${h1}"/><stop offset="100%" stop-color="${h2}"/>
+                            </linearGradient>
+                            <linearGradient id="s-${uid}" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="${sl2}"/><stop offset="100%" stop-color="${sl}"/>
+                            </linearGradient>
+                        </defs>
+                        <path d="M4,27 Q8,21 16,19 L20,18 L80,18 Q88,19 93,23 L96,27 L92,33 Q50,37 8,33 Z" fill="url(#h-${uid})" stroke="${ac}" stroke-width=".7"/>
+                        <path d="M2,26 L4,27 L0,25.5" stroke="${ac}" stroke-width=".8" fill="none"/>
+                        <path d="M0,25.5 L-2,25" stroke="${ac}" stroke-width="1.2" stroke-linecap="round"/>
+                        <ellipse cx="9" cy="24.5" rx="1.4" ry="1.1" fill="none" stroke="${ac}" stroke-width=".5" opacity=".6"/>
+                        <path d="M18,20 L80,20 L78,21.5 L20,21.5 Z" fill="${dk}" opacity=".35"/>
+                        ${oarRow(22, 78, 18, 6, 'top')}
+                        ${oarRow(22, 78, 33, 6, 'bottom')}
+                        <rect x="48" y="6" width="1.2" height="14" fill="${wd}" rx=".4"/>
+                        <path d="M49.2,7 L57,7 L57,13 L49.2,14 Z" fill="url(#s-${uid})" stroke="${ac}" stroke-width=".3" opacity=".75"/>
+                        <path d="M93,23 Q94,20 93,18" stroke="${ac}" stroke-width=".4" fill="none" opacity=".3"/>
+                        <path d="M8,36 Q50,39 92,36 L90,38 Q50,41 10,38 Z" fill="${h2}" opacity=".35"/>
+                        ${sunkDamage}
+                    </svg>`;
+                } else {
+                    return `<svg viewBox="0 0 100 50" preserveAspectRatio="none">
+                        <defs>
+                            <linearGradient id="h-${uid}" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="${h1}"/><stop offset="100%" stop-color="${h2}"/>
+                            </linearGradient>
+                            <linearGradient id="s-${uid}" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="${sl2}"/><stop offset="100%" stop-color="${sl}"/>
+                            </linearGradient>
+                        </defs>
+                        <path d="M5,28 Q9,22 17,20 L21,18.5 L79,18.5 Q87,19.5 92,24 L95,28 L91,33 Q50,37 9,33 Z" fill="url(#h-${uid})" stroke="${ac}" stroke-width=".7"/>
+                        <path d="M3,27 L5,28 L2,26.5" stroke="${ac}" stroke-width=".8" fill="none"/>
+                        <path d="M2,26.5 L0,26" stroke="${ac}" stroke-width="1.3" stroke-linecap="round"/>
+                        <path d="M19,20.5 L79,20.5 L77,22 L21,22 Z" fill="${dk}" opacity=".35"/>
+                        ${oarRow(23, 77, 18.5, 6, 'top')}
+                        ${oarRow(23, 77, 33, 6, 'bottom')}
+                        <rect x="48" y="6" width="1.3" height="14.5" fill="${wd}" rx=".4"/>
+                        <path d="M49.3,7 L57,7 L57,14 L49.3,14.5 Z" fill="url(#s-${uid})" stroke="${ac}" stroke-width=".3" opacity=".75"/>
+                        <path d="M92,24 Q93,21 92,19" stroke="${ac}" stroke-width=".4" fill="none" opacity=".3"/>
+                        <path d="M9,36 Q50,39 91,36 L89,38 Q50,41 11,38 Z" fill="${h2}" opacity=".35"/>
+                        ${sunkDamage}
+                    </svg>`;
+                }
+            })()
         };
 
         return svgs[shipId] || svgs.scout_galley;
