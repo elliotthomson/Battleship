@@ -161,24 +161,8 @@ const SoundEngine = {
 
     warHorn() {
         if (this.muted) return;
-        const ctx = this._ensureCtx();
-        const t = ctx.currentTime;
-        const osc = ctx.createOscillator();
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(120, t);
-        osc.frequency.linearRampToValueAtTime(180, t + 0.4);
-        osc.frequency.linearRampToValueAtTime(160, t + 1.0);
-        const g = ctx.createGain();
-        g.gain.setValueAtTime(0.001, t);
-        g.gain.linearRampToValueAtTime(0.12, t + 0.3);
-        g.gain.linearRampToValueAtTime(0.1, t + 0.8);
-        g.gain.exponentialRampToValueAtTime(0.001, t + 1.2);
-        const lpf = ctx.createBiquadFilter();
-        lpf.type = 'lowpass';
-        lpf.frequency.value = 400;
-        osc.connect(lpf).connect(g).connect(ctx.destination);
-        osc.start(t);
-        osc.stop(t + 1.2);
+        const audio = new Audio('assets/war-horn.wav');
+        audio.play().catch(() => {});
     },
 
     place() {
