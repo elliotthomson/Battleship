@@ -15,14 +15,14 @@
   resize();
 
   const WAVE_LAYERS = [
-    { y: 0.28, amp: 55, len: 700, speed: 0.18, bobAmp: 12, bobSpeed: 0.08, color: [8, 16, 38] },
-    { y: 0.34, amp: 48, len: 580, speed: 0.22, bobAmp: 15, bobSpeed: 0.06, color: [10, 22, 48] },
-    { y: 0.40, amp: 42, len: 500, speed: 0.28, bobAmp: 10, bobSpeed: 0.10, color: [12, 28, 56] },
-    { y: 0.47, amp: 50, len: 620, speed: 0.20, bobAmp: 18, bobSpeed: 0.05, color: [14, 35, 65] },
-    { y: 0.54, amp: 38, len: 440, speed: 0.32, bobAmp: 8,  bobSpeed: 0.12, color: [16, 42, 75] },
-    { y: 0.62, amp: 45, len: 520, speed: 0.25, bobAmp: 14, bobSpeed: 0.07, color: [18, 50, 85] },
-    { y: 0.72, amp: 35, len: 380, speed: 0.35, bobAmp: 6,  bobSpeed: 0.14, color: [12, 38, 68] },
-    { y: 0.82, amp: 28, len: 460, speed: 0.30, bobAmp: 10, bobSpeed: 0.09, color: [8, 28, 52] },
+    { y: 0.10, amp: 18, len: 900, speed: 0.10, bobAmp: 5, bobSpeed: 0.04, color: [8, 16, 38] },
+    { y: 0.22, amp: 22, len: 750, speed: 0.13, bobAmp: 6, bobSpeed: 0.05, color: [10, 22, 48] },
+    { y: 0.35, amp: 20, len: 650, speed: 0.16, bobAmp: 5, bobSpeed: 0.06, color: [12, 28, 56] },
+    { y: 0.48, amp: 24, len: 800, speed: 0.12, bobAmp: 7, bobSpeed: 0.04, color: [14, 35, 65] },
+    { y: 0.60, amp: 18, len: 600, speed: 0.18, bobAmp: 4, bobSpeed: 0.07, color: [16, 42, 75] },
+    { y: 0.72, amp: 22, len: 700, speed: 0.14, bobAmp: 6, bobSpeed: 0.05, color: [18, 50, 85] },
+    { y: 0.84, amp: 16, len: 550, speed: 0.20, bobAmp: 4, bobSpeed: 0.08, color: [12, 38, 68] },
+    { y: 0.94, amp: 14, len: 650, speed: 0.16, bobAmp: 5, bobSpeed: 0.06, color: [8, 28, 52] },
   ];
 
   function waveY(x, time, layer) {
@@ -68,26 +68,26 @@
     var foamLayer = WAVE_LAYERS[2];
     var baseY = height * foamLayer.y;
 
-    for (var x = 0; x <= width; x += 6) {
+    for (var x = 0; x <= width; x += 8) {
       var wy = baseY + waveY(x, time, foamLayer);
       var slope = waveY(x + 3, time, foamLayer) - waveY(x - 3, time, foamLayer);
-      if (slope < -1.2) {
-        var foamAlpha = Math.min(Math.abs(slope) * 0.04, 0.12);
+      if (slope < -1.0) {
+        var foamAlpha = Math.min(Math.abs(slope) * 0.02, 0.06);
         ctx.fillStyle = 'rgba(180, 210, 240, ' + foamAlpha + ')';
-        ctx.fillRect(x - 1, wy - 2, 3, 2);
+        ctx.fillRect(x - 1, wy - 1, 2, 1);
       }
     }
 
     var foamLayer2 = WAVE_LAYERS[5];
     var baseY2 = height * foamLayer2.y;
 
-    for (var x3 = 0; x3 <= width; x3 += 6) {
+    for (var x3 = 0; x3 <= width; x3 += 8) {
       var wy2 = baseY2 + waveY(x3, time, foamLayer2);
       var slope2 = waveY(x3 + 3, time, foamLayer2) - waveY(x3 - 3, time, foamLayer2);
-      if (slope2 < -1.0) {
-        var foamAlpha2 = Math.min(Math.abs(slope2) * 0.03, 0.1);
+      if (slope2 < -0.8) {
+        var foamAlpha2 = Math.min(Math.abs(slope2) * 0.015, 0.05);
         ctx.fillStyle = 'rgba(160, 200, 230, ' + foamAlpha2 + ')';
-        ctx.fillRect(x3 - 1, wy2 - 2, 3, 2);
+        ctx.fillRect(x3 - 1, wy2 - 1, 2, 1);
       }
     }
   }
@@ -107,7 +107,7 @@
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, width, height);
 
-    var alphas = [0.92, 0.88, 0.84, 0.80, 0.76, 0.72, 0.85, 0.90];
+    var alphas = [0.55, 0.50, 0.48, 0.45, 0.42, 0.40, 0.50, 0.55];
     for (var i = 0; i < WAVE_LAYERS.length; i++) {
       drawWave(WAVE_LAYERS[i], time, alphas[i]);
     }
