@@ -4,19 +4,20 @@
 
 body {
     font-family: 'Philosopher', 'Georgia', serif;
-    background:
-        url('img/ocean-bg.svg') repeat,
-        linear-gradient(180deg, #0a0e27 0%, #16213e 25%, #1a3a5c 50%, #0f3460 75%, #0a1929 100%);
-    background-size: 100% 400%;
-    animation: oceanWave 20s ease infinite;
+    background: #060c1f;
     min-height: 100vh;
     color: #e0d6c2;
     overflow-x: hidden;
 }
 
-@keyframes oceanWave {
-    0%, 100% { background-position: 0% 0%; }
-    50% { background-position: 0% 100%; }
+#ocean-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    pointer-events: none;
 }
 
 /* ── Screens ── */
