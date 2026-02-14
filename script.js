@@ -46,58 +46,34 @@ const SoundEngine = {
         src.stop(t + 0.25);
     },
 
+    _hitBuffer: null,
+
+    _loadHitSound() {
+        if (this._hitBuffer) return Promise.resolve();
+        return fetch('assets/big-boom.ogg')
+            .then(r => r.arrayBuffer())
+            .then(buf => this._ensureCtx().decodeAudioData(buf))
+            .then(decoded => { this._hitBuffer = decoded; });
+    },
+
     hit() {
         if (this.muted) return;
         const ctx = this._ensureCtx();
-        const t = ctx.currentTime;
-        const dur = 0.6;
-
-        const freqs = [320, 400, 520, 640, 800];
-        freqs.forEach((freq, i) => {
-            const osc = ctx.createOscillator();
-            osc.type = 'sine';
-            const detune = (Math.random() - 0.5) * 40;
-            osc.frequency.setValueAtTime(freq + detune, t);
-            osc.frequency.linearRampToValueAtTime(freq * 1.15 + detune, t + dur * 0.3);
-            osc.frequency.linearRampToValueAtTime(freq + detune, t + dur);
-
-            const vibrato = ctx.createOscillator();
-            vibrato.frequency.value = 4 + Math.random() * 3;
-            const vibGain = ctx.createGain();
-            vibGain.gain.value = 8 + Math.random() * 6;
-            vibrato.connect(vibGain).connect(osc.frequency);
-            vibrato.start(t);
-            vibrato.stop(t + dur);
-
-            const g = ctx.createGain();
-            const vol = 0.03 + Math.random() * 0.015;
-            const offset = i * 0.02;
-            g.gain.setValueAtTime(0.001, t);
-            g.gain.linearRampToValueAtTime(vol, t + 0.05 + offset);
-            g.gain.linearRampToValueAtTime(vol * 0.7, t + dur * 0.6);
-            g.gain.exponentialRampToValueAtTime(0.001, t + dur);
-
-            osc.connect(g).connect(ctx.destination);
-            osc.start(t + offset);
-            osc.stop(t + dur);
-        });
-
-        const { src } = this._noise(dur, 0.04);
-        const bpf = ctx.createBiquadFilter();
-        bpf.type = 'bandpass';
-        bpf.frequency.setValueAtTime(2000, t);
-        bpf.frequency.linearRampToValueAtTime(3000, t + dur * 0.3);
-        bpf.frequency.linearRampToValueAtTime(1500, t + dur);
-        bpf.Q.value = 0.5;
-        src.disconnect();
-        const ng = ctx.createGain();
-        ng.gain.setValueAtTime(0.001, t);
-        ng.gain.linearRampToValueAtTime(0.05, t + 0.05);
-        ng.gain.linearRampToValueAtTime(0.03, t + dur * 0.6);
-        ng.gain.exponentialRampToValueAtTime(0.001, t + dur);
-        src.connect(bpf).connect(ng).connect(ctx.destination);
-        src.start(t);
-        src.stop(t + dur);
+        if (this._hitBuffer) {
+            const src = ctx.createBufferSource();
+            src.buffer = this._hitBuffer;
+            src.connect(ctx.destination);
+            src.start(ctx.currentTime);
+        } else {
+            this._loadHitSound().then(() => {
+                if (this._hitBuffer) {
+                    const src = ctx.createBufferSource();
+                    src.buffer = this._hitBuffer;
+                    src.connect(ctx.destination);
+                    src.start(ctx.currentTime);
+                }
+            });
+        }
     },
 
     _missBuffer: null,
@@ -1107,7 +1083,6 @@ class NavalWar {
             this.romeHitCount++;
             this.greeceData[r][c] = 'hit';
             this._refreshCell(this.greeceBoardEl, this.greeceData, r, c, true);
-            SoundEngine.hit();
             this._spawnImpactFlash(this.greeceBoardEl, r, c);
             this._log('Direct hit!', 'hit-msg');
             this.consecutiveMisses = 0;
@@ -1118,6 +1093,8 @@ class NavalWar {
                 SoundEngine.sink();
                 this._log(`You sank the ${sunkShip.name}!`, 'sunk-msg');
                 this._showSunkAnimation(sunkShip);
+            } else {
+                SoundEngine.hit();
             }
             this._updateCounts();
             if (this._checkVictory()) return;
@@ -1177,7 +1154,6 @@ class NavalWar {
             this.greeceHitCount++;
             this.romeData[r][c] = 'hit';
             this._refreshCell(this.romeBoardEl, this.romeData, r, c, false);
-            SoundEngine.hit();
             this._spawnImpactFlash(this.romeBoardEl, r, c);
             this._log('Greece scores a direct hit!', 'hit-msg');
             this.consecutiveMisses = 0;
@@ -1191,6 +1167,8 @@ class NavalWar {
                 this._log(`Greece sank your ${sunkShip.name}!`, 'sunk-msg');
                 this._aiRegisterSunk(sunkShip);
                 this._showSunkAnimation(sunkShip);
+            } else {
+                SoundEngine.hit();
             }
             this._updateCounts();
             if (this._checkVictory()) return;
