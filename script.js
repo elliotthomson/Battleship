@@ -170,11 +170,6 @@ class NavalWar {
 
         this.difficulty = 'easy'; // easy | medium | hard | expert
 
-        // ── DOM refs (splash) ──
-        this.splashScreen    = document.getElementById('splash-screen');
-        this.splashAudio     = document.getElementById('splash-audio');
-        this.splashContinue  = document.getElementById('splash-continue-btn');
-
         // ── DOM refs (setup) ──
         this.setupScreen  = document.getElementById('setup-screen');
         this.battleScreen = document.getElementById('battle-screen');
@@ -233,9 +228,11 @@ class NavalWar {
 
         this.playerMissCount = 0;
 
+        this.saluteAudio = document.getElementById('salute-audio');
+
         this._bindSetup();
         this._bindBattle();
-        this._showSplash();
+        this._showSetup();
     }
 
     _createMuteBtn() {
@@ -292,28 +289,7 @@ class NavalWar {
         this.setupBoardEl.addEventListener('click',     (e) => this._setupPlace(e));
     }
 
-    _showSplash() {
-        this.splashScreen.classList.remove('hidden');
-        this.setupScreen.classList.add('hidden');
-        this.battleScreen.classList.add('hidden');
-
-        let transitioned = false;
-        const goToSetup = () => {
-            if (transitioned) return;
-            transitioned = true;
-            if (this.splashAudio) this.splashAudio.pause();
-            this.splashScreen.classList.add('hidden');
-            this._showSetup();
-        };
-
-        this.splashContinue.addEventListener('click', goToSetup, { once: true });
-        this.splashAudio.addEventListener('ended', goToSetup, { once: true });
-
-        this.splashAudio.play().catch(() => {});
-    }
-
     _showSetup() {
-        this.splashScreen.classList.add('hidden');
         this.setupScreen.classList.remove('hidden');
         this.battleScreen.classList.add('hidden');
 
@@ -471,6 +447,8 @@ class NavalWar {
         this.battleScreen.classList.remove('hidden');
 
         this._startBattle();
+
+        this._playSaluteOverlay();
     }
 
     _playWarTransition() {
@@ -488,6 +466,39 @@ class NavalWar {
                 overlay.remove();
                 resolve();
             }, 1800);
+        });
+    }
+
+    _playSaluteOverlay() {
+        return new Promise(resolve => {
+            const boards = document.getElementById('game-boards');
+            const overlay = document.createElement('div');
+            overlay.className = 'salute-overlay';
+            overlay.innerHTML =
+                '<img class="salute-gif" src="assets/roman-army.gif" alt="Roman army raising weapons">' +
+                '<p class="salute-text">"Ave Imperator, morituri te salutant!"</p>';
+            boards.style.position = 'relative';
+            boards.appendChild(overlay);
+
+            if (this.saluteAudio) {
+                this.saluteAudio.currentTime = 0;
+                this.saluteAudio.play().catch(() => {});
+            }
+
+            let dismissed = false;
+            const dismiss = () => {
+                if (dismissed) return;
+                dismissed = true;
+                if (this.saluteAudio) this.saluteAudio.pause();
+                overlay.classList.add('salute-fade-out');
+                setTimeout(() => overlay.remove(), 500);
+                resolve();
+            };
+
+            if (this.saluteAudio) {
+                this.saluteAudio.addEventListener('ended', dismiss, { once: true });
+            }
+            setTimeout(dismiss, 5000);
         });
     }
 

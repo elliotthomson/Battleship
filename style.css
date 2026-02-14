@@ -16,102 +16,48 @@ body {
 .screen { animation: fadeIn .35s ease; }
 .screen.hidden { display: none !important; }
 
-/* ── Splash Screen ── */
-#splash-screen {
+/* ── Salute Overlay (over battle boards) ── */
+.salute-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 100;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 100vh;
-}
-
-.splash-container {
-    text-align: center;
-    max-width: 700px;
-    padding: 40px 30px;
-    background: linear-gradient(135deg, rgba(139,0,0,.12), rgba(26,58,107,.12));
-    border: 1px solid rgba(212,175,55,.3);
-    border-radius: 16px;
-    animation: fadeIn .6s ease;
-}
-
-.splash-title {
-    font-family: 'Cinzel', serif;
-    font-weight: 900;
-    font-size: 3em;
-    background: linear-gradient(135deg, #d4af37, #f5e6a3, #d4af37);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    letter-spacing: 4px;
-    margin-bottom: 4px;
-}
-
-.splash-subtitle {
-    font-family: 'Cinzel', serif;
-    font-weight: 600;
-    font-size: 1.3em;
-    color: #c0b896;
-    letter-spacing: 3px;
-    margin-bottom: 24px;
-}
-
-.splash-image-wrapper {
-    margin: 0 auto 24px;
-    max-width: 560px;
+    background: rgba(0,0,0,.85);
     border-radius: 12px;
+    animation: fadeIn .4s ease;
     overflow: hidden;
-    border: 1px solid rgba(212,175,55,.2);
-    box-shadow: 0 4px 30px rgba(0,0,0,.4);
 }
 
-.splash-image {
-    display: block;
+.salute-overlay.salute-fade-out {
+    animation: salute-out .5s ease forwards;
+}
+
+@keyframes salute-out {
+    0%   { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+.salute-gif {
     width: 100%;
     height: auto;
+    max-height: 80%;
+    object-fit: cover;
+    border-radius: 8px;
 }
 
-.splash-quote {
+.salute-text {
     font-family: 'Cinzel', serif;
     font-weight: 700;
-    font-size: 1.15em;
+    font-size: 1.1em;
     color: #d4af37;
     letter-spacing: 1.5px;
-    margin-bottom: 4px;
     font-style: italic;
-}
-
-.splash-quote-translation {
-    font-family: 'Philosopher', serif;
-    font-size: .95em;
-    color: #c0b896;
-    margin-bottom: 28px;
-    letter-spacing: 1px;
-}
-
-.splash-continue-btn {
-    font-family: 'Cinzel', serif;
-    font-weight: 700;
-    font-size: 1.15em;
-    padding: 14px 40px;
-    border: 2px solid rgba(212,175,55,.4);
-    border-radius: 10px;
-    cursor: pointer;
-    color: #d4af37;
-    background: linear-gradient(135deg, rgba(212,175,55,.08), rgba(178,34,34,.08));
-    transition: all .3s;
-    letter-spacing: 1px;
-}
-
-.splash-continue-btn:hover {
-    background: linear-gradient(135deg, rgba(212,175,55,.18), rgba(178,34,34,.15));
-    box-shadow: 0 0 20px rgba(212,175,55,.15);
-    transform: translateY(-2px);
-}
-
-@media (max-width: 680px) {
-    .splash-title { font-size: 2em; }
-    .splash-subtitle { font-size: 1em; }
-    .splash-container { padding: 24px 16px; }
+    text-align: center;
+    padding: 10px 16px 6px;
+    text-shadow: 0 2px 8px rgba(0,0,0,.6);
 }
 
 /* ── Battle Start Sequence ── */
