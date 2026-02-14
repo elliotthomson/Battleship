@@ -1129,6 +1129,7 @@ class NavalWar {
                 this._markSunk(this.greeceBoardEl, sunkShip);
                 SoundEngine.sink();
                 this._log(`You sank the ${sunkShip.name}!`, 'sunk-msg');
+                this._showSunkAnimation(sunkShip);
             }
             this._updateCounts();
             if (this._checkVictory()) return;
@@ -1210,6 +1211,7 @@ class NavalWar {
                 SoundEngine.sink();
                 this._log(`Greece sank your ${sunkShip.name}!`, 'sunk-msg');
                 this._aiRegisterSunk(sunkShip);
+                this._showSunkAnimation(sunkShip);
             }
             this._updateCounts();
             if (this._checkVictory()) return;
@@ -1458,6 +1460,35 @@ class NavalWar {
         };
 
         requestAnimationFrame(tick);
+    }
+
+    _showSunkAnimation(ship) {
+        document.querySelectorAll('.sunk-overlay').forEach(el => el.remove());
+
+        const overlay = document.createElement('div');
+        overlay.className = 'sunk-overlay';
+
+        let bubbleHTML = '';
+        for (let i = 0; i < 10; i++) {
+            const left = 20 + Math.random() * 60;
+            const bottom = -10 + Math.random() * 20;
+            const delay = Math.random() * 1.2;
+            const size = 4 + Math.random() * 5;
+            bubbleHTML += `<div class="sunk-bubble-particle" style="left:${left}%;bottom:${bottom}%;animation-delay:${delay}s;width:${size}px;height:${size}px;"></div>`;
+        }
+
+        overlay.innerHTML = `
+            <div class="sunk-overlay-bg"></div>
+            <div class="sunk-overlay-content">
+                <div class="sunk-ship-graphic">\u2693</div>
+                <div class="sunk-ship-name">${ship.name}</div>
+                <div class="sunk-ship-subtitle">has been sunk!</div>
+                <div class="sunk-bubbles">${bubbleHTML}</div>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+
+        setTimeout(() => overlay.remove(), 2700);
     }
 
     /* ── Visual Effects ── */
