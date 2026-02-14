@@ -1267,6 +1267,110 @@ main {
     100% { opacity: 0; transform: scale(0.9) translateY(-20px); }
 }
 
+/* ── Ship Sunk Animation Overlay ── */
+.sunk-overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 95;
+    pointer-events: none;
+    animation: fadeIn .3s ease;
+}
+
+.sunk-overlay-bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, rgba(0,40,80,.6) 0%, rgba(0,0,0,.5) 100%);
+    animation: sunk-bg-fade 2.6s ease forwards;
+}
+
+@keyframes sunk-bg-fade {
+    0%   { opacity: 0; }
+    15%  { opacity: 1; }
+    70%  { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+.sunk-overlay-content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    animation: sunk-content-anim 2.6s ease forwards;
+}
+
+@keyframes sunk-content-anim {
+    0%   { opacity: 0; transform: translateY(10px) scale(0.9); }
+    12%  { opacity: 1; transform: translateY(0) scale(1); }
+    65%  { opacity: 1; transform: translateY(0) scale(1); }
+    100% { opacity: 0; transform: translateY(40px) scale(0.85); }
+}
+
+.sunk-ship-graphic {
+    font-size: 3.5em;
+    margin-bottom: 8px;
+    animation: sunk-ship-sink 2.6s ease forwards;
+    filter: drop-shadow(0 0 20px rgba(0,80,140,.6));
+}
+
+@keyframes sunk-ship-sink {
+    0%   { transform: translateY(-10px) rotate(0deg); opacity: 0; }
+    12%  { transform: translateY(0) rotate(0deg); opacity: 1; }
+    40%  { transform: translateY(0) rotate(-5deg); opacity: 1; }
+    65%  { transform: translateY(10px) rotate(-12deg); opacity: .9; }
+    100% { transform: translateY(60px) rotate(-20deg); opacity: 0; }
+}
+
+.sunk-ship-name {
+    font-family: 'Cinzel', serif;
+    font-weight: 900;
+    font-size: 1.6em;
+    color: #d4af37;
+    letter-spacing: 3px;
+    text-shadow: 0 2px 12px rgba(0,0,0,.6);
+    margin-bottom: 4px;
+    animation: sunk-text-fade 2.6s ease forwards;
+}
+
+.sunk-ship-subtitle {
+    font-family: 'Philosopher', serif;
+    font-size: 1em;
+    color: #a0c4e8;
+    letter-spacing: 1.5px;
+    text-shadow: 0 1px 6px rgba(0,0,0,.5);
+    animation: sunk-text-fade 2.6s ease forwards;
+}
+
+@keyframes sunk-text-fade {
+    0%   { opacity: 0; transform: translateY(6px); }
+    15%  { opacity: 1; transform: translateY(0); }
+    65%  { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(10px); }
+}
+
+.sunk-bubbles {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.sunk-bubble-particle {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(120,180,220,.5);
+    animation: sunk-bubble-rise 2.2s ease-out forwards;
+}
+
+@keyframes sunk-bubble-rise {
+    0%   { opacity: 0; transform: translateY(0) scale(1); }
+    20%  { opacity: .7; }
+    100% { opacity: 0; transform: translateY(-120px) scale(0.3); }
+}
+
 @keyframes wave-drift-rome {
     from { background-position: 0 0; }
     to { background-position: 200px 15px; }
