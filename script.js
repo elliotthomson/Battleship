@@ -170,6 +170,11 @@ class NavalWar {
 
         this.difficulty = 'easy'; // easy | medium | hard | expert
 
+        // ── DOM refs (splash) ──
+        this.splashScreen    = document.getElementById('splash-screen');
+        this.splashAudio     = document.getElementById('splash-audio');
+        this.splashContinue  = document.getElementById('splash-continue-btn');
+
         // ── DOM refs (setup) ──
         this.setupScreen  = document.getElementById('setup-screen');
         this.battleScreen = document.getElementById('battle-screen');
@@ -230,7 +235,7 @@ class NavalWar {
 
         this._bindSetup();
         this._bindBattle();
-        this._showSetup();
+        this._showSplash();
     }
 
     _createMuteBtn() {
@@ -287,7 +292,28 @@ class NavalWar {
         this.setupBoardEl.addEventListener('click',     (e) => this._setupPlace(e));
     }
 
+    _showSplash() {
+        this.splashScreen.classList.remove('hidden');
+        this.setupScreen.classList.add('hidden');
+        this.battleScreen.classList.add('hidden');
+
+        let transitioned = false;
+        const goToSetup = () => {
+            if (transitioned) return;
+            transitioned = true;
+            if (this.splashAudio) this.splashAudio.pause();
+            this.splashScreen.classList.add('hidden');
+            this._showSetup();
+        };
+
+        this.splashContinue.addEventListener('click', goToSetup, { once: true });
+        this.splashAudio.addEventListener('ended', goToSetup, { once: true });
+
+        this.splashAudio.play().catch(() => {});
+    }
+
     _showSetup() {
+        this.splashScreen.classList.add('hidden');
         this.setupScreen.classList.remove('hidden');
         this.battleScreen.classList.add('hidden');
 
