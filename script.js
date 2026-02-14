@@ -50,10 +50,11 @@ const SoundEngine = {
 
     _loadHitSound() {
         if (this._hitBuffer) return Promise.resolve();
-        return fetch('assets/big-boom.ogg')
+        return fetch('assets/big-boom.wav')
             .then(r => r.arrayBuffer())
             .then(buf => this._ensureCtx().decodeAudioData(buf))
-            .then(decoded => { this._hitBuffer = decoded; });
+            .then(decoded => { this._hitBuffer = decoded; })
+            .catch(() => {});
     },
 
     hit() {
@@ -312,6 +313,9 @@ class NavalWar {
             transitioned = true;
             if (this.splashAudio) this.splashAudio.pause();
             this.splashScreen.classList.add('hidden');
+            SoundEngine._loadHitSound();
+            SoundEngine._loadMissSound();
+            SoundEngine._loadSinkSound();
             this._showSetup();
         };
 
