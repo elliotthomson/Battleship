@@ -250,6 +250,13 @@ class NavalWar {
        ══════════════════════════════════════════ */
 
     _bindSetup() {
+        // Help button toggle
+        const helpBtn = document.getElementById('help-btn');
+        const helpDropdown = document.getElementById('help-dropdown');
+        helpBtn.addEventListener('click', () => {
+            helpDropdown.classList.toggle('hidden');
+        });
+
         // Difficulty buttons
         document.querySelectorAll('.diff-btn').forEach(btn => {
             btn.addEventListener('click', () => {

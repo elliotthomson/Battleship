@@ -211,6 +211,100 @@ h1 {
     letter-spacing: 1px;
 }
 
+/* ── Help Button & Dropdown ── */
+.help-wrapper {
+    text-align: center;
+    margin-bottom: 14px;
+}
+
+.help-btn {
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
+    font-size: .9em;
+    padding: 8px 22px;
+    border: 2px solid rgba(70,130,180,.4);
+    border-radius: 8px;
+    cursor: pointer;
+    color: #a0c4e8;
+    background: linear-gradient(135deg, rgba(70,130,180,.12), rgba(36,113,163,.08));
+    transition: all .3s;
+    letter-spacing: 1px;
+}
+
+.help-btn:hover {
+    background: linear-gradient(135deg, rgba(70,130,180,.25), rgba(36,113,163,.18));
+    box-shadow: 0 0 14px rgba(70,130,180,.2);
+    transform: translateY(-1px);
+}
+
+.help-dropdown {
+    max-width: 520px;
+    margin: 12px auto 0;
+    text-align: left;
+    padding: 18px 22px;
+    border-radius: 10px;
+    background: linear-gradient(160deg, rgba(26,58,107,.35), rgba(15,52,96,.45));
+    border: 1px solid rgba(70,130,180,.3);
+    overflow: hidden;
+    max-height: 600px;
+    transition: max-height .4s ease, opacity .3s ease, padding .3s ease, margin .3s ease;
+    opacity: 1;
+}
+
+.help-dropdown.hidden {
+    max-height: 0;
+    opacity: 0;
+    padding: 0 22px;
+    margin-top: 0;
+    border-color: transparent;
+}
+
+.help-dropdown h3 {
+    font-family: 'Cinzel', serif;
+    color: #d4af37;
+    font-size: 1.05em;
+    margin-bottom: 12px;
+    text-align: center;
+    letter-spacing: 1px;
+}
+
+.help-section {
+    margin-bottom: 10px;
+}
+
+.help-section:last-child {
+    margin-bottom: 0;
+}
+
+.help-section h4 {
+    font-family: 'Cinzel', serif;
+    color: #e8a0a0;
+    font-size: .88em;
+    margin-bottom: 5px;
+    letter-spacing: .5px;
+}
+
+.help-section ul {
+    list-style: none;
+    padding-left: 12px;
+}
+
+.help-section ul li {
+    position: relative;
+    padding-left: 14px;
+    margin-bottom: 3px;
+    font-size: .85em;
+    color: #c0b896;
+    line-height: 1.5;
+}
+
+.help-section ul li::before {
+    content: '\25B8';
+    position: absolute;
+    left: 0;
+    color: #d4af37;
+}
+
 /* ── Difficulty Bar ── */
 .difficulty-bar {
     display: flex;
