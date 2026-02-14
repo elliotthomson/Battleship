@@ -146,21 +146,31 @@
                           marker-end="url(#arrowhead)" marker-start="url(#fl-r)"/>
                 </svg>
 
-                <!-- Game Boards -->
-                <div class="game-boards" id="game-boards">
-                    <div class="board-container rome-board-container">
-                        <div class="board-title-row">
-                            <img id="archer-rome" class="archer archer-rome" src="img/archer-rome.svg" alt="Rome Archer"/>
-                            <h3 class="board-title rome-title">Rome Waters</h3>
+                <!-- Game Boards + Battle Log wrapper -->
+                <div class="boards-and-log">
+                    <div class="game-boards" id="game-boards">
+                        <div class="board-container rome-board-container">
+                            <div class="board-title-row">
+                                <img id="archer-rome" class="archer archer-rome" src="img/archer-rome.svg" alt="Rome Archer"/>
+                                <h3 class="board-title rome-title">Rome Waters</h3>
+                            </div>
+                            <div class="board" id="rome-board"></div>
                         </div>
-                        <div class="board" id="rome-board"></div>
+                        <div class="board-container greece-board-container">
+                            <div class="board-title-row">
+                                <h3 class="board-title greece-title">Greek Waters</h3>
+                                <img id="archer-greece" class="archer archer-greece" src="img/archer-greece.svg" alt="Greece Archer"/>
+                            </div>
+                            <div class="board" id="greece-board"></div>
+                        </div>
                     </div>
-                    <div class="board-container greece-board-container">
-                        <div class="board-title-row">
-                            <h3 class="board-title greece-title">Greek Waters</h3>
-                            <img id="archer-greece" class="archer archer-greece" src="img/archer-greece.svg" alt="Greece Archer"/>
+
+                    <!-- Message Log -->
+                    <div class="message-log" id="message-log">
+                        <h4>Battle Log</h4>
+                        <div class="log-entries" id="log-entries">
+                            <p class="log-entry">The fleets are assembled. Rome strikes first!</p>
                         </div>
-                        <div class="board" id="greece-board"></div>
                     </div>
                 </div>
 
@@ -169,14 +179,6 @@
                     <button id="restart-btn" class="control-btn restart-btn">⚔️ Restart War</button>
                 </div>
             </main>
-
-            <!-- Message Log -->
-            <div class="message-log" id="message-log">
-                <h4>Battle Log</h4>
-                <div class="log-entries" id="log-entries">
-                    <p class="log-entry">The fleets are assembled. Rome strikes first!</p>
-                </div>
-            </div>
         </div>
     </div>
 

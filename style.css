@@ -278,7 +278,7 @@ body {
 }
 
 /* ── Container ── */
-.container { max-width: 1100px; margin: 0 auto; padding: 16px 20px; }
+.container { max-width: 1400px; margin: 0 auto; padding: 16px 20px; }
 
 /* ── Header ── */
 header {
@@ -631,6 +631,15 @@ main {
     0%   { opacity: 0; transform: scaleX(-1) scale(0.5) translateY(8px); }
     60%  { opacity: 1; transform: scaleX(-1) scale(1.08) translateY(-2px); }
     100% { opacity: 1; transform: scaleX(-1) scale(1) translateY(0); }
+}
+
+/* ── Boards + Log Wrapper ── */
+.boards-and-log {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 20px;
+    flex-wrap: wrap;
 }
 
 /* ── Game Boards ── */
@@ -1000,14 +1009,13 @@ main {
 
 /* ── Message Log ── */
 .message-log {
-    margin-top: 14px;
     background: rgba(0,0,0,.25);
     border: 1px solid rgba(212,175,55,.12);
     border-radius: 10px;
     padding: 12px 16px;
-    max-width: 700px;
-    margin-left: auto;
-    margin-right: auto;
+    width: 220px;
+    flex-shrink: 0;
+    align-self: stretch;
 }
 
 .message-log h4 {
@@ -1019,7 +1027,7 @@ main {
 }
 
 .log-entries {
-    max-height: 130px;
+    max-height: 400px;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
@@ -1160,6 +1168,21 @@ main {
 }
 
 /* ── Responsive ── */
+@media (max-width: 1100px) {
+    .boards-and-log {
+        flex-direction: column;
+        align-items: center;
+    }
+    .message-log {
+        width: 100%;
+        max-width: 700px;
+        margin-top: 14px;
+    }
+    .log-entries {
+        max-height: 130px;
+    }
+}
+
 @media (max-width: 860px) {
     .board {
         grid-template-columns: repeat(10, 30px);
