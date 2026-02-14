@@ -17,6 +17,44 @@
                 <p class="subtitle">Position your fleet, Commander.</p>
             </header>
 
+            <div class="help-wrapper">
+                <button id="help-btn" class="help-btn">Never Played - Click Here</button>
+                <div id="help-dropdown" class="help-dropdown hidden">
+                    <h3>How to Play</h3>
+                    <div class="help-section">
+                        <h4>1. Setup Phase</h4>
+                        <ul>
+                            <li>Select difficulty level (Easy, Medium, Hard, or Expert)</li>
+                            <li>Place your 5 Roman ships on the grid</li>
+                            <li>You can place ships manually or use the "🎲 Random" button for automatic placement</li>
+                        </ul>
+                    </div>
+                    <div class="help-section">
+                        <h4>2. Ship Information</h4>
+                        <ul>
+                            <li>Quinquereme (5 cells)</li>
+                            <li>Roman Trireme (4 cells)</li>
+                            <li>Greek Trireme (3 cells)</li>
+                            <li>Bireme (3 cells)</li>
+                            <li>Scout Galley (2 cells)</li>
+                        </ul>
+                    </div>
+                    <div class="help-section">
+                        <h4>3. Battle Phase</h4>
+                        <ul>
+                            <li>Click on cells in the enemy grid to fire</li>
+                            <li>Try to sink all 5 Greek ships before they sink yours</li>
+                        </ul>
+                    </div>
+                    <div class="help-section">
+                        <h4>4. Win Condition</h4>
+                        <ul>
+                            <li>Sink all enemy ships to win the game</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
             <!-- Difficulty Selector -->
             <div class="difficulty-bar">
                 <span class="diff-label">Difficulty:</span>
@@ -132,21 +170,31 @@
                           marker-end="url(#arrowhead)" marker-start="url(#fl-r)"/>
                 </svg>
 
-                <!-- Game Boards -->
-                <div class="game-boards" id="game-boards">
-                    <div class="board-container rome-board-container">
-                        <div class="board-title-row">
-                            <img id="archer-rome" class="archer archer-rome" src="img/archer-rome.svg" alt="Rome Archer"/>
-                            <h3 class="board-title rome-title">Rome Waters</h3>
+                <!-- Game Boards + Battle Log wrapper -->
+                <div class="boards-and-log">
+                    <div class="game-boards" id="game-boards">
+                        <div class="board-container rome-board-container">
+                            <div class="board-title-row">
+                                <img id="archer-rome" class="archer archer-rome" src="img/archer-rome.svg" alt="Rome Archer"/>
+                                <h3 class="board-title rome-title">Rome Waters</h3>
+                            </div>
+                            <div class="board" id="rome-board"></div>
                         </div>
-                        <div class="board" id="rome-board"></div>
+                        <div class="board-container greece-board-container">
+                            <div class="board-title-row">
+                                <h3 class="board-title greece-title">Greek Waters</h3>
+                                <img id="archer-greece" class="archer archer-greece" src="img/archer-greece.svg" alt="Greece Archer"/>
+                            </div>
+                            <div class="board" id="greece-board"></div>
+                        </div>
                     </div>
-                    <div class="board-container greece-board-container">
-                        <div class="board-title-row">
-                            <h3 class="board-title greece-title">Greek Waters</h3>
-                            <img id="archer-greece" class="archer archer-greece" src="img/archer-greece.svg" alt="Greece Archer"/>
+
+                    <!-- Message Log -->
+                    <div class="message-log" id="message-log">
+                        <h4>Battle Log</h4>
+                        <div class="log-entries" id="log-entries">
+                            <p class="log-entry">The fleets are assembled. Rome strikes first!</p>
                         </div>
-                        <div class="board" id="greece-board"></div>
                     </div>
                 </div>
 
@@ -155,14 +203,6 @@
                     <button id="restart-btn" class="control-btn restart-btn">⚔️ Restart War</button>
                 </div>
             </main>
-
-            <!-- Message Log -->
-            <div class="message-log" id="message-log">
-                <h4>Battle Log</h4>
-                <div class="log-entries" id="log-entries">
-                    <p class="log-entry">The fleets are assembled. Rome strikes first!</p>
-                </div>
-            </div>
         </div>
     </div>
 
