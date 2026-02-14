@@ -621,227 +621,180 @@ class NavalWar {
 
     /* ── Ship SVG Overlays ── */
 
-    _getShipSVG(shipId, isGreece, isSunk) {
-        const romeHull1 = isSunk ? '#3a0808' : '#8B0000';
-        const romeHull2 = isSunk ? '#2a0505' : '#5c0000';
-        const romeDeck = isSunk ? '#2a1a0a' : '#6b3a1a';
-        const romeAccent = isSunk ? '#4a2a00' : '#d4af37';
-        const romeWood = isSunk ? '#3a2010' : '#a0522d';
-        const romeSail = isSunk ? '#2a1515' : '#c0392b';
-        const romeSailLight = isSunk ? '#3a2020' : '#e74c3c';
+    _getShipSVG(shipId, length, isGreece, isSunk) {
+        // ─── Dimensions ───
+        // We define the SVG coordinate system such that height is always 50 units.
+        // Width is proportional to length (approx 50 units per cell).
+        const H = 50;
+        const W = length * 50;
+        const CY = H / 2; // Center Y
 
-        const greekHull1 = isSunk ? '#0a1a2e' : '#1a3a5c';
-        const greekHull2 = isSunk ? '#081428' : '#0f2844';
-        const greekDeck = isSunk ? '#1a2a3a' : '#3a6688';
-        const greekAccent = isSunk ? '#2a3a4a' : '#aed6f1';
-        const greekWood = isSunk ? '#1a2a3a' : '#5b8ca8';
-        const greekSail = isSunk ? '#0a1828' : '#2471a3';
-        const greekSailLight = isSunk ? '#152535' : '#3498db';
+        // ─── Color Palettes ───
+        const romeHull1 = isSunk ? '#3a0808' : '#701010';
+        const romeHull2 = isSunk ? '#2a0505' : '#4a0000';
+        const romeDeck  = isSunk ? '#2a1a0a' : '#6b3a1a';
+        const romeGold  = isSunk ? '#4a3a10' : '#d4af37';
+        const romeWood  = isSunk ? '#3a2010' : '#8b4513';
+        const romeSail  = isSunk ? '#2a1010' : '#b32424';
+        
+        const greekHull1 = isSunk ? '#0a1a2e' : '#154360';
+        const greekHull2 = isSunk ? '#081428' : '#0a2a40';
+        const greekDeck  = isSunk ? '#1a2a3a' : '#cdb490'; 
+        const greekBlue  = isSunk ? '#102030' : '#2980b9';
+        const greekWood  = isSunk ? '#1a2a3a' : '#a0522d';
+        const greekEye   = isSunk ? '#333'    : '#fdfefe';
 
         const h1 = isGreece ? greekHull1 : romeHull1;
         const h2 = isGreece ? greekHull2 : romeHull2;
         const dk = isGreece ? greekDeck : romeDeck;
-        const ac = isGreece ? greekAccent : romeAccent;
+        const ac = isGreece ? greekBlue : romeGold;
         const wd = isGreece ? greekWood : romeWood;
-        const sl = isGreece ? greekSail : romeSail;
-        const sl2 = isGreece ? greekSailLight : romeSailLight;
+        const sl = isGreece ? greekBlue : romeSail;
 
         const uid = `${shipId}-${isGreece?'g':'r'}${isSunk?'s':''}`;
 
-        const sunkDamage = isSunk ? `
-            <line x1="20" y1="10" x2="30" y2="40" stroke="#111" stroke-width="1.2" opacity=".5"/>
-            <line x1="55" y1="8" x2="48" y2="42" stroke="#111" stroke-width="1.2" opacity=".5"/>
-            <line x1="75" y1="12" x2="80" y2="38" stroke="#111" stroke-width="1" opacity=".4"/>
-            <circle cx="35" cy="25" r="3" fill="none" stroke="#111" stroke-width=".8" opacity=".3"/>
-            <circle cx="65" cy="25" r="2.5" fill="none" stroke="#111" stroke-width=".8" opacity=".3"/>` : '';
+        // ─── Generators ───
 
-        const oarRow = (x1, x2, y, count, side) => {
-            let oars = '';
-            const spacing = (x2 - x1) / (count - 1);
-            for (let i = 0; i < count; i++) {
-                const ox = x1 + i * spacing;
-                const oy = side === 'top' ? y - 10 : y + 10;
-                const angle = side === 'top' ? -0.15 : 0.15;
-                const tipX = ox + angle * 10;
-                oars += `<line x1="${ox}" y1="${y}" x2="${tipX.toFixed(1)}" y2="${oy}" stroke="${wd}" stroke-width=".8" stroke-linecap="round" opacity=".65"/>`;
-                oars += `<line x1="${tipX.toFixed(1)}" y1="${oy}" x2="${(tipX + (side==='top'?-0.5:0.5)).toFixed(1)}" y2="${oy + (side==='top'?-1.5:1.5)}" stroke="${wd}" stroke-width=".5" opacity=".4"/>`;
+        const oars = (cx, cy, count, widthSpan, side) => {
+            let s = '';
+            const yDir = side === 'top' ? -1 : 1;
+            const startX = cx - widthSpan/2;
+            const spacing = widthSpan / (count - 1 || 1);
+            
+            for(let i=0; i<count; i++) {
+                const x = startX + i * spacing;
+                const tipX = x - 3;
+                const tipY = cy + yDir * 14;
+                s += `<line x1="${x}" y1="${cy}" x2="${tipX}" y2="${tipY}" stroke="${wd}" stroke-width="1.5" stroke-linecap="round" opacity=".8"/>`;
+                s += `<line x1="${tipX}" y1="${tipY}" x2="${tipX-2}" y2="${tipY + yDir*3}" stroke="${wd}" stroke-width="2.5" stroke-linecap="round" opacity=".6"/>`;
             }
-            return oars;
+            return s;
         };
 
-        const deckPlanks = (x1, x2, y, count) => {
-            let planks = '';
-            const spacing = (x2 - x1) / (count + 1);
-            for (let i = 1; i <= count; i++) {
-                const px = x1 + i * spacing;
-                planks += `<line x1="${px}" y1="${y - 5}" x2="${px}" y2="${y + 5}" stroke="${wd}" stroke-width=".3" opacity=".2"/>`;
+        const shields = (cx, cy, count, widthSpan, side) => {
+            if (!isGreece && !isSunk) return ''; 
+            let s = '';
+            const yDir = side === 'top' ? -1 : 1;
+            const startX = cx - widthSpan/2;
+            const spacing = widthSpan / (count - 1 || 1);
+            const y = cy + yDir * 5; 
+
+            for(let i=0; i<count; i++) {
+                const x = startX + i * spacing;
+                if (isGreece) {
+                    s += `<circle cx="${x}" cy="${y}" r="3" fill="#cd7f32" stroke="${h2}" stroke-width=".5"/>`;
+                    s += `<circle cx="${x}" cy="${y}" r="1.2" fill="${ac}"/>`;
+                } else {
+                    s += `<rect x="${x-3}" y="${y-3.5}" width="6" height="7" fill="#b32424" stroke="${romeGold}" stroke-width=".5"/>`;
+                    s += `<line x1="${x}" y1="${y-3.5}" x2="${x}" y2="${y+3.5}" stroke="${romeGold}" stroke-width=".5"/>`;
+                }
             }
-            return planks;
+            return s;
         };
 
-        const svgs = {
-            quinquereme: (() => {
-                return `<svg viewBox="0 0 100 50" preserveAspectRatio="none">
-                    <defs>
-                        <linearGradient id="h-${uid}" x1="0" y1="0" x2="1" y2="0">
-                            <stop offset="0%" stop-color="${h2}"/><stop offset="30%" stop-color="${h1}"/><stop offset="70%" stop-color="${h1}"/><stop offset="100%" stop-color="${h2}"/>
-                        </linearGradient>
-                        <linearGradient id="dk-${uid}" x1="0" y1="0" x2="1" y2="0">
-                            <stop offset="0%" stop-color="${dk}" stop-opacity=".3"/><stop offset="50%" stop-color="${dk}" stop-opacity=".7"/><stop offset="100%" stop-color="${dk}" stop-opacity=".3"/>
-                        </linearGradient>
-                        <radialGradient id="s1-${uid}" cx=".5" cy=".5" r=".5">
-                            <stop offset="0%" stop-color="${sl2}" stop-opacity=".9"/><stop offset="100%" stop-color="${sl}" stop-opacity=".7"/>
-                        </radialGradient>
-                    </defs>
-                    <path d="M-3,25 Q2,20 8,17 Q14,14 22,13 L78,13 Q86,14 92,17 Q98,20 103,25 Q98,30 92,33 Q86,36 78,37 L22,37 Q14,36 8,33 Q2,30 -3,25 Z" fill="url(#h-${uid})" stroke="${ac}" stroke-width=".6" opacity=".3"/>
-                    <path d="M0,25 Q4,20 10,17.5 Q16,15 24,14 L76,14 Q84,15 90,17.5 Q96,20 100,25 Q96,30 90,32.5 Q84,35 76,36 L24,36 Q16,35 10,32.5 Q4,30 0,25 Z" fill="url(#h-${uid})" stroke="${ac}" stroke-width=".8"/>
-                    <path d="M-2,25 L-5,25" stroke="${ac}" stroke-width="1.8" stroke-linecap="round"/>
-                    <path d="M6,18 L6,32" stroke="${h2}" stroke-width=".4" opacity=".3"/>
-                    <path d="M5,25 Q8,21 14,18.5 L86,18.5 Q92,21 95,25 Q92,29 86,31.5 L14,31.5 Q8,29 5,25 Z" fill="url(#dk-${uid})"/>
-                    ${deckPlanks(12, 88, 25, 14)}
-                    ${oarRow(14, 86, 14, 14, 'top')}
-                    ${oarRow(14, 86, 36, 14, 'bottom')}
-                    <line x1="30" y1="14" x2="30" y2="36" stroke="${wd}" stroke-width="1" opacity=".5"/>
-                    <ellipse cx="30" cy="25" rx="6" ry="5" fill="url(#s1-${uid})" stroke="${ac}" stroke-width=".3" opacity=".8"/>
-                    <line x1="30" y1="20" x2="30" y2="30" stroke="${ac}" stroke-width=".3" opacity=".4"/>
-                    <line x1="24" y1="25" x2="36" y2="25" stroke="${ac}" stroke-width=".3" opacity=".4"/>
-                    <line x1="65" y1="14" x2="65" y2="36" stroke="${wd}" stroke-width="1" opacity=".5"/>
-                    <ellipse cx="65" cy="25" rx="5.5" ry="4.5" fill="url(#s1-${uid})" stroke="${ac}" stroke-width=".3" opacity=".8"/>
-                    <line x1="65" y1="20.5" x2="65" y2="29.5" stroke="${ac}" stroke-width=".3" opacity=".4"/>
-                    <line x1="59.5" y1="25" x2="70.5" y2="25" stroke="${ac}" stroke-width=".3" opacity=".4"/>
-                    <rect x="46" y="22" width="4" height="6" rx="1" fill="${wd}" stroke="${ac}" stroke-width=".3" opacity=".5"/>
-                    <path d="M99,25 L102,24 L102,26 Z" fill="${ac}" opacity=".5"/>
-                    <circle cx="8" cy="25" r="1.5" fill="${ac}" opacity=".3"/>
-                    <line x1="7" y1="20" x2="7" y2="30" stroke="${ac}" stroke-width=".3" opacity=".2"/>
-                    ${sunkDamage}
-                </svg>`;
-            })(),
+        const deck = (x, y, w, h) => `
+            <rect x="${x}" y="${y}" width="${w}" height="${h}" rx="3" fill="${dk}" opacity=".9"/>
+            <line x1="${x}" y1="${CY}" x2="${x+w}" y2="${CY}" stroke="${h2}" stroke-width=".5" opacity=".3"/>
+        `;
 
-            roman_trireme: (() => {
-                return `<svg viewBox="0 0 100 50" preserveAspectRatio="none">
-                    <defs>
-                        <linearGradient id="h-${uid}" x1="0" y1="0" x2="1" y2="0">
-                            <stop offset="0%" stop-color="${h2}"/><stop offset="30%" stop-color="${h1}"/><stop offset="70%" stop-color="${h1}"/><stop offset="100%" stop-color="${h2}"/>
-                        </linearGradient>
-                        <linearGradient id="dk-${uid}" x1="0" y1="0" x2="1" y2="0">
-                            <stop offset="0%" stop-color="${dk}" stop-opacity=".3"/><stop offset="50%" stop-color="${dk}" stop-opacity=".7"/><stop offset="100%" stop-color="${dk}" stop-opacity=".3"/>
-                        </linearGradient>
-                        <radialGradient id="s1-${uid}" cx=".5" cy=".5" r=".5">
-                            <stop offset="0%" stop-color="${sl2}" stop-opacity=".9"/><stop offset="100%" stop-color="${sl}" stop-opacity=".7"/>
-                        </radialGradient>
-                    </defs>
-                    <path d="M-2,25 Q3,20 9,17.5 Q16,15 24,14.5 L76,14.5 Q84,15 91,17.5 Q97,20 102,25 Q97,30 91,32.5 Q84,35 76,35.5 L24,35.5 Q16,35 9,32.5 Q3,30 -2,25 Z" fill="url(#h-${uid})" stroke="${ac}" stroke-width=".6" opacity=".3"/>
-                    <path d="M1,25 Q5,20.5 11,18 Q17,16 25,15 L75,15 Q83,16 89,18 Q95,20.5 99,25 Q95,29.5 89,32 Q83,34 75,35 L25,35 Q17,34 11,32 Q5,29.5 1,25 Z" fill="url(#h-${uid})" stroke="${ac}" stroke-width=".8"/>
-                    <path d="M-1,25 L-4,25" stroke="${ac}" stroke-width="1.5" stroke-linecap="round"/>
-                    <path d="M6,19 L6,31" stroke="${h2}" stroke-width=".4" opacity=".3"/>
-                    <path d="M7,25 Q10,21.5 16,19 L84,19 Q90,21.5 93,25 Q90,28.5 84,31 L16,31 Q10,28.5 7,25 Z" fill="url(#dk-${uid})"/>
-                    ${deckPlanks(14, 86, 25, 12)}
-                    ${oarRow(16, 84, 15, 11, 'top')}
-                    ${oarRow(16, 84, 35, 11, 'bottom')}
-                    <line x1="48" y1="15" x2="48" y2="35" stroke="${wd}" stroke-width="1" opacity=".5"/>
-                    <ellipse cx="48" cy="25" rx="5.5" ry="4.5" fill="url(#s1-${uid})" stroke="${ac}" stroke-width=".3" opacity=".8"/>
-                    <line x1="48" y1="20.5" x2="48" y2="29.5" stroke="${ac}" stroke-width=".3" opacity=".4"/>
-                    <line x1="42.5" y1="25" x2="53.5" y2="25" stroke="${ac}" stroke-width=".3" opacity=".4"/>
-                    <rect x="28" y="22.5" width="3.5" height="5" rx="1" fill="${wd}" stroke="${ac}" stroke-width=".3" opacity=".5"/>
-                    <rect x="68" y="22.5" width="3.5" height="5" rx="1" fill="${wd}" stroke="${ac}" stroke-width=".3" opacity=".45"/>
-                    <path d="M98,25 L101,24 L101,26 Z" fill="${ac}" opacity=".5"/>
-                    <circle cx="9" cy="25" r="1.3" fill="${ac}" opacity=".3"/>
-                    ${sunkDamage}
-                </svg>`;
-            })(),
-
-            greek_trireme: (() => {
-                return `<svg viewBox="0 0 100 50" preserveAspectRatio="none">
-                    <defs>
-                        <linearGradient id="h-${uid}" x1="0" y1="0" x2="1" y2="0">
-                            <stop offset="0%" stop-color="${h2}"/><stop offset="30%" stop-color="${h1}"/><stop offset="70%" stop-color="${h1}"/><stop offset="100%" stop-color="${h2}"/>
-                        </linearGradient>
-                        <linearGradient id="dk-${uid}" x1="0" y1="0" x2="1" y2="0">
-                            <stop offset="0%" stop-color="${dk}" stop-opacity=".3"/><stop offset="50%" stop-color="${dk}" stop-opacity=".7"/><stop offset="100%" stop-color="${dk}" stop-opacity=".3"/>
-                        </linearGradient>
-                        <radialGradient id="s1-${uid}" cx=".5" cy=".5" r=".5">
-                            <stop offset="0%" stop-color="${sl2}" stop-opacity=".9"/><stop offset="100%" stop-color="${sl}" stop-opacity=".7"/>
-                        </radialGradient>
-                    </defs>
-                    <path d="M-1,25 Q4,20 10,17.5 Q17,15 26,14.5 L74,14.5 Q83,15 90,17.5 Q96,20 101,25 Q96,30 90,32.5 Q83,35 74,35.5 L26,35.5 Q17,35 10,32.5 Q4,30 -1,25 Z" fill="url(#h-${uid})" stroke="${ac}" stroke-width=".6" opacity=".3"/>
-                    <path d="M2,25 Q6,20.5 12,18 Q18,16 27,15.5 L73,15.5 Q82,16 88,18 Q94,20.5 98,25 Q94,29.5 88,32 Q82,34 73,34.5 L27,34.5 Q18,34 12,32 Q6,29.5 2,25 Z" fill="url(#h-${uid})" stroke="${ac}" stroke-width=".8"/>
-                    <path d="M0,25 L-4,25" stroke="${ac}" stroke-width="1.5" stroke-linecap="round"/>
-                    <ellipse cx="6" cy="25" rx="1.8" ry="1.5" fill="none" stroke="${ac}" stroke-width=".5" opacity=".5"/>
-                    <circle cx="6" cy="25" r=".5" fill="${ac}" opacity=".5"/>
-                    <path d="M8,25 Q11,21.5 17,19.5 L83,19.5 Q89,21.5 92,25 Q89,28.5 83,30.5 L17,30.5 Q11,28.5 8,25 Z" fill="url(#dk-${uid})"/>
-                    ${deckPlanks(15, 85, 25, 10)}
-                    ${oarRow(17, 83, 15.5, 9, 'top')}
-                    ${oarRow(17, 83, 34.5, 9, 'bottom')}
-                    <line x1="50" y1="15.5" x2="50" y2="34.5" stroke="${wd}" stroke-width="1" opacity=".5"/>
-                    <ellipse cx="50" cy="25" rx="5" ry="4" fill="url(#s1-${uid})" stroke="${ac}" stroke-width=".3" opacity=".8"/>
-                    <line x1="50" y1="21" x2="50" y2="29" stroke="${ac}" stroke-width=".3" opacity=".4"/>
-                    <line x1="45" y1="25" x2="55" y2="25" stroke="${ac}" stroke-width=".3" opacity=".4"/>
-                    <rect x="30" y="23" width="3" height="4" rx=".8" fill="${wd}" stroke="${ac}" stroke-width=".3" opacity=".45"/>
-                    <path d="M97,25 L100,24 L100,26 Z" fill="${ac}" opacity=".5"/>
-                    <path d="M-4,25 L-6,24 L-6,26 Z" fill="${ac}" opacity=".3"/>
-                    ${sunkDamage}
-                </svg>`;
-            })(),
-
-            bireme: (() => {
-                return `<svg viewBox="0 0 100 50" preserveAspectRatio="none">
-                    <defs>
-                        <linearGradient id="h-${uid}" x1="0" y1="0" x2="1" y2="0">
-                            <stop offset="0%" stop-color="${h2}"/><stop offset="30%" stop-color="${h1}"/><stop offset="70%" stop-color="${h1}"/><stop offset="100%" stop-color="${h2}"/>
-                        </linearGradient>
-                        <linearGradient id="dk-${uid}" x1="0" y1="0" x2="1" y2="0">
-                            <stop offset="0%" stop-color="${dk}" stop-opacity=".3"/><stop offset="50%" stop-color="${dk}" stop-opacity=".7"/><stop offset="100%" stop-color="${dk}" stop-opacity=".3"/>
-                        </linearGradient>
-                        <radialGradient id="s1-${uid}" cx=".5" cy=".5" r=".5">
-                            <stop offset="0%" stop-color="${sl2}" stop-opacity=".9"/><stop offset="100%" stop-color="${sl}" stop-opacity=".7"/>
-                        </radialGradient>
-                    </defs>
-                    <path d="M0,25 Q5,20 11,17.5 Q18,15.5 27,15 L73,15 Q82,15.5 89,17.5 Q95,20 100,25 Q95,30 89,32.5 Q82,34.5 73,35 L27,35 Q18,34.5 11,32.5 Q5,30 0,25 Z" fill="url(#h-${uid})" stroke="${ac}" stroke-width=".6" opacity=".3"/>
-                    <path d="M3,25 Q7,21 13,18.5 Q19,16.5 28,16 L72,16 Q81,16.5 87,18.5 Q93,21 97,25 Q93,29 87,31.5 Q81,33.5 72,34 L28,34 Q19,33.5 13,31.5 Q7,29 3,25 Z" fill="url(#h-${uid})" stroke="${ac}" stroke-width=".8"/>
-                    <path d="M1,25 L-2,25" stroke="${ac}" stroke-width="1.3" stroke-linecap="round"/>
-                    <path d="M9,25 Q12,22 18,20 L82,20 Q88,22 91,25 Q88,28 82,30 L18,30 Q12,28 9,25 Z" fill="url(#dk-${uid})"/>
-                    ${deckPlanks(16, 84, 25, 9)}
-                    ${oarRow(18, 82, 16, 8, 'top')}
-                    ${oarRow(18, 82, 34, 8, 'bottom')}
-                    <line x1="50" y1="16" x2="50" y2="34" stroke="${wd}" stroke-width=".9" opacity=".5"/>
-                    <ellipse cx="50" cy="25" rx="4.5" ry="3.5" fill="url(#s1-${uid})" stroke="${ac}" stroke-width=".3" opacity=".75"/>
-                    <line x1="50" y1="21.5" x2="50" y2="28.5" stroke="${ac}" stroke-width=".3" opacity=".35"/>
-                    <line x1="45.5" y1="25" x2="54.5" y2="25" stroke="${ac}" stroke-width=".3" opacity=".35"/>
-                    <path d="M96,25 L99,24 L99,26 Z" fill="${ac}" opacity=".45"/>
-                    <circle cx="8" cy="25" r="1" fill="${ac}" opacity=".25"/>
-                    ${sunkDamage}
-                </svg>`;
-            })(),
-
-            scout_galley: (() => {
-                return `<svg viewBox="0 0 100 50" preserveAspectRatio="none">
-                    <defs>
-                        <linearGradient id="h-${uid}" x1="0" y1="0" x2="1" y2="0">
-                            <stop offset="0%" stop-color="${h2}"/><stop offset="30%" stop-color="${h1}"/><stop offset="70%" stop-color="${h1}"/><stop offset="100%" stop-color="${h2}"/>
-                        </linearGradient>
-                        <linearGradient id="dk-${uid}" x1="0" y1="0" x2="1" y2="0">
-                            <stop offset="0%" stop-color="${dk}" stop-opacity=".3"/><stop offset="50%" stop-color="${dk}" stop-opacity=".6"/><stop offset="100%" stop-color="${dk}" stop-opacity=".3"/>
-                        </linearGradient>
-                        <radialGradient id="s1-${uid}" cx=".5" cy=".5" r=".5">
-                            <stop offset="0%" stop-color="${sl2}" stop-opacity=".85"/><stop offset="100%" stop-color="${sl}" stop-opacity=".65"/>
-                        </radialGradient>
-                    </defs>
-                    <path d="M2,25 Q7,20 14,17.5 Q21,16 30,15.5 L70,15.5 Q79,16 86,17.5 Q93,20 98,25 Q93,30 86,32.5 Q79,34 70,34.5 L30,34.5 Q21,34 14,32.5 Q7,30 2,25 Z" fill="url(#h-${uid})" stroke="${ac}" stroke-width=".6" opacity=".3"/>
-                    <path d="M5,25 Q9,21 15,18.5 Q22,17 31,16.5 L69,16.5 Q78,17 85,18.5 Q91,21 95,25 Q91,29 85,31.5 Q78,33 69,33.5 L31,33.5 Q22,33 15,31.5 Q9,29 5,25 Z" fill="url(#h-${uid})" stroke="${ac}" stroke-width=".7"/>
-                    <path d="M3,25 L0,25" stroke="${ac}" stroke-width="1.2" stroke-linecap="round"/>
-                    <path d="M11,25 Q14,22 20,20.5 L80,20.5 Q86,22 89,25 Q86,28 80,29.5 L20,29.5 Q14,28 11,25 Z" fill="url(#dk-${uid})"/>
-                    ${deckPlanks(18, 82, 25, 7)}
-                    ${oarRow(22, 78, 16.5, 6, 'top')}
-                    ${oarRow(22, 78, 33.5, 6, 'bottom')}
-                    <line x1="50" y1="16.5" x2="50" y2="33.5" stroke="${wd}" stroke-width=".8" opacity=".45"/>
-                    <ellipse cx="50" cy="25" rx="3.5" ry="3" fill="url(#s1-${uid})" stroke="${ac}" stroke-width=".3" opacity=".7"/>
-                    <path d="M94,25 L97,24 L97,26 Z" fill="${ac}" opacity=".4"/>
-                    ${sunkDamage}
-                </svg>`;
-            })()
+        const tower = (x) => {
+            if (isGreece) return ''; 
+            return `
+                <rect x="${x-6}" y="${CY-6}" width="12" height="12" fill="${romeWood}" stroke="${romeGold}" stroke-width=".5"/>
+                <rect x="${x-5}" y="${CY-5}" width="10" height="10" fill="none" stroke="#3a2010" stroke-width=".5" stroke-dasharray="2,1"/>
+                <circle cx="${x}" cy="${CY}" r="2" fill="#111" opacity=".5"/>
+            `;
         };
 
-        return svgs[shipId] || svgs.scout_galley;
+        const sail = (x) => `
+            <line x1="${x}" y1="${CY-14}" x2="${x}" y2="${CY+14}" stroke="${wd}" stroke-width="2.5"/>
+            <ellipse cx="${x}" cy="${CY}" rx="10" ry="5" fill="${sl}" stroke="${ac}" stroke-width="1"/>
+        `;
+
+        // ─── Render ───
+        
+        let content = '';
+        
+        // Prow (front) is at Right (width), Stern (back) is at 0
+        const bowX = W - 2;
+        const sternX = 2;
+        const hullW = W - 10;
+        
+        const oarCount = Math.floor(length * 3.5); 
+        const oarSpan = hullW * 0.8;
+        const oarCX = W / 2;
+
+        if (isGreece) {
+            // Greek Hull: curved stern (aphlaston), battering ram
+            content += `<defs><linearGradient id="g-hull-${uid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${h2}"/><stop offset="50%" stop-color="${h1}"/><stop offset="100%" stop-color="${h2}"/></linearGradient></defs>`;
+            
+            // Oars
+            content += oars(oarCX, CY-9, oarCount, oarSpan, 'top');
+            content += oars(oarCX, CY+9, oarCount, oarSpan, 'bottom');
+
+            // Hull
+            content += `<path d="M${sternX},${CY-10} Q${sternX-5},${CY} ${sternX},${CY+10} L${sternX+15},${CY+14} L${bowX-15},${CY+14} Q${bowX},${CY} ${bowX-15},${CY-14} L${sternX+15},${CY-14} Z" fill="url(#g-hull-${uid})" stroke="${ac}" stroke-width="1"/>`;
+            
+            // Deck
+            content += deck(sternX+15, CY-11, hullW-25, 22);
+            
+            // Eye (Ophthalmos)
+            content += `<circle cx="${bowX-8}" cy="${CY-5}" r="2" fill="${greekEye}"/><circle cx="${bowX-7.5}" cy="${CY-5}" r=".7" fill="#000"/>`;
+            content += `<circle cx="${bowX-8}" cy="${CY+5}" r="2" fill="${greekEye}"/><circle cx="${bowX-7.5}" cy="${CY+5}" r=".7" fill="#000"/>`;
+
+            // Ram
+            content += `<path d="M${bowX-5},${CY} L${bowX+4},${CY} L${bowX+1},${CY-3} M${bowX+4},${CY} L${bowX+1},${CY+3}" stroke="${h2}" stroke-width="2" fill="none"/>`;
+
+            // Shields
+            content += shields(oarCX, CY, Math.floor(length*2.5), hullW*0.7, 'top');
+            content += shields(oarCX, CY, Math.floor(length*2.5), hullW*0.7, 'bottom');
+
+            // Sail
+            content += sail(W/2);
+
+        } else {
+            // Roman Hull: heavy, towers, corvus
+            content += `<defs><linearGradient id="g-hull-${uid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${h2}"/><stop offset="50%" stop-color="${h1}"/><stop offset="100%" stop-color="${h2}"/></linearGradient></defs>`;
+            
+            // Oars
+            content += oars(oarCX, CY-10, oarCount, oarSpan, 'top');
+            content += oars(oarCX, CY+10, oarCount, oarSpan, 'bottom');
+
+            // Hull
+            content += `<path d="M${sternX+5},${CY} Q${sternX+10},${CY-15} ${sternX+25},${CY-16} L${bowX-15},${CY-16} Q${bowX},${CY-14} ${bowX},${CY} Q${bowX},${CY+14} ${bowX-15},${CY+16} L${sternX+25},${CY+16} Q${sternX+10},${CY+15} ${sternX+5},${CY} Z" fill="url(#g-hull-${uid})" stroke="${h2}" stroke-width="1"/>`;
+            
+            // Deck
+            content += deck(sternX+20, CY-12, hullW-35, 24);
+
+            // Shields
+            content += shields(oarCX, CY, Math.floor(length*2.5), hullW*0.7, 'top');
+            content += shields(oarCX, CY, Math.floor(length*2.5), hullW*0.7, 'bottom');
+
+            // Towers (for large ships)
+            if (length >= 4) {
+                content += tower(W*0.3);
+                content += tower(W*0.7);
+            } else if (length >= 3) {
+                content += tower(W*0.6);
+            }
+
+            // Sail
+            content += sail(W/2);
+
+            // Ram (Square/heavy)
+            content += `<path d="M${bowX-2},${CY} L${bowX+4},${CY-3} L${bowX+4},${CY+3} Z" fill="${romeGold}"/>`;
+        }
+
+        // Sunk damage overlay
+        if (isSunk) {
+            content += `
+                <path d="M${W*0.2},10 L${W*0.3},40 M${W*0.5},8 L${W*0.4},42 M${W*0.8},12 L${W*0.85},38" stroke="#000" stroke-width="1.5" opacity=".6"/>
+                <circle cx="${W*0.35}" cy="25" r="4" fill="#000" opacity=".4"/>
+                <circle cx="${W*0.65}" cy="25" r="3" fill="#000" opacity=".4"/>
+            `;
+        }
+
+        return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">${content}</svg>`;
     }
 
     _getShipOrientation(ship) {
@@ -868,7 +821,7 @@ class NavalWar {
             if (orient === 'v') overlay.classList.add('ship-overlay-vertical');
             overlay.dataset.shipId = ship.id;
             overlay.dataset.shipLen = ship.length;
-            overlay.innerHTML = this._getShipSVG(ship.id, isGreece, ship.sunk);
+            overlay.innerHTML = this._getShipSVG(ship.id, ship.length, isGreece, ship.sunk);
 
             const cellRect = startCell.getBoundingClientRect();
             const boardRect = boardEl.getBoundingClientRect();
