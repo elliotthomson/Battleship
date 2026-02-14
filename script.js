@@ -100,54 +100,34 @@ const SoundEngine = {
         src.stop(t + dur);
     },
 
+    _missBuffer: null,
+
+    _loadMissSound() {
+        if (this._missBuffer) return Promise.resolve();
+        return fetch('assets/water-splash.wav')
+            .then(r => r.arrayBuffer())
+            .then(buf => this._ensureCtx().decodeAudioData(buf))
+            .then(decoded => { this._missBuffer = decoded; });
+    },
+
     miss() {
         if (this.muted) return;
         const ctx = this._ensureCtx();
-        const t = ctx.currentTime;
-
-        const { src: splash1 } = this._noise(0.45, 0.12);
-        const bpf1 = ctx.createBiquadFilter();
-        bpf1.type = 'bandpass';
-        bpf1.frequency.setValueAtTime(2500, t);
-        bpf1.frequency.exponentialRampToValueAtTime(400, t + 0.3);
-        bpf1.Q.value = 0.8;
-        splash1.disconnect();
-        const g1 = ctx.createGain();
-        g1.gain.setValueAtTime(0.15, t);
-        g1.gain.linearRampToValueAtTime(0.08, t + 0.05);
-        g1.gain.exponentialRampToValueAtTime(0.001, t + 0.45);
-        splash1.connect(bpf1).connect(g1).connect(ctx.destination);
-        splash1.start(t);
-        splash1.stop(t + 0.45);
-
-        const { src: splash2 } = this._noise(0.3, 0.06);
-        const lpf = ctx.createBiquadFilter();
-        lpf.type = 'lowpass';
-        lpf.frequency.setValueAtTime(800, t + 0.05);
-        lpf.frequency.exponentialRampToValueAtTime(150, t + 0.35);
-        splash2.disconnect();
-        const g2 = ctx.createGain();
-        g2.gain.setValueAtTime(0.001, t);
-        g2.gain.linearRampToValueAtTime(0.07, t + 0.05);
-        g2.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
-        splash2.connect(lpf).connect(g2).connect(ctx.destination);
-        splash2.start(t + 0.03);
-        splash2.stop(t + 0.38);
-
-        const { src: bubbles } = this._noise(0.5, 0.03);
-        const bpf2 = ctx.createBiquadFilter();
-        bpf2.type = 'bandpass';
-        bpf2.frequency.setValueAtTime(600, t + 0.15);
-        bpf2.frequency.exponentialRampToValueAtTime(200, t + 0.55);
-        bpf2.Q.value = 3;
-        bubbles.disconnect();
-        const g3 = ctx.createGain();
-        g3.gain.setValueAtTime(0.001, t);
-        g3.gain.linearRampToValueAtTime(0.04, t + 0.15);
-        g3.gain.exponentialRampToValueAtTime(0.001, t + 0.55);
-        bubbles.connect(bpf2).connect(g3).connect(ctx.destination);
-        bubbles.start(t + 0.1);
-        bubbles.stop(t + 0.6);
+        if (this._missBuffer) {
+            const src = ctx.createBufferSource();
+            src.buffer = this._missBuffer;
+            src.connect(ctx.destination);
+            src.start(ctx.currentTime);
+        } else {
+            this._loadMissSound().then(() => {
+                if (this._missBuffer) {
+                    const src = ctx.createBufferSource();
+                    src.buffer = this._missBuffer;
+                    src.connect(ctx.destination);
+                    src.start(ctx.currentTime);
+                }
+            });
+        }
     },
 
     sink() {
