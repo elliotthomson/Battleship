@@ -130,33 +130,34 @@ const SoundEngine = {
         }
     },
 
+    _sinkBuffer: null,
+
+    _loadSinkSound() {
+        if (this._sinkBuffer) return Promise.resolve();
+        return fetch('assets/ship-sink.wav')
+            .then(r => r.arrayBuffer())
+            .then(buf => this._ensureCtx().decodeAudioData(buf))
+            .then(decoded => { this._sinkBuffer = decoded; });
+    },
+
     sink() {
         if (this.muted) return;
         const ctx = this._ensureCtx();
-        const t = ctx.currentTime;
-        const osc = ctx.createOscillator();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(300, t);
-        osc.frequency.exponentialRampToValueAtTime(60, t + 0.8);
-        const g = ctx.createGain();
-        g.gain.setValueAtTime(0.18, t);
-        g.gain.linearRampToValueAtTime(0.12, t + 0.2);
-        g.gain.exponentialRampToValueAtTime(0.001, t + 0.8);
-        osc.connect(g).connect(ctx.destination);
-        osc.start(t);
-        osc.stop(t + 0.8);
-        const { src } = this._noise(0.5, 0.06);
-        const lpf = ctx.createBiquadFilter();
-        lpf.type = 'lowpass';
-        lpf.frequency.setValueAtTime(600, t);
-        lpf.frequency.exponentialRampToValueAtTime(100, t + 0.5);
-        src.disconnect();
-        const g2 = ctx.createGain();
-        g2.gain.setValueAtTime(0.08, t + 0.1);
-        g2.gain.exponentialRampToValueAtTime(0.001, t + 0.6);
-        src.connect(lpf).connect(g2).connect(ctx.destination);
-        src.start(t + 0.1);
-        src.stop(t + 0.6);
+        if (this._sinkBuffer) {
+            const src = ctx.createBufferSource();
+            src.buffer = this._sinkBuffer;
+            src.connect(ctx.destination);
+            src.start(ctx.currentTime);
+        } else {
+            this._loadSinkSound().then(() => {
+                if (this._sinkBuffer) {
+                    const src = ctx.createBufferSource();
+                    src.buffer = this._sinkBuffer;
+                    src.connect(ctx.destination);
+                    src.start(ctx.currentTime);
+                }
+            });
+        }
     },
 
     warHorn() {
