@@ -633,14 +633,14 @@ class NavalWar {
         const romeHull1 = isSunk ? '#3a0808' : '#701010';
         const romeHull2 = isSunk ? '#2a0505' : '#4a0000';
         const romeDeck  = isSunk ? '#2a1a0a' : '#6b3a1a';
-        const romeGold  = isSunk ? '#4a3a10' : '#d4af37';
+        const romeGold  = isSunk ? '#4a3a10' : '#ffd700';
         const romeWood  = isSunk ? '#3a2010' : '#8b4513';
         const romeSail  = isSunk ? '#2a1010' : '#b32424';
         
         const greekHull1 = isSunk ? '#0a1a2e' : '#154360';
         const greekHull2 = isSunk ? '#081428' : '#0a2a40';
         const greekDeck  = isSunk ? '#1a2a3a' : '#cdb490'; 
-        const greekBlue  = isSunk ? '#102030' : '#2980b9';
+        const greekBlue  = isSunk ? '#102030' : '#5dade2';
         const greekWood  = isSunk ? '#1a2a3a' : '#a0522d';
         const greekEye   = isSunk ? '#333'    : '#fdfefe';
 
