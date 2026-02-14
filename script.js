@@ -305,6 +305,8 @@ class NavalWar {
         this.battleScreen.classList.add('hidden');
 
         let transitioned = false;
+        let audioStarted = false;
+
         const goToSetup = () => {
             if (transitioned) return;
             transitioned = true;
@@ -313,10 +315,27 @@ class NavalWar {
             this._showSetup();
         };
 
-        this.splashContinue.addEventListener('click', goToSetup, { once: true });
         this.splashAudio.addEventListener('ended', goToSetup, { once: true });
 
-        this.splashAudio.play().catch(() => {});
+        this.splashContinue.addEventListener('click', () => {
+            if (audioStarted) {
+                goToSetup();
+            } else {
+                audioStarted = true;
+                this.splashAudio.play().catch(() => goToSetup());
+            }
+        });
+
+        this.splashScreen.addEventListener('click', (e) => {
+            if (audioStarted) return;
+            if (e.target === this.splashContinue || this.splashContinue.contains(e.target)) return;
+            audioStarted = true;
+            this.splashAudio.play().catch(() => {});
+        });
+
+        this.splashAudio.play().then(() => {
+            audioStarted = true;
+        }).catch(() => {});
     }
 
     _showSetup() {
