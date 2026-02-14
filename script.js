@@ -1102,6 +1102,7 @@ class NavalWar {
             if (this.consecutiveMisses >= 3) {
                 const insult = this._getNextInsult();
                 this._log(insult, 'insult-msg');
+                this._showInsult(insult);
                 this.consecutiveMisses = 0;
             }
             this._updateCounts();
@@ -1363,8 +1364,7 @@ class NavalWar {
         document.querySelectorAll('.insult-overlay').forEach(el => el.remove());
 
         if (!text) {
-            text = this._insults[this._insultIndex];
-            this._insultIndex = (this._insultIndex + 1) % this._insults.length;
+            text = this._getNextInsult();
         }
 
         const overlay = document.createElement('div');
