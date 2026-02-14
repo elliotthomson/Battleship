@@ -50,37 +50,104 @@ const SoundEngine = {
         if (this.muted) return;
         const ctx = this._ensureCtx();
         const t = ctx.currentTime;
-        const osc = ctx.createOscillator();
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(150, t);
-        osc.frequency.exponentialRampToValueAtTime(40, t + 0.3);
-        const g = ctx.createGain();
-        g.gain.setValueAtTime(0.2, t);
-        g.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
-        osc.connect(g).connect(ctx.destination);
-        osc.start(t);
-        osc.stop(t + 0.3);
-        const { src } = this._noise(0.15, 0.18);
+        const dur = 0.6;
+
+        const freqs = [320, 400, 520, 640, 800];
+        freqs.forEach((freq, i) => {
+            const osc = ctx.createOscillator();
+            osc.type = 'sine';
+            const detune = (Math.random() - 0.5) * 40;
+            osc.frequency.setValueAtTime(freq + detune, t);
+            osc.frequency.linearRampToValueAtTime(freq * 1.15 + detune, t + dur * 0.3);
+            osc.frequency.linearRampToValueAtTime(freq + detune, t + dur);
+
+            const vibrato = ctx.createOscillator();
+            vibrato.frequency.value = 4 + Math.random() * 3;
+            const vibGain = ctx.createGain();
+            vibGain.gain.value = 8 + Math.random() * 6;
+            vibrato.connect(vibGain).connect(osc.frequency);
+            vibrato.start(t);
+            vibrato.stop(t + dur);
+
+            const g = ctx.createGain();
+            const vol = 0.03 + Math.random() * 0.015;
+            const offset = i * 0.02;
+            g.gain.setValueAtTime(0.001, t);
+            g.gain.linearRampToValueAtTime(vol, t + 0.05 + offset);
+            g.gain.linearRampToValueAtTime(vol * 0.7, t + dur * 0.6);
+            g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+
+            osc.connect(g).connect(ctx.destination);
+            osc.start(t + offset);
+            osc.stop(t + dur);
+        });
+
+        const { src } = this._noise(dur, 0.04);
+        const bpf = ctx.createBiquadFilter();
+        bpf.type = 'bandpass';
+        bpf.frequency.setValueAtTime(2000, t);
+        bpf.frequency.linearRampToValueAtTime(3000, t + dur * 0.3);
+        bpf.frequency.linearRampToValueAtTime(1500, t + dur);
+        bpf.Q.value = 0.5;
+        src.disconnect();
+        const ng = ctx.createGain();
+        ng.gain.setValueAtTime(0.001, t);
+        ng.gain.linearRampToValueAtTime(0.05, t + 0.05);
+        ng.gain.linearRampToValueAtTime(0.03, t + dur * 0.6);
+        ng.gain.exponentialRampToValueAtTime(0.001, t + dur);
+        src.connect(bpf).connect(ng).connect(ctx.destination);
         src.start(t);
-        src.stop(t + 0.15);
+        src.stop(t + dur);
     },
 
     miss() {
         if (this.muted) return;
         const ctx = this._ensureCtx();
         const t = ctx.currentTime;
-        const { src } = this._noise(0.35, 0.08);
+
+        const { src: splash1 } = this._noise(0.45, 0.12);
+        const bpf1 = ctx.createBiquadFilter();
+        bpf1.type = 'bandpass';
+        bpf1.frequency.setValueAtTime(2500, t);
+        bpf1.frequency.exponentialRampToValueAtTime(400, t + 0.3);
+        bpf1.Q.value = 0.8;
+        splash1.disconnect();
+        const g1 = ctx.createGain();
+        g1.gain.setValueAtTime(0.15, t);
+        g1.gain.linearRampToValueAtTime(0.08, t + 0.05);
+        g1.gain.exponentialRampToValueAtTime(0.001, t + 0.45);
+        splash1.connect(bpf1).connect(g1).connect(ctx.destination);
+        splash1.start(t);
+        splash1.stop(t + 0.45);
+
+        const { src: splash2 } = this._noise(0.3, 0.06);
         const lpf = ctx.createBiquadFilter();
         lpf.type = 'lowpass';
-        lpf.frequency.setValueAtTime(1200, t);
-        lpf.frequency.exponentialRampToValueAtTime(200, t + 0.35);
-        src.disconnect();
-        const g = ctx.createGain();
-        g.gain.setValueAtTime(0.1, t);
-        g.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
-        src.connect(lpf).connect(g).connect(ctx.destination);
-        src.start(t);
-        src.stop(t + 0.35);
+        lpf.frequency.setValueAtTime(800, t + 0.05);
+        lpf.frequency.exponentialRampToValueAtTime(150, t + 0.35);
+        splash2.disconnect();
+        const g2 = ctx.createGain();
+        g2.gain.setValueAtTime(0.001, t);
+        g2.gain.linearRampToValueAtTime(0.07, t + 0.05);
+        g2.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
+        splash2.connect(lpf).connect(g2).connect(ctx.destination);
+        splash2.start(t + 0.03);
+        splash2.stop(t + 0.38);
+
+        const { src: bubbles } = this._noise(0.5, 0.03);
+        const bpf2 = ctx.createBiquadFilter();
+        bpf2.type = 'bandpass';
+        bpf2.frequency.setValueAtTime(600, t + 0.15);
+        bpf2.frequency.exponentialRampToValueAtTime(200, t + 0.55);
+        bpf2.Q.value = 3;
+        bubbles.disconnect();
+        const g3 = ctx.createGain();
+        g3.gain.setValueAtTime(0.001, t);
+        g3.gain.linearRampToValueAtTime(0.04, t + 0.15);
+        g3.gain.exponentialRampToValueAtTime(0.001, t + 0.55);
+        bubbles.connect(bpf2).connect(g3).connect(ctx.destination);
+        bubbles.start(t + 0.1);
+        bubbles.stop(t + 0.6);
     },
 
     sink() {
