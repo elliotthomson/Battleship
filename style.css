@@ -1157,6 +1157,7 @@ main {
 .log-entry.sunk-msg { color: #d4af37; background: rgba(212,175,55,.1); font-weight: 700; border-left-color: #d4af37; }
 .log-entry.win-msg  { color: #7ddf7d; background: rgba(50,180,50,.1); font-weight: 700; font-size: .95em; border-left-color: #7ddf7d; }
 .log-entry.lose-msg { color: #e87070; background: rgba(178,34,34,.1); font-weight: 700; font-size: .95em; border-left-color: #e87070; }
+.log-entry.insult-msg { color: #ff6b6b; background: rgba(255,107,107,.15); font-weight: 700; border-left-color: #ff6b6b; }
 
 /* ── Game Over Overlay ── */
 .game-over-overlay {

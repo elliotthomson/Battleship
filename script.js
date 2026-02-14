@@ -207,19 +207,13 @@ class NavalWar {
         this._arrowResolve = null;
         this._arrowCancelled = false;
 
-        // Insult overlay state
-        this._insultIndex = 0;
-        this._insults = [
-            'You call that a shot? My grandmother rows harder!',
-            'Poseidon weeps at your aim!',
-            'Even a blind kraken could hit better!',
-            'The fish are laughing at you!',
-            'Your fleet is an embarrassment to the sea!',
-            'A drunken sailor has better tactics!',
-            'Neptune himself is bored watching you!',
-            'Did you learn strategy from a barnacle?',
-            'The waves themselves dodge your arrows!',
-            'Your admiral must be a landlubber!',
+        this.consecutiveMisses = 0;
+        this.lastInsultIndex = -1;
+        this.insults = [
+            "Your aim is worse than a blind archer!",
+            "The gods mock your poor marksmanship!",
+            "Even a child could aim better!",
+            "Neptune himself laughs at your failure!"
         ];
 
         // Mute button
@@ -230,8 +224,6 @@ class NavalWar {
         this.setupData   = null;         // grid for placement
         this.setupFleet  = [];           // placed ships
         this.currentShipIdx = 0;         // index into FLEET being placed
-
-        this.playerMissCount = 0;
 
         this._bindSetup();
         this._bindBattle();
@@ -1089,6 +1081,16 @@ class NavalWar {
         });
     }
 
+    _getNextInsult() {
+        let nextIndex;
+        do {
+            nextIndex = Math.floor(Math.random() * this.insults.length);
+        } while (nextIndex === this.lastInsultIndex && this.insults.length > 1);
+
+        this.lastInsultIndex = nextIndex;
+        return this.insults[nextIndex];
+    }
+
     /* ══════════════════════════════════════════
        PLAYER ATTACK
        ══════════════════════════════════════════ */
@@ -1123,6 +1125,7 @@ class NavalWar {
             SoundEngine.hit();
             this._spawnImpactFlash(this.greeceBoardEl, r, c);
             this._log('Direct hit!', 'hit-msg');
+            this.consecutiveMisses = 0;
 
             const sunkShip = this._checkSunk(this.greeceFleet, this.greeceData);
             if (sunkShip) {
@@ -1140,24 +1143,13 @@ class NavalWar {
             this._refreshCell(this.greeceBoardEl, this.greeceData, r, c, true);
             SoundEngine.miss();
             this._spawnSplash(this.greeceBoardEl, r, c);
-            this.playerMissCount++;
+            this._log('Splash\u2014miss!', 'miss-msg');
 
-            if (this.playerMissCount % 3 === 0) {
-                const insults = [
-                    "Is that the best you've got?",
-                    "Looks like you need more practice!",
-                    "Even a blind archer shoots better!",
-                    "The gods mock your aim!",
-                    "Perhaps try closing your eyes next time?",
-                    "Your ancestors weep at this display!",
-                    "A child could aim better!",
-                    "Neptune himself laughs at you!"
-                ];
-                const insult = insults[Math.floor(Math.random() * insults.length)];
+            this.consecutiveMisses++;
+            if (this.consecutiveMisses >= 3) {
+                const insult = this._getNextInsult();
                 this._log(insult, 'insult-msg');
-                this._showInsult(insult);
-            } else {
-                this._log('Splash\u2014miss!', 'miss-msg');
+                this.consecutiveMisses = 0;
             }
             this._updateCounts();
 
@@ -1202,6 +1194,7 @@ class NavalWar {
             SoundEngine.hit();
             this._spawnImpactFlash(this.romeBoardEl, r, c);
             this._log('Greece scores a direct hit!', 'hit-msg');
+            this.consecutiveMisses = 0;
 
             this._aiRegisterHit(r, c);
 
