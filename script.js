@@ -1023,7 +1023,7 @@ class NavalWar {
             const endY = tgtRect.top + tgtRect.height / 2;
 
             const dist = Math.hypot(endX - startX, endY - startY);
-            const arcHeight = Math.min(dist * 0.25, 120);
+            const arcHeight = Math.min(dist * 0.40, 160);
 
             const duration = 480 + Math.random() * 170;
 
