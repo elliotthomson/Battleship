@@ -1154,6 +1154,7 @@ class NavalWar {
                 ];
                 const insult = insults[Math.floor(Math.random() * insults.length)];
                 this._log(insult, 'insult-msg');
+                this._showInsult(insult);
             } else {
                 this._log('Splash\u2014miss!', 'miss-msg');
             }
@@ -1410,21 +1411,53 @@ class NavalWar {
         });
     }
 
-    _showInsult() {
+    _showInsult(text) {
         document.querySelectorAll('.insult-overlay').forEach(el => el.remove());
 
-        const text = this._insults[this._insultIndex];
-        this._insultIndex = (this._insultIndex + 1) % this._insults.length;
+        if (!text) {
+            text = this._insults[this._insultIndex];
+            this._insultIndex = (this._insultIndex + 1) % this._insults.length;
+        }
 
         const overlay = document.createElement('div');
         overlay.className = 'insult-overlay';
         overlay.innerHTML = `<div class="insult-box"><p>${text}</p></div>`;
         document.body.appendChild(overlay);
 
-        setTimeout(() => {
-            overlay.classList.add('insult-fade-out');
-            overlay.addEventListener('animationend', () => overlay.remove());
-        }, 2000);
+        const box = overlay.querySelector('.insult-box');
+        const ENTER = 400;
+        const HOLD = 2000;
+        const EXIT = 600;
+        const TOTAL = ENTER + HOLD + EXIT;
+        const start = performance.now();
+
+        const tick = (now) => {
+            const elapsed = now - start;
+
+            if (elapsed < ENTER) {
+                const t = elapsed / ENTER;
+                const easeOut = 1 - Math.pow(1 - t, 3);
+                box.style.transform = `scale(${0.3 + easeOut * 0.7})`;
+                box.style.opacity = String(easeOut);
+            } else if (elapsed < ENTER + HOLD) {
+                const ht = (elapsed - ENTER) / HOLD;
+                const pulse = 1 + Math.sin(ht * Math.PI * 3) * 0.02;
+                box.style.transform = `scale(${pulse})`;
+                box.style.opacity = '1';
+            } else if (elapsed < TOTAL) {
+                const t = (elapsed - ENTER - HOLD) / EXIT;
+                const easeIn = t * t;
+                box.style.transform = `scale(${1 - easeIn * 0.1}) translateY(${-easeIn * 40}px)`;
+                box.style.opacity = String(1 - easeIn);
+            } else {
+                overlay.remove();
+                return;
+            }
+
+            requestAnimationFrame(tick);
+        };
+
+        requestAnimationFrame(tick);
     }
 
     /* ── Visual Effects ── */
