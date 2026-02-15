@@ -137,6 +137,36 @@ const SoundEngine = {
         }
     },
 
+    _victoryBuffer: null,
+
+    _loadVictorySound() {
+        if (this._victoryBuffer) return Promise.resolve();
+        return fetch('assets/crowd-applause.wav')
+            .then(r => r.arrayBuffer())
+            .then(buf => this._ensureCtx().decodeAudioData(buf))
+            .then(decoded => { this._victoryBuffer = decoded; });
+    },
+
+    victory() {
+        if (this.muted) return;
+        const ctx = this._ensureCtx();
+        if (this._victoryBuffer) {
+            const src = ctx.createBufferSource();
+            src.buffer = this._victoryBuffer;
+            src.connect(ctx.destination);
+            src.start(ctx.currentTime);
+        } else {
+            this._loadVictorySound().then(() => {
+                if (this._victoryBuffer) {
+                    const src = ctx.createBufferSource();
+                    src.buffer = this._victoryBuffer;
+                    src.connect(ctx.destination);
+                    src.start(ctx.currentTime);
+                }
+            });
+        }
+    },
+
     warHorn() {
         if (this.muted) return;
         const audio = new Audio('assets/war-horn.wav');
@@ -316,6 +346,7 @@ class NavalWar {
             SoundEngine._loadHitSound();
             SoundEngine._loadMissSound();
             SoundEngine._loadSinkSound();
+            SoundEngine._loadVictorySound();
             this._showSetup();
         };
 
@@ -1113,7 +1144,12 @@ class NavalWar {
             const sunkShip = this._checkSunk(this.greeceFleet, this.greeceData);
             if (sunkShip) {
                 this._markSunk(this.greeceBoardEl, sunkShip);
-                SoundEngine.sink();
+                const isVictory = this.greeceFleet.every(s => s.sunk);
+                if (isVictory) {
+                    SoundEngine.victory();
+                } else {
+                    SoundEngine.sink();
+                }
                 this._log(`You sank the ${sunkShip.name}!`, 'sunk-msg');
                 this._showSunkAnimation(sunkShip);
             } else {
@@ -1186,7 +1222,12 @@ class NavalWar {
             const sunkShip = this._checkSunk(this.romeFleet, this.romeData);
             if (sunkShip) {
                 this._markSunk(this.romeBoardEl, sunkShip);
-                SoundEngine.sink();
+                const isVictory = this.romeFleet.every(s => s.sunk);
+                if (isVictory) {
+                    SoundEngine.victory();
+                } else {
+                    SoundEngine.sink();
+                }
                 this._log(`Greece sank your ${sunkShip.name}!`, 'sunk-msg');
                 this._aiRegisterSunk(sunkShip);
                 this._showSunkAnimation(sunkShip);
