@@ -350,27 +350,29 @@ class NavalWar {
             this._showSetup();
         };
 
-        this.splashAudio.addEventListener('ended', goToSetup, { once: true });
-
-        this.splashContinue.addEventListener('click', () => {
-            if (audioStarted) {
-                goToSetup();
-            } else {
-                audioStarted = true;
-                this.splashAudio.play().catch(() => goToSetup());
-            }
-        });
-
-        this.splashScreen.addEventListener('click', (e) => {
+        const tryPlay = () => {
             if (audioStarted) return;
-            if (e.target === this.splashContinue || this.splashContinue.contains(e.target)) return;
             audioStarted = true;
             this.splashAudio.play().catch(() => {});
-        });
+            cleanup();
+        };
+
+        const cleanup = () => {
+            document.removeEventListener('click', tryPlay, true);
+            document.removeEventListener('touchstart', tryPlay, true);
+            document.removeEventListener('keydown', tryPlay, true);
+        };
+
+        this.splashAudio.addEventListener('ended', goToSetup, { once: true });
+        this.splashContinue.addEventListener('click', goToSetup);
 
         this.splashAudio.play().then(() => {
             audioStarted = true;
-        }).catch(() => {});
+        }).catch(() => {
+            document.addEventListener('click', tryPlay, true);
+            document.addEventListener('touchstart', tryPlay, true);
+            document.addEventListener('keydown', tryPlay, true);
+        });
     }
 
     _showSetup() {
