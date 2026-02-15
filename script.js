@@ -367,7 +367,6 @@ class NavalWar {
         const goToFaction = () => {
             if (transitioned) return;
             transitioned = true;
-            if (this.splashAudio) this.splashAudio.pause();
             SoundEngine._loadHitSound();
             SoundEngine._loadMissSound();
             SoundEngine._loadSinkSound();
@@ -553,6 +552,10 @@ class NavalWar {
     }
 
     async _beginWar() {
+        if (this.splashAudio) {
+            this.splashAudio.pause();
+            this.splashAudio.currentTime = 0;
+        }
         const playerSetup = this.setupData.map(row => [...row]);
         const playerFleet = this.setupFleet.map(s => ({ ...s, positions: s.positions.map(p => [...p]), sunk: false }));
 
