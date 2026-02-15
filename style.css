@@ -616,6 +616,11 @@ h1 {
     border: 1px solid rgba(178,34,34,.4);
 }
 
+.ship-rack.greece .rack-pips i {
+    background: linear-gradient(135deg, rgba(36,113,163,.5), rgba(26,82,118,.65));
+    border: 1px solid rgba(36,113,163,.4);
+}
+
 .rack-ship.placed .rack-pips i {
     background: rgba(100,100,100,.3);
     border-color: rgba(100,100,100,.2);
