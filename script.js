@@ -208,11 +208,15 @@ class NavalWar {
         ];
 
         this.difficulty = 'easy'; // easy | medium | hard | expert
+        this.playerFaction = 'rome'; // rome | greece
 
         // ── DOM refs (splash) ──
         this.splashScreen    = document.getElementById('splash-screen');
         this.splashAudio     = document.getElementById('splash-audio');
         this.splashContinue  = document.getElementById('splash-continue-btn');
+
+        // ── DOM refs (faction) ──
+        this.factionScreen   = document.getElementById('faction-screen');
 
         // ── DOM refs (setup) ──
         this.setupScreen  = document.getElementById('setup-screen');
@@ -264,6 +268,7 @@ class NavalWar {
         this.setupFleet  = [];           // placed ships
         this.currentShipIdx = 0;         // index into FLEET being placed
 
+        this._bindFaction();
         this._bindSetup();
         this._bindBattle();
         this._showSplash();
@@ -279,6 +284,27 @@ class NavalWar {
             btn.innerHTML = muted ? '&#x1f507;' : '&#x1f50a;';
         });
         document.body.appendChild(btn);
+    }
+
+    /* ══════════════════════════════════════════
+       FACTION SELECTION
+       ══════════════════════════════════════════ */
+
+    _bindFaction() {
+        document.querySelectorAll('.faction-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                this.playerFaction = btn.dataset.faction;
+                this.factionScreen.classList.add('hidden');
+                this._showSetup();
+            });
+        });
+    }
+
+    _showFaction() {
+        this.splashScreen.classList.add('hidden');
+        this.factionScreen.classList.remove('hidden');
+        this.setupScreen.classList.add('hidden');
+        this.battleScreen.classList.add('hidden');
     }
 
     /* ══════════════════════════════════════════
@@ -338,16 +364,15 @@ class NavalWar {
         let transitioned = false;
         let audioStarted = false;
 
-        const goToSetup = () => {
+        const goToFaction = () => {
             if (transitioned) return;
             transitioned = true;
             if (this.splashAudio) this.splashAudio.pause();
-            this.splashScreen.classList.add('hidden');
             SoundEngine._loadHitSound();
             SoundEngine._loadMissSound();
             SoundEngine._loadSinkSound();
             SoundEngine._loadVictorySound();
-            this._showSetup();
+            this._showFaction();
         };
 
         const tryPlay = () => {
@@ -363,8 +388,8 @@ class NavalWar {
             document.removeEventListener('keydown', tryPlay, true);
         };
 
-        this.splashAudio.addEventListener('ended', goToSetup, { once: true });
-        this.splashContinue.addEventListener('click', goToSetup);
+        this.splashAudio.addEventListener('ended', goToFaction, { once: true });
+        this.splashContinue.addEventListener('click', goToFaction);
 
         this.splashAudio.play().then(() => {
             audioStarted = true;
@@ -377,8 +402,19 @@ class NavalWar {
 
     _showSetup() {
         this.splashScreen.classList.add('hidden');
+        this.factionScreen.classList.add('hidden');
         this.setupScreen.classList.remove('hidden');
         this.battleScreen.classList.add('hidden');
+
+        const isGreece = this.playerFaction === 'greece';
+        document.getElementById('fleet-title').textContent = isGreece ? 'Greek Fleet' : 'Roman Fleet';
+        const setupBoardTitle = this.setupScreen.querySelector('.board-title');
+        if (setupBoardTitle) setupBoardTitle.textContent = isGreece ? 'Greek Waters' : 'Rome Waters';
+        const boardContainer = this.setupScreen.querySelector('.board-container');
+        boardContainer.classList.toggle('rome-board-container', !isGreece);
+        boardContainer.classList.toggle('greece-board-container', isGreece);
+        const shipRack = document.getElementById('ship-rack');
+        shipRack.classList.toggle('greece', isGreece);
 
         // Reset setup state
         this.setupData  = this._emptyGrid();
@@ -399,6 +435,7 @@ class NavalWar {
     }
 
     _renderSetupBoard() {
+        const isGreece = this.playerFaction === 'greece';
         this.setupBoardEl.innerHTML = '';
         for (let r = 0; r < this.SIZE; r++) {
             for (let c = 0; c < this.SIZE; c++) {
@@ -406,11 +443,11 @@ class NavalWar {
                 cell.className = 'cell setup-cell';
                 cell.dataset.row = r;
                 cell.dataset.col = c;
-                if (this.setupData[r][c] === 'ship') cell.classList.add('ship-rome');
+                if (this.setupData[r][c] === 'ship') cell.classList.add(isGreece ? 'ship-greece' : 'ship-rome');
                 this.setupBoardEl.appendChild(cell);
             }
         }
-        this._renderShipOverlays(this.setupBoardEl, this.setupFleet, false, false);
+        this._renderShipOverlays(this.setupBoardEl, this.setupFleet, false, isGreece, false);
     }
 
     _getPositions(r, c, len, orient) {
@@ -516,12 +553,22 @@ class NavalWar {
     }
 
     async _beginWar() {
-        this.romeData  = this.setupData.map(row => [...row]);
-        this.romeFleet = this.setupFleet.map(s => ({ ...s, positions: s.positions.map(p => [...p]), sunk: false }));
+        const playerSetup = this.setupData.map(row => [...row]);
+        const playerFleet = this.setupFleet.map(s => ({ ...s, positions: s.positions.map(p => [...p]), sunk: false }));
 
-        this.greeceData  = this._emptyGrid();
-        this.greeceFleet = [];
-        this._placeFleetRandom(this.greeceData, this.greeceFleet);
+        if (this.playerFaction === 'greece') {
+            this.greeceData  = playerSetup;
+            this.greeceFleet = playerFleet;
+            this.romeData    = this._emptyGrid();
+            this.romeFleet   = [];
+            this._placeFleetRandom(this.romeData, this.romeFleet);
+        } else {
+            this.romeData    = playerSetup;
+            this.romeFleet   = playerFleet;
+            this.greeceData  = this._emptyGrid();
+            this.greeceFleet = [];
+            this._placeFleetRandom(this.greeceData, this.greeceFleet);
+        }
 
         const labels = { easy: 'Easy', medium: 'Medium', hard: 'Hard', expert: 'Expert' };
         this.diffDisplay.textContent = labels[this.difficulty];
@@ -560,7 +607,8 @@ class NavalWar {
 
     _bindBattle() {
         this.restartBtn.addEventListener('click', () => this.restart());
-        this.greeceBoardEl.addEventListener('click', (e) => this._onGreeceClick(e));
+        this.greeceBoardEl.addEventListener('click', (e) => this._onBoardClick(e, true));
+        this.romeBoardEl.addEventListener('click', (e) => this._onBoardClick(e, false));
     }
 
     _startBattle() {
@@ -580,9 +628,11 @@ class NavalWar {
         this.greeceShotCount = 0;
         this.greeceHitCount = 0;
 
-        // Render boards
-        this._renderBoard(this.romeBoardEl,   this.romeData,   false);
-        this._renderBoard(this.greeceBoardEl, this.greeceData, true);
+        const playerIsGreece = this.playerFaction === 'greece';
+
+        // Render boards: player board shows ships, enemy board is hidden
+        this._renderBoard(this.romeBoardEl,   this.romeData,   this.romeFleet,   playerIsGreece, false);
+        this._renderBoard(this.greeceBoardEl, this.greeceData, this.greeceFleet, !playerIsGreece, true);
 
         this._updateCounts();
         this._setTurn('rome');
@@ -592,6 +642,11 @@ class NavalWar {
 
         document.querySelectorAll('.game-over-overlay').forEach(el => el.remove());
         this._cancelArrow();
+
+        if (playerIsGreece) {
+            this.locked = true;
+            this._delay(800).then(() => this._aiTurn());
+        }
     }
 
     restart() {
@@ -625,7 +680,7 @@ class NavalWar {
 
     /* ── Rendering ── */
 
-    _renderBoard(boardEl, data, isGreece) {
+    _renderBoard(boardEl, data, fleet, isEnemy, isGreeceFaction) {
         boardEl.innerHTML = '';
         for (let r = 0; r < this.SIZE; r++) {
             for (let c = 0; c < this.SIZE; c++) {
@@ -635,12 +690,12 @@ class NavalWar {
                 cell.dataset.col = c;
 
                 const val = data[r][c];
-                if (isGreece) {
-                    cell.classList.add('greece-cell');
+                if (isEnemy) {
+                    cell.classList.add('enemy-cell');
                     if (val === 'hit')  { cell.classList.add('hit'); }
                     if (val === 'miss') { cell.classList.add('miss'); this._createWaveElements(cell); }
                 } else {
-                    if (val === 'ship') cell.classList.add('ship-rome');
+                    if (val === 'ship') cell.classList.add(isGreeceFaction ? 'ship-greece' : 'ship-rome');
                     if (val === 'hit')  { cell.classList.add('hit'); }
                     if (val === 'miss') { cell.classList.add('miss'); this._createWaveElements(cell); }
                 }
@@ -650,7 +705,6 @@ class NavalWar {
 
         this._syncAdjacentMisses(boardEl, data);
 
-        const fleet = isGreece ? this.greeceFleet : this.romeFleet;
         fleet.filter(s => s.sunk).forEach(s => {
             s.positions.forEach(([sr, sc]) => {
                 const sunkCell = boardEl.querySelector(`.cell[data-row="${sr}"][data-col="${sc}"]`);
@@ -658,15 +712,15 @@ class NavalWar {
             });
         });
 
-        this._renderShipOverlays(boardEl, fleet, isGreece, false);
+        this._renderShipOverlays(boardEl, fleet, isEnemy, isGreeceFaction, false);
     }
 
-    _refreshCell(boardEl, data, r, c, isGreece) {
+    _refreshCell(boardEl, data, r, c, isEnemy, isGreeceFaction) {
         const cell = boardEl.querySelector(`.cell[data-row="${r}"][data-col="${c}"]`);
         if (!cell) return;
         const val = data[r][c];
-        cell.className = 'cell' + (isGreece ? ' greece-cell' : '');
-        if (!isGreece && val === 'ship') cell.classList.add('ship-rome');
+        cell.className = 'cell' + (isEnemy ? ' enemy-cell' : '');
+        if (!isEnemy && val === 'ship') cell.classList.add(isGreeceFaction ? 'ship-greece' : 'ship-rome');
         if (val === 'hit')       { cell.classList.add('hit'); }
         else if (val === 'miss') { cell.classList.add('miss'); this._createWaveElements(cell); this._updateAdjacentMisses(boardEl, data, r, c); }
         else                     { cell.textContent = ''; }
@@ -677,10 +731,11 @@ class NavalWar {
             const cell = boardEl.querySelector(`.cell[data-row="${sr}"][data-col="${sc}"]`);
             if (cell) cell.classList.add('sunk');
         });
-        const isGreece = (boardEl === this.greeceBoardEl);
-        const fleet = isGreece ? this.greeceFleet : this.romeFleet;
+        const isGreeceBoard = (boardEl === this.greeceBoardEl);
+        const fleet = isGreeceBoard ? this.greeceFleet : this.romeFleet;
+        const isEnemy = (this.playerFaction === 'rome') ? isGreeceBoard : !isGreeceBoard;
         boardEl.querySelectorAll('.ship-overlay').forEach(el => el.remove());
-        this._renderShipOverlays(boardEl, fleet, isGreece, false);
+        this._renderShipOverlays(boardEl, fleet, isEnemy, isGreeceBoard, false);
     }
 
     /* ── Ship SVG Overlays ── */
@@ -866,11 +921,11 @@ class NavalWar {
         return ship.positions[0][0] === ship.positions[1][0] ? 'h' : 'v';
     }
 
-    _renderShipOverlays(boardEl, fleet, isGreece, forceShow) {
+    _renderShipOverlays(boardEl, fleet, isEnemy, isGreeceFaction, forceShow) {
         boardEl.querySelectorAll('.ship-overlay').forEach(el => el.remove());
 
         for (const ship of fleet) {
-            if (isGreece && !ship.sunk && !forceShow) continue;
+            if (isEnemy && !ship.sunk && !forceShow) continue;
 
             const orient = this._getShipOrientation(ship);
             const startPos = ship.positions[0];
@@ -881,11 +936,11 @@ class NavalWar {
 
             const overlay = document.createElement('div');
             overlay.className = 'ship-overlay';
-            overlay.classList.add(ship.sunk ? 'ship-overlay-sunk' : (isGreece ? 'ship-overlay-greece' : 'ship-overlay-rome'));
+            overlay.classList.add(ship.sunk ? 'ship-overlay-sunk' : (isGreeceFaction ? 'ship-overlay-greece' : 'ship-overlay-rome'));
             if (orient === 'v') overlay.classList.add('ship-overlay-vertical');
             overlay.dataset.shipId = ship.id;
             overlay.dataset.shipLen = ship.length;
-            overlay.innerHTML = this._getShipSVG(ship.id, ship.length, isGreece, ship.sunk);
+            overlay.innerHTML = this._getShipSVG(ship.id, ship.length, isGreeceFaction, ship.sunk);
 
             const cellRect = startCell.getBoundingClientRect();
             const boardRect = boardEl.getBoundingClientRect();
@@ -1112,10 +1167,12 @@ class NavalWar {
        PLAYER ATTACK
        ══════════════════════════════════════════ */
 
-    _onGreeceClick(e) {
-        if (this.gameOver || this.locked || this.turn !== 'rome') return;
+    _onBoardClick(e, isGreeceBoard) {
+        if (this.gameOver || this.locked || this.turn !== this.playerFaction) return;
+        const isEnemyBoard = (this.playerFaction === 'rome') ? isGreeceBoard : !isGreeceBoard;
+        if (!isEnemyBoard) return;
         const cell = e.target.closest('.cell');
-        if (!cell || !cell.classList.contains('greece-cell')) return;
+        if (!cell || !cell.classList.contains('enemy-cell')) return;
         if (cell.classList.contains('hit') || cell.classList.contains('miss')) return;
 
         const r = +cell.dataset.row, c = +cell.dataset.col;
@@ -1124,29 +1181,37 @@ class NavalWar {
 
     async _executePlayerAttack(r, c) {
         this.locked = true;
-        this.romeShotCount++;
+        const isPlayerRome = this.playerFaction === 'rome';
+        const enemyBoardEl = isPlayerRome ? this.greeceBoardEl : this.romeBoardEl;
+        const enemyData = isPlayerRome ? this.greeceData : this.romeData;
+        const enemyFleet = isPlayerRome ? this.greeceFleet : this.romeFleet;
+        const archerEl = isPlayerRome ? this.archerRome : this.archerGreece;
+        const arrowDir = isPlayerRome ? 'right' : 'left';
+        const enemyIsGreece = isPlayerRome;
 
-        const targetCell = this.greeceBoardEl.querySelector(`.cell[data-row="${r}"][data-col="${c}"]`);
+        if (isPlayerRome) { this.romeShotCount++; } else { this.greeceShotCount++; }
 
-        this._showArcher(this.archerRome);
+        const targetCell = enemyBoardEl.querySelector(`.cell[data-row="${r}"][data-col="${c}"]`);
+
+        this._showArcher(archerEl);
         await this._delay(300);
         SoundEngine.arrowLaunch();
-        await this._fireArrow(this.archerRome, targetCell, 'right');
+        await this._fireArrow(archerEl, targetCell, arrowDir);
         if (this.gameOver) return;
 
-        const val = this.greeceData[r][c];
+        const val = enemyData[r][c];
         if (val === 'ship') {
-            this.romeHitCount++;
-            this.greeceData[r][c] = 'hit';
-            this._refreshCell(this.greeceBoardEl, this.greeceData, r, c, true);
-            this._spawnImpactFlash(this.greeceBoardEl, r, c);
+            if (isPlayerRome) { this.romeHitCount++; } else { this.greeceHitCount++; }
+            enemyData[r][c] = 'hit';
+            this._refreshCell(enemyBoardEl, enemyData, r, c, true, enemyIsGreece);
+            this._spawnImpactFlash(enemyBoardEl, r, c);
             this._log('Direct hit!', 'hit-msg');
             this.consecutiveMisses = 0;
 
-            const sunkShip = this._checkSunk(this.greeceFleet, this.greeceData);
+            const sunkShip = this._checkSunk(enemyFleet, enemyData);
             if (sunkShip) {
-                this._markSunk(this.greeceBoardEl, sunkShip);
-                const isVictory = this.greeceFleet.every(s => s.sunk);
+                this._markSunk(enemyBoardEl, sunkShip);
+                const isVictory = enemyFleet.every(s => s.sunk);
                 if (isVictory) {
                     SoundEngine.victory();
                 } else {
@@ -1162,10 +1227,10 @@ class NavalWar {
 
             this.locked = false;
         } else {
-            this.greeceData[r][c] = 'miss';
-            this._refreshCell(this.greeceBoardEl, this.greeceData, r, c, true);
+            enemyData[r][c] = 'miss';
+            this._refreshCell(enemyBoardEl, enemyData, r, c, true, enemyIsGreece);
             SoundEngine.miss();
-            this._spawnSplash(this.greeceBoardEl, r, c);
+            this._spawnSplash(enemyBoardEl, r, c);
             this._log('Splash\u2014miss!', 'miss-msg');
 
             this.consecutiveMisses++;
@@ -1177,7 +1242,8 @@ class NavalWar {
             }
             this._updateCounts();
 
-            this._setTurn('greece');
+            const aiFaction = isPlayerRome ? 'greece' : 'rome';
+            this._setTurn(aiFaction);
             await this._delay(500);
             if (this.gameOver) return;
             await this._aiTurn();
@@ -1198,39 +1264,48 @@ class NavalWar {
         if (this.gameOver) return;
         this.locked = true;
 
+        const isPlayerRome = this.playerFaction === 'rome';
+        const playerBoardEl = isPlayerRome ? this.romeBoardEl : this.greeceBoardEl;
+        const playerData = isPlayerRome ? this.romeData : this.greeceData;
+        const playerFleet = isPlayerRome ? this.romeFleet : this.greeceFleet;
+        const archerEl = isPlayerRome ? this.archerGreece : this.archerRome;
+        const arrowDir = isPlayerRome ? 'left' : 'right';
+        const playerIsGreece = !isPlayerRome;
+        const aiFaction = isPlayerRome ? 'Greece' : 'Rome';
+
         const [r, c] = this._aiPickTarget();
         this.aiShots.add(r * this.SIZE + c);
-        this.greeceShotCount++;
+        if (isPlayerRome) { this.greeceShotCount++; } else { this.romeShotCount++; }
 
-        const targetCell = this.romeBoardEl.querySelector(`.cell[data-row="${r}"][data-col="${c}"]`);
+        const targetCell = playerBoardEl.querySelector(`.cell[data-row="${r}"][data-col="${c}"]`);
 
-        this._showArcher(this.archerGreece);
+        this._showArcher(archerEl);
         await this._delay(300);
         SoundEngine.arrowLaunch();
-        await this._fireArrow(this.archerGreece, targetCell, 'left');
+        await this._fireArrow(archerEl, targetCell, arrowDir);
         if (this.gameOver) return;
 
-        const val = this.romeData[r][c];
+        const val = playerData[r][c];
         if (val === 'ship') {
-            this.greeceHitCount++;
-            this.romeData[r][c] = 'hit';
-            this._refreshCell(this.romeBoardEl, this.romeData, r, c, false);
-            this._spawnImpactFlash(this.romeBoardEl, r, c);
-            this._log('Greece scores a direct hit!', 'hit-msg');
+            if (isPlayerRome) { this.greeceHitCount++; } else { this.romeHitCount++; }
+            playerData[r][c] = 'hit';
+            this._refreshCell(playerBoardEl, playerData, r, c, false, playerIsGreece);
+            this._spawnImpactFlash(playerBoardEl, r, c);
+            this._log(`${aiFaction} scores a direct hit!`, 'hit-msg');
             this.consecutiveMisses = 0;
 
             this._aiRegisterHit(r, c);
 
-            const sunkShip = this._checkSunk(this.romeFleet, this.romeData);
+            const sunkShip = this._checkSunk(playerFleet, playerData);
             if (sunkShip) {
-                this._markSunk(this.romeBoardEl, sunkShip);
-                const isVictory = this.romeFleet.every(s => s.sunk);
+                this._markSunk(playerBoardEl, sunkShip);
+                const isVictory = playerFleet.every(s => s.sunk);
                 if (isVictory) {
                     SoundEngine.victory();
                 } else {
                     SoundEngine.sink();
                 }
-                this._log(`Greece sank your ${sunkShip.name}!`, 'sunk-msg');
+                this._log(`${aiFaction} sank your ${sunkShip.name}!`, 'sunk-msg');
                 this._aiRegisterSunk(sunkShip);
                 this._showSunkAnimation(sunkShip);
             } else {
@@ -1240,16 +1315,16 @@ class NavalWar {
             if (this._checkVictory()) return;
 
             await this._delay(600);
-            await this._aiTurn(); // another turn on hit
+            await this._aiTurn();
         } else {
-            this.romeData[r][c] = 'miss';
-            this._refreshCell(this.romeBoardEl, this.romeData, r, c, false);
+            playerData[r][c] = 'miss';
+            this._refreshCell(playerBoardEl, playerData, r, c, false, playerIsGreece);
             SoundEngine.miss();
-            this._spawnSplash(this.romeBoardEl, r, c);
-            this._log('Greece missed!', 'miss-msg');
+            this._spawnSplash(playerBoardEl, r, c);
+            this._log(`${aiFaction} missed!`, 'miss-msg');
             this._updateCounts();
 
-            this._setTurn('rome');
+            this._setTurn(this.playerFaction);
             this.locked = false;
         }
     }
@@ -1374,7 +1449,8 @@ class NavalWar {
         const adj = [[r-1,c],[r+1,c],[r,c-1],[r,c+1]].filter(
             ([ar, ac]) => ar >= 0 && ar < this.SIZE && ac >= 0 && ac < this.SIZE
         );
-        const hitNeighbours = adj.filter(([ar, ac]) => this.romeData[ar][ac] === 'hit');
+        const pData = this.playerFaction === 'rome' ? this.romeData : this.greeceData;
+        const hitNeighbours = adj.filter(([ar, ac]) => pData[ar][ac] === 'hit');
         if (hitNeighbours.length === 0) return true;
         return hitNeighbours.every(([ar, ac]) => sunkSet.has(ar * this.SIZE + ac));
     }
@@ -1408,12 +1484,13 @@ class NavalWar {
         this.locked = true;
         this._cancelArrow();
 
+        const playerWon = winner === this.playerFaction;
         if (winner === 'rome') {
-            this._log('🏛️ VICTORY! Rome conquers the Greek fleet!', 'win-msg');
-            this._showOverlay('Rome Victorious!', 'The Greek fleet lies at the bottom of the sea.', true);
+            this._log(playerWon ? '🏛️ VICTORY! Rome conquers the Greek fleet!' : '🏛️ DEFEAT! Rome has destroyed your fleet!', playerWon ? 'win-msg' : 'lose-msg');
+            this._showOverlay('Rome Victorious!', 'The Greek fleet lies at the bottom of the sea.', playerWon);
         } else {
-            this._log('🏺 DEFEAT! Greece has destroyed the Roman fleet!', 'lose-msg');
-            this._showOverlay('Greece Prevails!', 'The Roman fleet has been vanquished.', false);
+            this._log(playerWon ? '🏺 VICTORY! Greece destroys the Roman fleet!' : '🏺 DEFEAT! Greece has destroyed the Roman fleet!', playerWon ? 'win-msg' : 'lose-msg');
+            this._showOverlay('Greece Prevails!', 'The Roman fleet has been vanquished.', playerWon);
         }
     }
 

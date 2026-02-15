@@ -24,6 +24,26 @@
         </div>
     </div>
 
+    <!-- ═══════════ FACTION SELECTION SCREEN ═══════════ -->
+    <div class="screen hidden" id="faction-screen">
+        <div class="splash-container">
+            <h1 class="splash-title">Choose Your Faction</h1>
+            <p class="splash-subtitle">Who will command the fleet?</p>
+            <div class="faction-buttons">
+                <button class="faction-btn faction-btn-rome" data-faction="rome">
+                    <span class="faction-icon">&#x1f3db;</span>
+                    <span class="faction-name">Rome</span>
+                    <span class="faction-desc">Command the Roman Fleet</span>
+                </button>
+                <button class="faction-btn faction-btn-greece" data-faction="greece">
+                    <span class="faction-icon">&#x1f3fa;</span>
+                    <span class="faction-name">Greece</span>
+                    <span class="faction-desc">Command the Greek Fleet</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- ═══════════ SETUP SCREEN ═══════════ -->
     <div class="screen hidden" id="setup-screen">
         <div class="container">
@@ -40,7 +60,7 @@
                         <h4>1. Setup Phase</h4>
                         <ul>
                             <li>Select difficulty level (Easy, Medium, Hard, or Expert)</li>
-                            <li>Place your 5 Roman ships on the grid</li>
+                            <li>Place your 5 ships on the grid</li>
                             <li>You can place ships manually or use the "🎲 Random" button for automatic placement</li>
                         </ul>
                     </div>
@@ -58,7 +78,7 @@
                         <h4>3. Battle Phase</h4>
                         <ul>
                             <li>Click on cells in the enemy grid to fire</li>
-                            <li>Try to sink all 5 Greek ships before they sink yours</li>
+                            <li>Try to sink all 5 enemy ships before they sink yours</li>
                         </ul>
                     </div>
                     <div class="help-section">
@@ -82,7 +102,7 @@
             <div class="setup-layout">
                 <!-- Ship list -->
                 <div class="ship-rack" id="ship-rack">
-                    <h3>Roman Fleet</h3>
+                    <h3 id="fleet-title">Roman Fleet</h3>
                     <div class="rack-ship selected" data-ship="quinquereme" data-len="5">
                         <span class="rack-name">Quinquereme</span>
                         <span class="rack-pips"><i></i><i></i><i></i><i></i><i></i></span>

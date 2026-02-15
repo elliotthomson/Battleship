@@ -128,6 +128,77 @@ body {
     .splash-container { padding: 24px 16px; }
 }
 
+/* ── Faction Selection Screen ── */
+#faction-screen {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+.faction-buttons {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    margin-top: 28px;
+    flex-wrap: wrap;
+}
+
+.faction-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 28px 36px;
+    border: 2px solid rgba(212,175,55,.3);
+    border-radius: 14px;
+    cursor: pointer;
+    background: linear-gradient(135deg, rgba(212,175,55,.06), rgba(0,0,0,.2));
+    transition: all .3s;
+    min-width: 180px;
+}
+
+.faction-btn:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 0 24px rgba(212,175,55,.15);
+}
+
+.faction-btn-rome:hover {
+    border-color: rgba(178,34,34,.6);
+    background: linear-gradient(135deg, rgba(178,34,34,.15), rgba(139,0,0,.1));
+}
+
+.faction-btn-greece:hover {
+    border-color: rgba(36,113,163,.6);
+    background: linear-gradient(135deg, rgba(36,113,163,.15), rgba(26,82,118,.1));
+}
+
+.faction-icon {
+    font-size: 2.8em;
+}
+
+.faction-name {
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
+    font-size: 1.3em;
+    color: #d4af37;
+    letter-spacing: 2px;
+}
+
+.faction-desc {
+    font-family: 'Philosopher', serif;
+    font-size: .85em;
+    color: #c0b896;
+    letter-spacing: .5px;
+}
+
+@media (max-width: 680px) {
+    .faction-buttons { gap: 14px; }
+    .faction-btn { padding: 20px 24px; min-width: 140px; }
+    .faction-icon { font-size: 2em; }
+    .faction-name { font-size: 1.05em; }
+}
+
 /* ── Battle Start Sequence ── */
 .war-transition-overlay {
     position: fixed;
@@ -276,7 +347,7 @@ body {
 }
 
 /* ── Battle Cell Hover Ripple ── */
-.cell.greece-cell:hover:not(.hit):not(.miss):not(.disabled)::before {
+.cell.enemy-cell:hover:not(.hit):not(.miss):not(.disabled)::before {
     content: '';
     position: absolute;
     inset: 0;
@@ -479,6 +550,11 @@ h1 {
     border: 1px solid rgba(178,34,34,.25);
 }
 
+.ship-rack.greece {
+    background: linear-gradient(160deg, rgba(26,58,107,.15), rgba(10,20,40,.25));
+    border: 1px solid rgba(36,113,163,.25);
+}
+
 .ship-rack h3 {
     font-family: 'Cinzel', serif;
     color: #e8a0a0;
@@ -486,6 +562,10 @@ h1 {
     margin-bottom: 10px;
     text-align: center;
     letter-spacing: 1px;
+}
+
+.ship-rack.greece h3 {
+    color: #a0c4e8;
 }
 
 .rack-ship {
@@ -501,9 +581,14 @@ h1 {
 }
 
 .rack-ship:hover { background: rgba(178,34,34,.1); }
+.ship-rack.greece .rack-ship:hover { background: rgba(36,113,163,.1); }
 .rack-ship.selected {
     background: rgba(178,34,34,.18);
     border-color: rgba(178,34,34,.4);
+}
+.ship-rack.greece .rack-ship.selected {
+    background: rgba(36,113,163,.18);
+    border-color: rgba(36,113,163,.4);
 }
 .rack-ship.placed {
     opacity: .4;
@@ -845,14 +930,19 @@ main {
     border-color: rgba(178,34,34,.4);
 }
 
-.cell.greece-cell { cursor: crosshair; position: relative; }
+.cell.ship-greece {
+    background: linear-gradient(135deg, rgba(36,113,163,.35), rgba(26,82,118,.45));
+    border-color: rgba(36,113,163,.4);
+}
 
-.cell.greece-cell:hover:not(.hit):not(.miss):not(.disabled) {
+.cell.enemy-cell { cursor: crosshair; position: relative; }
+
+.cell.enemy-cell:hover:not(.hit):not(.miss):not(.disabled) {
     background: rgba(70,130,180,.25);
     transform: scale(1.08);
 }
 
-.cell.greece-cell.disabled { cursor: not-allowed; }
+.cell.enemy-cell.disabled { cursor: not-allowed; }
 
 .cell.hit {
     background: linear-gradient(135deg, #b22222, #8B0000);
