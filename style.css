@@ -1454,20 +1454,25 @@ main {
         margin-top: 14px;
     }
     .log-entries {
-        max-height: 130px;
+        max-height: 180px;
     }
 }
 
 @media (max-width: 860px) {
     .board {
-        grid-template-columns: repeat(10, 30px);
-        grid-template-rows: repeat(10, 30px);
+        grid-template-columns: repeat(10, 36px);
+        grid-template-rows: repeat(10, 36px);
     }
     .game-boards { gap: 16px; }
     .setup-layout { gap: 16px; }
     h1 { font-size: 1.6em; }
     .game-stats { gap: 10px; }
-    .stats-side { gap: 6px; padding: 4px 10px; font-size: .75em; }
+    .stats-side { gap: 6px; padding: 4px 10px; font-size: .85em; }
+    .diff-display { font-size: .9em; }
+    .log-entry { font-size: .9em; }
+    .control-btn { padding: 12px 32px; font-size: 1em; }
+    .start-war-btn { padding: 16px 44px; font-size: 1.2em; }
+    .orient-btn { font-size: .9em !important; padding: 10px 18px !important; }
 }
 
 @media (max-width: 680px) {
@@ -1476,8 +1481,43 @@ main {
         align-items: center;
     }
     .board {
-        grid-template-columns: repeat(10, 28px);
-        grid-template-rows: repeat(10, 28px);
+        grid-template-columns: repeat(10, 36px);
+        grid-template-rows: repeat(10, 36px);
     }
     .game-stats { flex-direction: column; align-items: center; gap: 6px; }
+    .stats-side { font-size: .85em; }
+    .diff-display { font-size: .9em; }
+    .log-entry { font-size: .9em; padding: 6px 12px; }
+    .control-btn { padding: 14px 34px; font-size: 1em; }
+    .start-war-btn { padding: 16px 44px; font-size: 1.2em; }
+    .orient-btn { font-size: .9em !important; padding: 12px 20px !important; }
+}
+
+@media (max-width: 480px) {
+    .board {
+        grid-template-columns: repeat(10, 32px);
+        grid-template-rows: repeat(10, 32px);
+    }
+    h1 { font-size: 1.3em; }
+    .subtitle { font-size: .9em; }
+    .container { padding: 12px 8px; }
+    .game-boards { gap: 12px; }
+    .board-title { font-size: .95em; }
+    .stats-side { font-size: .8em; padding: 4px 8px; }
+    .diff-display { font-size: .85em; }
+    .log-entry { font-size: .85em; }
+    .log-entries { max-height: 160px; }
+    .control-btn { padding: 12px 24px; font-size: .95em; }
+    .start-war-btn { padding: 14px 36px; font-size: 1.1em; }
+    .orient-btn { font-size: .85em !important; padding: 10px 16px !important; }
+    .ship-rack { min-width: unset; width: 100%; padding: 10px; }
+    .rack-ship { padding: 6px 8px; }
+    .difficulty-bar { flex-wrap: wrap; gap: 6px; }
+    .diff-btn { padding: 6px 14px; font-size: .85em; }
+    .fleet-status { font-size: .85em; }
+    .message-log { margin-top: 10px; }
+    .message-log h4 { font-size: .9em; }
+    .splash-title { font-size: 1.6em; }
+    .splash-subtitle { font-size: .9em; }
+    .splash-container { padding: 18px 12px; }
 }
