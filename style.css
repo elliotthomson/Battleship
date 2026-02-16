@@ -883,6 +883,11 @@ main {
 .rome-title   { color: #e8a0a0; }
 .greece-title { color: #a0c4e8; }
 
+.board.disabled-board {
+    pointer-events: none;
+    opacity: 0.6;
+}
+
 .board {
     display: grid;
     grid-template-columns: repeat(10, 38px);

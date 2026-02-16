@@ -1021,6 +1021,13 @@ class NavalWar {
         this.turn = who;
         this.turnEl.textContent = who === 'rome' ? "Rome's Turn" : "Greece's Turn";
         this.turnEl.className = 'turn-indicator ' + (who === 'rome' ? 'rome-turn' : 'greece-turn');
+
+        const enemyBoardEl = this.playerFaction === 'rome' ? this.greeceBoardEl : this.romeBoardEl;
+        if (who === this.playerFaction) {
+            enemyBoardEl.classList.remove('disabled-board');
+        } else {
+            enemyBoardEl.classList.add('disabled-board');
+        }
     }
 
     _updateCounts() {
