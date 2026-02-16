@@ -44,56 +44,56 @@
       <circle cx="0" cy="-8" r="10" fill="#deb887"/>
       <ellipse cx="0" cy="-18" rx="12" ry="8" fill="url(#crimson)"/>
       <g><animateTransform attributeName="transform" type="rotate" values="0 0 10;-20 0 10;0 0 10" dur="2.4s" begin="0.1s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/>
-      <path d="M0,10 L-15,-65 L-18,-65 L-15,-75 L-12,-65 L-15,-65" stroke="url(#gold-grad)" stroke-width="2.5" fill="url(#gold-grad)"/></g>
+      <path d="M0,10 L-15,-65 L-12.1,-65.6 L-17.0,-74.8 L-17.9,-64.4 L-15,-65" stroke="url(#gold-grad)" stroke-width="2.5" fill="url(#gold-grad)"/></g>
     </g>
     <g transform="translate(170,275) scale(0.6)">
       <rect x="-8" y="0" width="16" height="50" fill="url(#armor)" rx="3"/>
       <circle cx="0" cy="-8" r="10" fill="#deb887"/>
       <ellipse cx="0" cy="-18" rx="12" ry="8" fill="url(#crimson)"/>
       <g><animateTransform attributeName="transform" type="rotate" values="0 0 10;-18 0 10;0 0 10" dur="2.6s" begin="0.4s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/>
-      <path d="M0,10 L-12,-70 L-15,-70 L-12,-80 L-9,-70 L-12,-70" stroke="#888" stroke-width="2" fill="#aaa"/></g>
+      <path d="M0,10 L-12,-70 L-9.0,-70.4 L-13.5,-79.9 L-15.0,-69.6 L-12,-70" stroke="#888" stroke-width="2" fill="#aaa"/></g>
     </g>
     <g transform="translate(260,278) scale(0.6)">
       <rect x="-8" y="0" width="16" height="50" fill="url(#armor)" rx="3"/>
       <circle cx="0" cy="-8" r="10" fill="#deb887"/>
       <ellipse cx="0" cy="-18" rx="12" ry="8" fill="url(#crimson)"/>
       <g><animateTransform attributeName="transform" type="rotate" values="0 2 10;-22 2 10;0 2 10" dur="2.3s" begin="0.7s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/>
-      <path d="M2,10 L-8,-68 L-11,-68 L-8,-78 L-5,-68 L-8,-68" stroke="url(#gold-grad)" stroke-width="2.5" fill="url(#gold-grad)"/></g>
+      <path d="M2,10 L-8,-68 L-5.0,-68.4 L-9.3,-77.9 L-11.0,-67.6 L-8,-68" stroke="url(#gold-grad)" stroke-width="2.5" fill="url(#gold-grad)"/></g>
     </g>
     <g transform="translate(350,273) scale(0.6)">
       <rect x="-8" y="0" width="16" height="50" fill="url(#armor)" rx="3"/>
       <circle cx="0" cy="-8" r="10" fill="#deb887"/>
       <ellipse cx="0" cy="-18" rx="12" ry="8" fill="url(#crimson)"/>
       <g><animateTransform attributeName="transform" type="rotate" values="0 0 10;-17 0 10;0 0 10" dur="2.5s" begin="0.2s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/>
-      <path d="M0,10 L-14,-66 L-17,-66 L-14,-76 L-11,-66 L-14,-66" stroke="#888" stroke-width="2" fill="#aaa"/></g>
+      <path d="M0,10 L-14,-66 L-11.0,-66.5 L-15.8,-75.8 L-17.0,-65.5 L-14,-66" stroke="#888" stroke-width="2" fill="#aaa"/></g>
     </g>
     <g transform="translate(440,276) scale(0.6)">
       <rect x="-8" y="0" width="16" height="50" fill="url(#armor)" rx="3"/>
       <circle cx="0" cy="-8" r="10" fill="#deb887"/>
       <ellipse cx="0" cy="-18" rx="12" ry="8" fill="url(#crimson)"/>
       <g><animateTransform attributeName="transform" type="rotate" values="0 0 10;-21 0 10;0 0 10" dur="2.7s" begin="0.5s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/>
-      <path d="M0,10 L-10,-72 L-13,-72 L-10,-82 L-7,-72 L-10,-72" stroke="url(#gold-grad)" stroke-width="2.5" fill="url(#gold-grad)"/></g>
+      <path d="M0,10 L-10,-72 L-7.0,-72.4 L-11.2,-81.9 L-13.0,-71.6 L-10,-72" stroke="url(#gold-grad)" stroke-width="2.5" fill="url(#gold-grad)"/></g>
     </g>
     <g transform="translate(530,274) scale(0.6)">
       <rect x="-8" y="0" width="16" height="50" fill="url(#armor)" rx="3"/>
       <circle cx="0" cy="-8" r="10" fill="#deb887"/>
       <ellipse cx="0" cy="-18" rx="12" ry="8" fill="url(#crimson)"/>
       <g><animateTransform attributeName="transform" type="rotate" values="0 0 10;-19 0 10;0 0 10" dur="2.4s" begin="0.8s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/>
-      <path d="M0,10 L-13,-67 L-16,-67 L-13,-77 L-10,-67 L-13,-67" stroke="#888" stroke-width="2" fill="#aaa"/></g>
+      <path d="M0,10 L-13,-67 L-10.0,-67.5 L-14.7,-76.9 L-16.0,-66.5 L-13,-67" stroke="#888" stroke-width="2" fill="#aaa"/></g>
     </g>
     <g transform="translate(620,279) scale(0.6)">
       <rect x="-8" y="0" width="16" height="50" fill="url(#armor)" rx="3"/>
       <circle cx="0" cy="-8" r="10" fill="#deb887"/>
       <ellipse cx="0" cy="-18" rx="12" ry="8" fill="url(#crimson)"/>
       <g><animateTransform attributeName="transform" type="rotate" values="0 0 10;-20 0 10;0 0 10" dur="2.5s" begin="0.3s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/>
-      <path d="M0,10 L-11,-69 L-14,-69 L-11,-79 L-8,-69 L-11,-69" stroke="url(#gold-grad)" stroke-width="2.5" fill="url(#gold-grad)"/></g>
+      <path d="M0,10 L-11,-69 L-8.0,-69.4 L-12.4,-78.9 L-14.0,-68.6 L-11,-69" stroke="url(#gold-grad)" stroke-width="2.5" fill="url(#gold-grad)"/></g>
     </g>
     <g transform="translate(710,277) scale(0.6)">
       <rect x="-8" y="0" width="16" height="50" fill="url(#armor)" rx="3"/>
       <circle cx="0" cy="-8" r="10" fill="#deb887"/>
       <ellipse cx="0" cy="-18" rx="12" ry="8" fill="url(#crimson)"/>
       <g><animateTransform attributeName="transform" type="rotate" values="0 0 10;-16 0 10;0 0 10" dur="2.6s" begin="0.6s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/>
-      <path d="M0,10 L-15,-64 L-18,-64 L-15,-74 L-12,-64 L-15,-64" stroke="#888" stroke-width="2" fill="#aaa"/></g>
+      <path d="M0,10 L-15,-64 L-12.1,-64.6 L-17.0,-73.8 L-17.9,-63.4 L-15,-64" stroke="#888" stroke-width="2" fill="#aaa"/></g>
     </g>
   </g>
 
@@ -105,14 +105,14 @@
       <ellipse cx="0" cy="-22" rx="14" ry="9" fill="url(#crimson)"/>
       <rect x="-14" y="-4" width="6" height="24" fill="url(#crimson)" rx="2"/>
       <g><animateTransform attributeName="transform" type="rotate" values="0 -2 12;-22 -2 12;0 -2 12" dur="2.5s" begin="0.15s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/>
-      <path d="M-2,12 L-18,-80 L-22,-80 L-18,-92 L-14,-80 L-18,-80" stroke="url(#gold-grad)" stroke-width="3" fill="url(#gold-grad)"/></g>
+      <path d="M-2,12 L-18,-80 L-14.1,-80.7 L-20.1,-91.8 L-21.9,-79.3 L-18,-80" stroke="url(#gold-grad)" stroke-width="3" fill="url(#gold-grad)"/></g>
     </g>
     <g transform="translate(230,305) scale(0.75)">
       <rect x="-10" y="0" width="20" height="60" fill="url(#armor)" rx="3"/>
       <circle cx="0" cy="-10" r="12" fill="#deb887"/>
       <ellipse cx="0" cy="-22" rx="14" ry="9" fill="url(#crimson)"/>
       <g><animateTransform attributeName="transform" type="rotate" values="0 0 12;-20 0 12;0 0 12" dur="2.7s" begin="0.5s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/>
-      <path d="M0,12 L-16,-85 L-20,-85 L-16,-97 L-12,-85 L-16,-85" stroke="#999" stroke-width="2.5" fill="#bbb"/></g>
+      <path d="M0,12 L-16,-85 L-12.1,-85.7 L-18.0,-96.8 L-19.9,-84.3 L-16,-85" stroke="#999" stroke-width="2.5" fill="#bbb"/></g>
     </g>
     <g transform="translate(340,308) scale(0.75)">
       <rect x="-10" y="0" width="20" height="60" fill="url(#armor)" rx="3"/>
@@ -120,21 +120,21 @@
       <ellipse cx="0" cy="-22" rx="14" ry="9" fill="url(#crimson)"/>
       <rect x="-16" y="5" width="8" height="30" fill="url(#shield-grad)" rx="2"/>
       <g><animateTransform attributeName="transform" type="rotate" values="0 2 12;-23 2 12;0 2 12" dur="2.3s" begin="0.35s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/>
-      <path d="M2,12 L-14,-82 L-18,-82 L-14,-94 L-10,-82 L-14,-82" stroke="url(#gold-grad)" stroke-width="3" fill="url(#gold-grad)"/></g>
+      <path d="M2,12 L-14,-82 L-10.1,-82.7 L-16.0,-93.8 L-17.9,-81.3 L-14,-82" stroke="url(#gold-grad)" stroke-width="3" fill="url(#gold-grad)"/></g>
     </g>
     <g transform="translate(450,303) scale(0.75)">
       <rect x="-10" y="0" width="20" height="60" fill="url(#armor)" rx="3"/>
       <circle cx="0" cy="-10" r="12" fill="#deb887"/>
       <ellipse cx="0" cy="-22" rx="14" ry="9" fill="url(#crimson)"/>
       <g><animateTransform attributeName="transform" type="rotate" values="0 0 12;-19 0 12;0 0 12" dur="2.6s" begin="0.7s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/>
-      <path d="M0,12 L-15,-83 L-19,-83 L-15,-95 L-11,-83 L-15,-83" stroke="#999" stroke-width="2.5" fill="#bbb"/></g>
+      <path d="M0,12 L-15,-83 L-11.0,-83.6 L-16.9,-94.9 L-19.0,-82.4 L-15,-83" stroke="#999" stroke-width="2.5" fill="#bbb"/></g>
     </g>
     <g transform="translate(560,307) scale(0.75)">
       <rect x="-10" y="0" width="20" height="60" fill="url(#armor)" rx="3"/>
       <circle cx="0" cy="-10" r="12" fill="#deb887"/>
       <ellipse cx="0" cy="-22" rx="14" ry="9" fill="url(#crimson)"/>
       <g><animateTransform attributeName="transform" type="rotate" values="0 -1 12;-21 -1 12;0 -1 12" dur="2.4s" begin="0.25s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/>
-      <path d="M-1,12 L-17,-84 L-21,-84 L-17,-96 L-13,-84 L-17,-84" stroke="url(#gold-grad)" stroke-width="3" fill="url(#gold-grad)"/></g>
+      <path d="M-1,12 L-17,-84 L-13.1,-84.7 L-19.0,-95.8 L-20.9,-83.3 L-17,-84" stroke="url(#gold-grad)" stroke-width="3" fill="url(#gold-grad)"/></g>
     </g>
     <g transform="translate(670,310) scale(0.75)">
       <rect x="-10" y="0" width="20" height="60" fill="url(#armor)" rx="3"/>
@@ -142,7 +142,7 @@
       <ellipse cx="0" cy="-22" rx="14" ry="9" fill="url(#crimson)"/>
       <rect x="-16" y="5" width="8" height="30" fill="url(#shield-grad)" rx="2"/>
       <g><animateTransform attributeName="transform" type="rotate" values="0 0 12;-18 0 12;0 0 12" dur="2.8s" begin="0.6s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/>
-      <path d="M0,12 L-13,-81 L-17,-81 L-13,-93 L-9,-81 L-13,-81" stroke="#999" stroke-width="2.5" fill="#bbb"/></g>
+      <path d="M0,12 L-13,-81 L-9.0,-81.6 L-14.7,-92.9 L-17.0,-80.4 L-13,-81" stroke="#999" stroke-width="2.5" fill="#bbb"/></g>
     </g>
   </g>
 
@@ -158,7 +158,7 @@
       <rect x="-20" y="5" width="10" height="40" fill="url(#shield-grad)" rx="3"/>
       <rect x="-19" y="15" width="8" height="2" fill="url(#gold-grad)"/>
       <g><animateTransform attributeName="transform" type="rotate" values="0 4 10;-25 4 10;0 4 10" dur="2.5s" begin="0s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/>
-      <path d="M4,10 L-20,-95 L-24,-95 L-20,-110 L-16,-95 L-20,-95" stroke="url(#gold-grad)" stroke-width="3.5" fill="url(#gold-grad)"/></g>
+      <path d="M4,10 L-20,-95 L-16.1,-95.9 L-23.3,-109.6 L-23.9,-94.1 L-20,-95" stroke="url(#gold-grad)" stroke-width="3.5" fill="url(#gold-grad)"/></g>
     </g>
 
     <!-- Soldier 2 - spear raised -->
@@ -168,7 +168,7 @@
       <ellipse cx="0" cy="-26" rx="16" ry="10" fill="url(#crimson)"/>
       <rect x="0" y="-30" width="3" height="12" fill="url(#gold-grad)"/>
       <g><animateTransform attributeName="transform" type="rotate" values="0 2 10;-23 2 10;0 2 10" dur="2.7s" begin="0.3s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/>
-      <path d="M2,10 L-18,-100 L-22,-100 L-18,-115 L-14,-100 L-18,-100" stroke="#aaa" stroke-width="3" fill="#ccc"/></g>
+      <path d="M2,10 L-18,-100 L-14.1,-100.7 L-20.7,-114.8 L-21.9,-99.3 L-18,-100" stroke="#aaa" stroke-width="3" fill="#ccc"/></g>
     </g>
 
     <!-- Soldier 3 - sword raised high -->
@@ -180,7 +180,7 @@
       <rect x="-20" y="5" width="10" height="40" fill="url(#shield-grad)" rx="3"/>
       <rect x="-19" y="15" width="8" height="2" fill="url(#gold-grad)"/>
       <g><animateTransform attributeName="transform" type="rotate" values="0 3 10;-24 3 10;0 3 10" dur="2.3s" begin="0.55s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/>
-      <path d="M3,10 L-15,-98 L-19,-98 L-15,-113 L-11,-98 L-15,-98" stroke="url(#gold-grad)" stroke-width="3.5" fill="url(#gold-grad)"/></g>
+      <path d="M3,10 L-15,-98 L-11.1,-98.7 L-17.5,-112.8 L-18.9,-97.3 L-15,-98" stroke="url(#gold-grad)" stroke-width="3.5" fill="url(#gold-grad)"/></g>
     </g>
 
     <!-- Center soldier (leader)- largest, most detailed -->
@@ -197,7 +197,7 @@
       <rect x="-23" y="18" width="10" height="3" fill="url(#gold-grad)"/>
       <circle cx="-18" cy="28" r="4" fill="url(#gold-grad)" opacity="0.6"/>
       <g><animateTransform attributeName="transform" type="rotate" values="0 6 12;-26 6 12;0 6 12" dur="2.5s" begin="0.1s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/>
-      <path d="M6,12 L-22,-115 L-27,-115 L-22,-132 L-17,-115 L-22,-115" stroke="url(#gold-grad)" stroke-width="4" fill="url(#gold-grad)"/>
+      <path d="M6,12 L-22,-115 L-17.1,-116.1 L-25.7,-131.6 L-26.9,-113.9 L-22,-115" stroke="url(#gold-grad)" stroke-width="4" fill="url(#gold-grad)"/>
       <line x1="-22" y1="-125" x2="-22" y2="-115" stroke="url(#gold-grad)" stroke-width="1.5"/></g>
     </g>
 
@@ -208,7 +208,7 @@
       <ellipse cx="0" cy="-26" rx="16" ry="10" fill="url(#crimson)"/>
       <rect x="0" y="-30" width="3" height="12" fill="url(#gold-grad)"/>
       <g><animateTransform attributeName="transform" type="rotate" values="0 3 10;-22 3 10;0 3 10" dur="2.6s" begin="0.4s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/>
-      <path d="M3,10 L-17,-97 L-21,-97 L-17,-112 L-13,-97 L-17,-97" stroke="url(#gold-grad)" stroke-width="3.5" fill="url(#gold-grad)"/></g>
+      <path d="M3,10 L-17,-97 L-13.1,-97.7 L-19.8,-111.7 L-20.9,-96.3 L-17,-97" stroke="url(#gold-grad)" stroke-width="3.5" fill="url(#gold-grad)"/></g>
     </g>
 
     <!-- Soldier 6 - spear -->
@@ -219,7 +219,7 @@
       <rect x="0" y="-30" width="3" height="12" fill="url(#gold-grad)"/>
       <rect x="-20" y="5" width="10" height="40" fill="url(#shield-grad)" rx="3"/>
       <g><animateTransform attributeName="transform" type="rotate" values="0 2 10;-24 2 10;0 2 10" dur="2.4s" begin="0.65s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/>
-      <path d="M2,10 L-16,-102 L-20,-102 L-16,-117 L-12,-102 L-16,-102" stroke="#aaa" stroke-width="3" fill="#ccc"/></g>
+      <path d="M2,10 L-16,-102 L-12.1,-102.6 L-18.4,-116.8 L-19.9,-101.4 L-16,-102" stroke="#aaa" stroke-width="3" fill="#ccc"/></g>
     </g>
 
     <!-- Soldier 7 - raised sword -->
@@ -229,7 +229,7 @@
       <ellipse cx="0" cy="-26" rx="16" ry="10" fill="url(#crimson)"/>
       <rect x="0" y="-30" width="3" height="12" fill="url(#gold-grad)"/>
       <g><animateTransform attributeName="transform" type="rotate" values="0 4 10;-23 4 10;0 4 10" dur="2.8s" begin="0.2s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/>
-      <path d="M4,10 L-18,-96 L-22,-96 L-18,-111 L-14,-96 L-18,-96" stroke="url(#gold-grad)" stroke-width="3.5" fill="url(#gold-grad)"/></g>
+      <path d="M4,10 L-18,-96 L-14.1,-96.8 L-21.0,-110.7 L-21.9,-95.2 L-18,-96" stroke="url(#gold-grad)" stroke-width="3.5" fill="url(#gold-grad)"/></g>
     </g>
   </g>
 
