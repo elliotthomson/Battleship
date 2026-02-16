@@ -980,12 +980,15 @@ class NavalWar {
 
             overlay.style.width = spanLen + 'px';
             overlay.style.height = overlayH + 'px';
-            overlay.style.left = left + 'px';
-            overlay.style.top = (top - oarExtend) + 'px';
 
             if (orient === 'v') {
+                overlay.style.left = (left - oarExtend) + 'px';
+                overlay.style.top = top + 'px';
                 overlay.style.transformOrigin = `${oarExtend}px ${oarExtend}px`;
                 overlay.style.transform = `rotate(90deg) translateY(-${cellW}px)`;
+            } else {
+                overlay.style.left = left + 'px';
+                overlay.style.top = (top - oarExtend) + 'px';
             }
 
             boardEl.appendChild(overlay);
