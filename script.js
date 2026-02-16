@@ -224,6 +224,7 @@ class NavalWar {
         this.setupBoardEl = document.getElementById('setup-board');
         this.orientBtn    = document.getElementById('orient-btn');
         this.randomBtn    = document.getElementById('random-btn');
+        this.clearBtn     = document.getElementById('clear-btn');
         this.startWarBtn  = document.getElementById('start-war-btn');
 
         // ── DOM refs (battle) ──
@@ -364,6 +365,9 @@ class NavalWar {
         // Random placement
         this.randomBtn.addEventListener('click', () => this._randomPlaceAll());
 
+        // Clear all ships
+        this.clearBtn.addEventListener('click', () => this._clearAllShips());
+
         // Start war
         this.startWarBtn.addEventListener('click', () => this._beginWar());
 
@@ -448,6 +452,22 @@ class NavalWar {
         });
 
         this._renderSetupBoard();
+    }
+
+    _clearAllShips() {
+        this.setupData = this._emptyGrid();
+        this.setupFleet = [];
+        this.currentShipIdx = 0;
+
+        const rackShips = document.querySelectorAll('.rack-ship');
+        rackShips.forEach((el, i) => {
+            el.classList.remove('placed', 'selected');
+            if (i === 0) el.classList.add('selected');
+        });
+
+        this.startWarBtn.disabled = true;
+        this._renderSetupBoard();
+        SoundEngine.place();
     }
 
     _renderSetupBoard() {
