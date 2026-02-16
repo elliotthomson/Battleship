@@ -1533,6 +1533,12 @@ class NavalWar {
         this.locked = true;
         this._cancelArrow();
 
+        const playerIsGreece = this.playerFaction === 'greece';
+        const enemyBoardEl = playerIsGreece ? this.romeBoardEl : this.greeceBoardEl;
+        const enemyFleet = playerIsGreece ? this.romeFleet : this.greeceFleet;
+        const enemyIsGreece = !playerIsGreece;
+        this._renderShipOverlays(enemyBoardEl, enemyFleet, true, enemyIsGreece, true);
+
         const playerWon = winner === this.playerFaction;
         if (winner === 'rome') {
             this._log(playerWon ? '🏛️ VICTORY! Rome conquers the Greek fleet!' : '🏛️ DEFEAT! Rome has destroyed your fleet!', playerWon ? 'win-msg' : 'lose-msg');
@@ -1546,19 +1552,45 @@ class NavalWar {
     _showOverlay(title, subtitle, isWin) {
         document.querySelectorAll('.game-over-overlay').forEach(el => el.remove());
 
+        const romeAcc = this.romeShotCount > 0 ? (this.romeHitCount / this.romeShotCount * 100).toFixed(1) + '%' : '0.0%';
+        const greeceAcc = this.greeceShotCount > 0 ? (this.greeceHitCount / this.greeceShotCount * 100).toFixed(1) + '%' : '0.0%';
+        const romeSunk = this.greeceFleet.filter(s => s.sunk).length;
+        const greeceSunk = this.romeFleet.filter(s => s.sunk).length;
+        const diffLabel = this.difficulty.charAt(0).toUpperCase() + this.difficulty.slice(1);
+
         const overlay = document.createElement('div');
         overlay.className = 'game-over-overlay';
         overlay.innerHTML = `
             <div class="game-over-box ${isWin ? 'win' : 'lose'}">
                 <h2>${title}</h2>
                 <p>${subtitle}</p>
-                <button id="overlay-restart">⚔️ Restart War</button>
+                <div class="game-over-stats">
+                    <div class="stats-difficulty">Difficulty: ${diffLabel}</div>
+                    <table class="stats-table">
+                        <thead>
+                            <tr><th></th><th>Rome</th><th>Greece</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Shots</td><td>${this.romeShotCount}</td><td>${this.greeceShotCount}</td></tr>
+                            <tr><td>Hits</td><td>${this.romeHitCount}</td><td>${this.greeceHitCount}</td></tr>
+                            <tr><td>Accuracy</td><td>${romeAcc}</td><td>${greeceAcc}</td></tr>
+                            <tr><td>Ships Sunk</td><td>${romeSunk}</td><td>${greeceSunk}</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="game-over-buttons">
+                    <button id="overlay-view">🔍 View Battlefield</button>
+                    <button id="overlay-restart">⚔️ Restart War</button>
+                </div>
             </div>
         `;
         document.body.appendChild(overlay);
         overlay.querySelector('#overlay-restart').addEventListener('click', () => {
             overlay.remove();
             this.restart();
+        });
+        overlay.querySelector('#overlay-view').addEventListener('click', () => {
+            overlay.remove();
         });
     }
 
