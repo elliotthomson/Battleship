@@ -396,28 +396,48 @@ class NavalWar {
             this._showFaction();
         };
 
+        const markStarted = () => { audioStarted = true; cleanup(); };
+
         const tryPlay = () => {
             if (audioStarted) return;
-            audioStarted = true;
-            this.splashAudio.play().catch(() => {});
-            cleanup();
+            this.splashAudio.play().then(markStarted).catch(() => {});
         };
 
+        const interactionEvents = [
+            'click', 'touchstart', 'touchend', 'mousedown',
+            'pointerdown', 'pointerup', 'keydown', 'keyup'
+        ];
+
         const cleanup = () => {
-            document.removeEventListener('click', tryPlay, true);
-            document.removeEventListener('touchstart', tryPlay, true);
-            document.removeEventListener('keydown', tryPlay, true);
+            interactionEvents.forEach(e => document.removeEventListener(e, tryPlay, true));
+            document.removeEventListener('visibilitychange', onVisible);
+            window.removeEventListener('focus', tryPlay);
+            if (this._splashRetryId) { clearInterval(this._splashRetryId); this._splashRetryId = null; }
+        };
+
+        const onVisible = () => {
+            if (!document.hidden) tryPlay();
         };
 
         this.splashAudio.addEventListener('ended', goToFaction, { once: true });
         this.splashContinue.addEventListener('click', goToFaction);
 
-        this.splashAudio.play().then(() => {
-            audioStarted = true;
-        }).catch(() => {
-            document.addEventListener('click', tryPlay, true);
-            document.addEventListener('touchstart', tryPlay, true);
-            document.addEventListener('keydown', tryPlay, true);
+        this.splashAudio.play().then(markStarted).catch(() => {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                ctx.resume().then(() => {
+                    if (!audioStarted) this.splashAudio.play().then(markStarted).catch(() => {});
+                }).catch(() => {});
+            } catch (_) {}
+
+            interactionEvents.forEach(e => document.addEventListener(e, tryPlay, true));
+            document.addEventListener('visibilitychange', onVisible);
+            window.addEventListener('focus', tryPlay);
+
+            this._splashRetryId = setInterval(() => {
+                if (audioStarted) { clearInterval(this._splashRetryId); this._splashRetryId = null; return; }
+                this.splashAudio.play().then(markStarted).catch(() => {});
+            }, 1000);
         });
     }
 
