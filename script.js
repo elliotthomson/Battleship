@@ -251,13 +251,30 @@ class NavalWar {
         this._arrowCancelled = false;
 
         this.consecutiveMisses = 0;
-        this.lastInsultIndex = -1;
+        this.usedInsults = new Set();
         this.insults = [
             "Your aim is worse than a blind archer!",
             "The gods mock your poor marksmanship!",
             "Even a child could aim better!",
-            "Neptune himself laughs at your failure!"
+            "Neptune himself laughs at your failure!",
+            "Poseidon weeps at such incompetence!",
+            "A drunken sailor could steer truer!",
+            "The Spartans would disown you!",
+            "Your arrows couldn't hit the Colossus of Rhodes!",
+            "Odysseus found his way home faster than you find a ship!",
+            "Zeus would strike you down for wasting his time!",
+            "The oracle foresaw your defeat — and your poor aim!",
+            "Even the Trojan Horse had better aim!",
+            "Athena turns away in shame!",
+            "You fight like a Persian tax collector!",
+            "The Kraken yawns at your feeble attempts!",
+            "Ares himself would desert your army!",
+            "Your strategy rivals that of Xerxes at Salamis!",
+            "The sirens wouldn't bother singing for you!",
+            "Hephaestus could forge a better aim blindfolded!",
+            "Even Icarus had a better sense of direction!"
         ];
+        this.nextInsultThreshold = this._getRandomInsultThreshold();
 
         // Mute button
         this._createMuteBtn();
@@ -1156,14 +1173,19 @@ class NavalWar {
         });
     }
 
-    _getNextInsult() {
-        let nextIndex;
-        do {
-            nextIndex = Math.floor(Math.random() * this.insults.length);
-        } while (nextIndex === this.lastInsultIndex && this.insults.length > 1);
+    _getRandomInsultThreshold() {
+        return Math.floor(Math.random() * 4) + 2;
+    }
 
-        this.lastInsultIndex = nextIndex;
-        return this.insults[nextIndex];
+    _getNextInsult() {
+        if (this.usedInsults.size >= this.insults.length) {
+            this.usedInsults.clear();
+        }
+        const available = this.insults.filter((_, i) => !this.usedInsults.has(i));
+        const pick = Math.floor(Math.random() * available.length);
+        const index = this.insults.indexOf(available[pick]);
+        this.usedInsults.add(index);
+        return this.insults[index];
     }
 
     /* ══════════════════════════════════════════
@@ -1237,11 +1259,12 @@ class NavalWar {
             this._log('Splash\u2014miss!', 'miss-msg');
 
             this.consecutiveMisses++;
-            if (this.consecutiveMisses >= 3) {
+            if (this.consecutiveMisses >= this.nextInsultThreshold) {
                 const insult = this._getNextInsult();
                 this._log(insult, 'insult-msg');
                 this._showInsult(insult);
                 this.consecutiveMisses = 0;
+                this.nextInsultThreshold = this._getRandomInsultThreshold();
             }
             this._updateCounts();
 
