@@ -242,6 +242,7 @@ class NavalWar {
         this.greeceSunkEl  = document.getElementById('greece-sunk');
         this.arrowLine     = document.getElementById('arrow-line');
         this.restartBtn    = document.getElementById('restart-btn');
+        this.switchFactionBtn = document.getElementById('switch-faction-btn');
         this.diffDisplay   = document.getElementById('diff-display');
         this.archerRome    = document.getElementById('archer-rome');
         this.archerGreece  = document.getElementById('archer-greece');
@@ -647,6 +648,7 @@ class NavalWar {
 
     _bindBattle() {
         this.restartBtn.addEventListener('click', () => this.restart());
+        this.switchFactionBtn.addEventListener('click', () => this.switchFaction());
         this.greeceBoardEl.addEventListener('click', (e) => this._onBoardClick(e, true));
         this.romeBoardEl.addEventListener('click', (e) => this._onBoardClick(e, false));
     }
@@ -691,6 +693,12 @@ class NavalWar {
 
     restart() {
         this._cancelArrow();
+        this._showSetup();
+    }
+
+    switchFaction() {
+        this._cancelArrow();
+        this.playerFaction = this.playerFaction === 'rome' ? 'greece' : 'rome';
         this._showSetup();
     }
 
@@ -1587,6 +1595,7 @@ class NavalWar {
                 </div>
                 <div class="game-over-buttons">
                     <button id="overlay-view">🔍 View Battlefield</button>
+                    <button id="overlay-switch">⚔️ Switch Faction</button>
                     <button id="overlay-restart">⚔️ Restart War</button>
                 </div>
             </div>
@@ -1595,6 +1604,10 @@ class NavalWar {
         overlay.querySelector('#overlay-restart').addEventListener('click', () => {
             overlay.remove();
             this.restart();
+        });
+        overlay.querySelector('#overlay-switch').addEventListener('click', () => {
+            overlay.remove();
+            this.switchFaction();
         });
         overlay.querySelector('#overlay-view').addEventListener('click', () => {
             overlay.remove();
